@@ -14,8 +14,10 @@ Verfügbar für: Windows, macOS, Linux und Chrome OS
 
 
 ### PlantUML
+PlantUML ist ein kostenloses textbasiertes Tool zur Erstellung von UML-Diagrammen. Das Tool kann ganz einfach online aufgerufen werden und zusätzlich wird keine Registrierung benötigt. Unter diesem Link kann die Seite aufgerufen werden: https://www.planttext.com/
+Um einen Überblick über die Funktionen zur Erstellung eines UML-Diagramm zu bekommen, bieten sie eine Informationsseite an: https://plantuml.com/de/
 
-
+Beispiel:
 
 
 ## Weitere Tools: https://t2informatik.de/wissen-kompakt/uml/
