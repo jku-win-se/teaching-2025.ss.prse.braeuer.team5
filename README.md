@@ -1,1 +1,1 @@
-### PR Software Engineering - Lunchify
+### Praktikum Software Engineering - Lunchify
