@@ -13,6 +13,9 @@ Diagrams.net (oder früher: draw.io) ist eine kostenlose Software zur Erstellung
 Verfügbar für: Windows, macOS, Linux und Chrome OS
 
 ### StarUML
+StarUML ist ein kostenloses UML-Moodeling-Tool, dessen Basisversion gratis verfügbar ist. Das Tool kann online heruntergeladen werden und benötigt für die Basisversion keine Registrierung. 
+
+Verfügbar für: Windows, macOS and Linux
 ![Bildschirmfoto 2025-03-13 um 07 04 10](https://github.com/user-attachments/assets/83d5ef3f-07ec-4189-8c39-242f99d1de9f)
 
 ### PlantUML
