@@ -26,10 +26,12 @@ Beispiel UML:
 ![PlantUml](https://github.com/user-attachments/assets/6cf3a8ea-c6eb-4ee3-b901-79b012e72686)
 
 Code:
+
 @startuml
+
 skinparam groupInheritance 2
 abstract class Person{
-  + name: String
+  "+ name: String"
   + alter: Integer
 }
 
