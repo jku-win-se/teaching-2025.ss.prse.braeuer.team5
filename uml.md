@@ -13,5 +13,5 @@ classDiagram
         +double balance
         +void deposit(amount: double)
     }
-    User --> Administrator : inherits
+   
     User <|-- Administrator
