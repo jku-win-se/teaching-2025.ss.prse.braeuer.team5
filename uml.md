@@ -7,13 +7,19 @@ classDiagram
         +Enum rollen
         +List <Invoice> invoices
         +void login()
-        +void uploadInvoice()
+        +void uploadInvoice(File file)
         +List<Invoice>: viewHistory()
+        +void receiveNotification(String message)
+        +void changeNotificationSettings()
     }
 
     class Administrator {
         +List<Invoice> viewAllInvoices()
         +void checkInvoices()
+        +void flagAnomalies()
+        +void manageUsers()
+        +void sendNotification(String message)
+        +void configureRefundAmounts(double restaurant, double supermarket)
     }
 
     class Invoice{
@@ -21,9 +27,12 @@ classDiagram
         +Localdate date
         +double amount
         +Category category
-        +STATUS status
-        +image
+        +Status status
+        +File file
         +void calculateRefund()
+        +User submittedBy
+        +boolean checkAnomaly()
+        +void updateStatus(Status newStatus)
     }
 
     class Category{
@@ -33,8 +42,8 @@ classDiagram
     }
 
     class OCRService{
-        +scanAmount()
-        +scanCategory()
+        +double scanAmount(File file)
+        +Category scanCategory(File file)
     }
 
     class Status{
@@ -43,7 +52,31 @@ classDiagram
         PROCESSING
         DECLINED
     }
+
+    class Notification{
+        +void sendAdminAlert(String message)
+    }
+
+    class AnomalyDetection{
+        +boolean detectDuplicateUpload(User user, Invoice invoice)
+        +boolean detectMismatch(Invoice invoice)
+    }
+
+    class Statistics{
+        +int totalInvoices
+        +double totalReimbursmment
+        +Map<Category, int> categoryDistribution
+        +void generateMonthlyReport()
+    }
    
     User <|-- Administrator
     Invoice --> Category : uses
     Invoice --> Status : uses
+    Administrator --> Notification : uses
+    Administrator --> AnomalyDetection : uses
+    Administrator --> Statistics : uses
+    Notification --> User : notifies
+    AnomalyDetection --> Invoice : checks
+    Invoice --> OCRService : calls for scanning
+    AnomalyDetection --> Invoice : checks
+    OCRService --> Invoice : provides scanning
