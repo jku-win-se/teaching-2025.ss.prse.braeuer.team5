@@ -74,10 +74,8 @@ classDiagram
     Invoice --> Status : uses
     User --> Invoice : uses
     Administrator --> Notification : uses
-    Administrator --> AnomalyDetection : uses
     Administrator --> Statistics : uses
     Notification --> User : notifies
-    AnomalyDetection --> Invoice : checks
     Invoice --> OCRService : calls for scanning
     AnomalyDetection --> Invoice : checks
     OCRService --> Invoice : provides scanning
