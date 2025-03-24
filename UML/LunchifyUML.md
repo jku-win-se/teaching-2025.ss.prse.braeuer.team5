@@ -4,7 +4,7 @@ classDiagram
         +String name
         +String email
         +String password
-        +Enum rollen
+        +boolean isAdministrator
         +List <Invoice> invoices
         +void login()
         +void uploadInvoice(File file)
