@@ -20,6 +20,8 @@ classDiagram
         +void manageUsers()
         +void sendNotification(String message)
         +void configureRefundAmounts(double restaurant, double supermarket)
+        +void addUser(User user)
+        +void addAdministrator(Administrator administrator)
     }
 
     class Invoice{
