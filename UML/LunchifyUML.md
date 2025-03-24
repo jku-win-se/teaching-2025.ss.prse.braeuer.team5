@@ -72,6 +72,7 @@ classDiagram
     User <|-- Administrator
     Invoice --> Category : uses
     Invoice --> Status : uses
+    User --> Invoice : uses
     Administrator --> Notification : uses
     Administrator --> AnomalyDetection : uses
     Administrator --> Statistics : uses
