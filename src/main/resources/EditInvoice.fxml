@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jku.se.Controller.EditInvoiceController">
+
+    <!-- Titel -->
+    <Label layoutX="234.0" layoutY="44.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-alignment: CENTER;" text="Edit invoice" />
+
+    <!-- Dropdown für Rechnungs-Auswahl -->
+    <Label layoutX="161.0" layoutY="112.0" text="Select invoice:" />
+    <ComboBox fx:id="invoiceComboBox" layoutX="272.0" layoutY="112.0" prefHeight="25.0" prefWidth="204.0">
+        <!-- Hier könnte eine Liste von Rechnungen eingefügt werden -->
+    </ComboBox>
+
+    <!-- Rechnungsbetrag -->
+    <Label layoutX="161.0" layoutY="162.0" text="Amount:" />
+    <TextField fx:id="amountField" layoutX="272.0" layoutY="162.0" prefHeight="25.0" prefWidth="204.0" />
+
+    <!-- Rechnungsdatum -->
+    <Label layoutX="161.0" layoutY="212.0" text="Invoice date:" />
+    <DatePicker fx:id="datePicker" layoutX="272.0" layoutY="212.0" prefHeight="25.0" prefWidth="204.0" />
+
+    <!-- Klassifizierung -->
+    <Label layoutX="161.0" layoutY="262.0" text="Category:" />
+    <ComboBox fx:id="classificationComboBox" layoutX="272.0" layoutY="262.0" prefHeight="25.0" prefWidth="204.0">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="Restaurant" />
+                <String fx:value="Supermarket" />
+            </FXCollections>
+        </items>
+    </ComboBox>
+
+    <!-- Buttons für Speichern und Abbrechen -->
+    <Button layoutX="200.0" layoutY="313.0" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Change" />
+    <Button layoutX="342.0" layoutY="313.0" onAction="#cancelEdit" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Exit" />
+
+</AnchorPane>

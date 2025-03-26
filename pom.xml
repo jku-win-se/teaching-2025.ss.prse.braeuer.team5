@@ -21,7 +21,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>at.jku.se.calculator.SimpleCalculator</mainClass>
+							<mainClass>jku.se.Controller.StartApplication</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
