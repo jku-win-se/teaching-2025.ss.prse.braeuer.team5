@@ -13,8 +13,7 @@ import java.io.IOException;
 
 public class StartController {
 
-    private Label login1;
-    private Label login2;
+
     @FXML
     private void handleAdminLogin(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard2.fxml"));

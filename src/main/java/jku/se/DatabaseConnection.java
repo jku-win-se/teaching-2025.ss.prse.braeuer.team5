@@ -9,17 +9,17 @@ public class DatabaseConnection {
     public static String PWD = "LunchifyTeam5!";
     private static final String URL = "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres";
 
-    public static void execute() {
-        try (Connection con = DriverManager.getConnection(URL, USER, PWD)) {
+    // Use this for queries
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PWD);
+    }
+
+    //Check database connection
+    public static void main(String[] args) {
+        try (Connection con = getConnection()) {
             System.out.println("Verbindung zu Supabase erfolgreich!");
         } catch (SQLException e) {
             System.err.println("Fehler bei der Verbindung: " + e.getMessage());
-            System.err.println("SQLState: " + e.getSQLState());
-            System.err.println("Fehlercode: " + e.getErrorCode());
         }
-    }
-
-    public static void main(String[] args) {
-        execute(); // Testet die Verbindung
     }
 }
