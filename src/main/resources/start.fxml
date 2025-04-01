@@ -13,16 +13,16 @@
 <AnchorPane prefHeight="364.0" prefWidth="606.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jku.se.Controller.StartController">
     <VBox alignment="CENTER" layoutX="105.0" layoutY="120.0" spacing="10">
         <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="User Login" />
-        <TextField fx:id="emailField" promptText="E-Mail" />
-        <PasswordField fx:id="passwordField" promptText="Password" />
+        <TextField fx:id="emailFieldUser" promptText="E-Mail" />
+        <PasswordField fx:id="passwordFieldUser" promptText="Password" />
         <Button onAction="#handleUserLogin" text="Login" />
         <Label fx:id="errorLabel" textFill="red" visible="false" />
     </VBox>
     <VBox alignment="CENTER" layoutX="341.0" layoutY="120.0" spacing="10">
         <children>
             <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Admin Login" />
-            <TextField fx:id="emailField1" promptText="E-Mail" />
-            <PasswordField fx:id="passwordField1" promptText="Password" />
+            <TextField fx:id="emailFieldAdmin" promptText="E-Mail" />
+            <PasswordField fx:id="passwordFieldAdmin" promptText="Password" />
             <Button onAction="#handleAdminLogin" text="Login" />
             <Label fx:id="errorLabel1" textFill="red" visible="false" />
         </children>
