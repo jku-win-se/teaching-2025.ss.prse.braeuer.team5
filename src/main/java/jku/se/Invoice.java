@@ -21,4 +21,13 @@ public class Invoice {
         this.file = file;
         this.submittedBy = submittedBy;
     }
+
+    public double calculateRefund(){
+        if (category == Category.RESTAURANT){
+            return amount;
+        }else if(category == Category.SUPERMARKET){
+            return amount *0.8;
+        }
+        return 0.0;
+    }
 }
