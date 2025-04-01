@@ -109,7 +109,7 @@ public class AdminDashboardController {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         stage.setScene(scene);
-        stage.show();;
+        stage.show();
     }
 
 
