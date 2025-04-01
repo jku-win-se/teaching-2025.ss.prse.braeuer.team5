@@ -112,7 +112,7 @@ public class Invoice {
     }
 
     public double getReimbursement() {
-        return reimbursement;
+        return calculateRefund();
     }
 
     public void setReimbursement(double reimbursement) {
