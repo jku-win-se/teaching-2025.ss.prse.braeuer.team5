@@ -2,23 +2,26 @@ package jku.se;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Invoice {
-    public String id;
-    public LocalDate date;
-    public double amount;
-    public Category category;
-    public Status status;
-    public File file;
-    public User submittedBy;
+    private String userEmail;
+    private LocalDate date;
+    private double amount;
+    private String category;
+    private String status;
+    private String fileUrl;
+    private LocalDateTime createdAt;
+    private double reimbursement;
 
-    public Invoice(String id, LocalDate date, double amount, Category category, Status status, File file, User submittedBy) {
-        this.id = id;
+    public Invoice(String userEmail, LocalDate date, double amount, String category, String status, String fileUrl, LocalDateTime createdAt, double reimbursement) {
+        this.userEmail = userEmail;
         this.date = date;
         this.amount = amount;
         this.category = category;
         this.status = status;
-        this.file = file;
-        this.submittedBy = submittedBy;
+        this.fileUrl = fileUrl;
+        this.createdAt = createdAt; //brauchen wir um zu vergleichen, ob die Rechnung im selben Monat eingereicht wurde
+        this.reimbursement = reimbursement;
     }
 }
