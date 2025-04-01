@@ -1,23 +1,31 @@
 package jku.se.Controller;
 
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+
 
 public class AddInvoiceController {
 
+    @FXML ComboBox<String> categoryCombo;
     private Label cancelAdd;
+
+    @FXML
+    public void initialize() {
+        // Safe initialization
+        if (categoryCombo != null) {
+            categoryCombo.getItems().addAll("RESTAURANT", "SUPERMARKET");
+        } else {
+            System.err.println("FATAL: categoryCombo not injected!");
+        }
+    }
+
     @FXML
     private void cancelAdd(ActionEvent event) throws IOException {
         // Wenn der Admin auf "Logout" klickt, lade die Startseite
