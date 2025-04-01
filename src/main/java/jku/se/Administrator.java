@@ -1,5 +1,6 @@
 package jku.se;
 
+import jku.se.repository.InvoiceRepository;
 import jku.se.repository.UserRepository;
 
 import java.util.List;
@@ -10,8 +11,9 @@ public class Administrator extends User{
         super(name, email, password, true);
     }
 
-    public List <Invoice> viewAllInvoices(Invoice invoice){
-        return viewAllInvoices(invoice);
+    //to see all invoices in admin dashboard
+    public List<Invoice> viewAllInvoices() { //#15- Magdalena
+        return InvoiceRepository.getAllInvoices();
     }
 
     public void checkInovices(){}
