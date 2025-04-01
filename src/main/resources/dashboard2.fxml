@@ -35,11 +35,12 @@
    <center>
       <TableView fx:id="invoiceTable" prefHeight="159.0" prefWidth="545.0" BorderPane.alignment="CENTER">
          <columns>
-            <TableColumn prefWidth="100.66659545898438" text="User" />
-            <TableColumn prefWidth="122.0" text="Submission date" />
-            <TableColumn prefWidth="70.0" text="Amount" />
-            <TableColumn prefWidth="100.0" text="Category" />
-            <TableColumn prefWidth="106.0" text="Status" />
+            <TableColumn fx:id="userColumn" prefWidth="83.33328247070312" text="User" />
+            <TableColumn fx:id="submissionDateColumn" prefWidth="99.33331298828125" text="Submission date" />
+            <TableColumn fx:id="amountColumn" prefWidth="80.6666259765625" text="Amount" />
+            <TableColumn fx:id="categoryColumn" prefWidth="77.33331298828125" text="Category" />
+            <TableColumn fx:id="statusColumn" prefWidth="65.3333740234375" text="Status" />
+            <TableColumn fx:id="reimbursementColumn" maxWidth="1000.0" minWidth="5.0" prefWidth="89.3333740234375" text="Reimbursement" />
          </columns>
       </TableView>
    </center>
