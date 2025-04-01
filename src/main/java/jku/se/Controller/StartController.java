@@ -22,15 +22,29 @@ public class StartController {
     @FXML private Label errorLabel, errorLabel1;
     @FXML
     private void handleAdminLogin(ActionEvent event) throws IOException {
+        String email = emailFieldAdmin.getText();
+        String password = passwordFieldAdmin.getText();
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard2.fxml"));
-        Scene dashboardScene = new Scene(loader.load());
+        User user = UserRepository.findByEmailAndPassword(email, password);
 
-        // Hole das aktuelle Fenster (Stage) von einem der UI-Elemente (Node)
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        if (email.isEmpty() || password.isEmpty()) {
+            errorLabel.setText("Email and password cannot be empty!");
+            errorLabel.setVisible(true);
+            return;
+        }
 
-        stage.setScene(dashboardScene); // Setze die neue Szene
-        stage.show(); // Zeige das Dashboard
+        if (user != null && user.isAdministrator()) {
+            user.login();
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard2.fxml"));
+            Scene dashboardScene = new Scene(loader.load());
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(dashboardScene);
+            stage.show();
+        } else {
+            errorLabel1.setText("Invalid admin credentials!");
+            errorLabel1.setVisible(true);
+        }
     }
 
     @FXML
