@@ -1,7 +1,10 @@
 package jku.se;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.DayOfWeek;
+import java.util.Objects;
 
 public class Invoice {
     private String userEmail;
@@ -12,6 +15,8 @@ public class Invoice {
     private String fileUrl;
     private LocalDateTime createdAt;
     private double reimbursement;
+    private static final long MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB in Bytes
+
 
     public Invoice(String userEmail, LocalDate date, double amount, Category category, Status status, String fileUrl, LocalDateTime createdAt, double reimbursement) {
         this.userEmail = userEmail;
@@ -24,35 +29,69 @@ public class Invoice {
         this.reimbursement = reimbursement;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    // --- Validierungsmethoden ---
+    private LocalDate validateDate(LocalDate date) {
+        validateDate(this.date);
+        validateAmount(this.amount);
+        validateReimbursement(this.reimbursement);
+
+
+        if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            throw new IllegalArgumentException("Rechnungen nur an Werktagen erlaubt");
+        }
+        return date;
+
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
-    public double getAmount() {
+    private double validateAmount(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Betrag muss positiv sein");
+        }
         return amount;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    private double validateReimbursement(double reimbursement) {
+        double expected = calculateRefund();
+        if (Math.abs(reimbursement - expected) > 0.01) {
+            throw new IllegalArgumentException("Rückerstattung entspricht nicht den Regeln");
+        }
+        return reimbursement;
     }
 
-    public String getCategory() {
-        return category;
+    public static void validateFileFormat(File file) throws IllegalArgumentException {
+        if (file == null) {
+            throw new IllegalArgumentException("No file selected");
+        }
+
+        String fileName = file.getName().toLowerCase();
+        if (!fileName.endsWith(".jpg") &&
+                !fileName.endsWith(".jpeg") &&
+                !fileName.endsWith(".png") &&
+                !fileName.endsWith(".pdf")) {
+            throw new IllegalArgumentException(
+                    "Invalid file format. Only JPG, PNG, or PDF allowed."
+            );
+        }
     }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
+
+    public String getUserEmail() {return userEmail;}
+
+    public void setUserEmail(String userEmail) {this.userEmail = userEmail;}
+
+    public double getAmount() {return amount;}
+
+    public void setAmount(double amount) {this.amount = amount;}
+
+    public Category getCategory() {return category;}
+
+    public void setCategory(Category category) {this.category = category;}
 
     public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -73,12 +112,14 @@ public class Invoice {
     }
 
     public double getReimbursement() {
-        return reimbursement;
+        return calculateRefund();
     }
 
     public void setReimbursement(double reimbursement) {
         this.reimbursement = reimbursement;
     }
+
+    public LocalDate getDate() {return date;}
 
     public double calculateRefund(){
         if (category == Category.RESTAURANT){
@@ -88,4 +129,5 @@ public class Invoice {
         }
         return 0.0;
     }
+
 }
