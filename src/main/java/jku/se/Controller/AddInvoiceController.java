@@ -21,7 +21,7 @@ public class AddInvoiceController {
     @FXML
     private void cancelAdd(ActionEvent event) throws IOException {
         // Wenn der Admin auf "Logout" klickt, lade die Startseite
-        loadPage("dashboard2.fxml", event);
+        loadPage("dashboard1.fxml", event);
     }
 
     @FXML
