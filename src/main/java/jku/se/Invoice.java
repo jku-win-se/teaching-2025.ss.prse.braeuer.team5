@@ -12,19 +12,22 @@ public class Invoice {
     private double amount;
     private Category category;
     private Status status;
-    private String fileUrl;
+    private String file_Url;
     private LocalDateTime createdAt;
     private double reimbursement;
     private static final long MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB in Bytes
 
+    private static final double RESTAURANT_REFUND = 3.0;              // maximaler Rückerstattungsbetrag, kann später vom admin geändert werden
+    private static final double SUPERMARKET_REFUND = 2.5;
 
-    public Invoice(String userEmail, LocalDate date, double amount, Category category, Status status, String fileUrl, LocalDateTime createdAt, double reimbursement) {
+
+    public Invoice(String userEmail, LocalDate date, double amount, Category category, Status status, String file_Url, LocalDateTime createdAt, double reimbursement) {
         this.userEmail = userEmail;
         this.date = date;
         this.amount = amount;
         this.category = category;
         this.status = status;
-        this.fileUrl = fileUrl;
+        this.file_Url = file_Url;
         this.createdAt = createdAt; //brauchen wir um zu vergleichen, ob die Rechnung im selben Monat eingereicht wurde
         this.reimbursement = reimbursement;
     }
@@ -96,11 +99,11 @@ public class Invoice {
     }
 
     public String getFileUrl() {
-        return fileUrl;
+        return file_Url;
     }
 
     public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
+        this.file_Url = fileUrl;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -122,12 +125,21 @@ public class Invoice {
     public LocalDate getDate() {return date;}
 
     public double calculateRefund(){
+        double maxRefund = 0;
+
         if (category == Category.RESTAURANT){
-            return amount;
+            maxRefund = RESTAURANT_REFUND;
         }else if(category == Category.SUPERMARKET){
-            return amount *0.8;
+            maxRefund = SUPERMARKET_REFUND;
         }
-        return 0.0;
+
+        // Wenn der Rechnungsbetrag kleiner ist als der maximal mögliche Rückerstattungsbetrag,
+        // gibt es nur so viel Rückerstattung wie der Rechnungsbetrag
+        if (amount < maxRefund) {
+            return amount;
+        } else {
+            return maxRefund;
+        }
     }
 
     //getter for table invoice AdminDashboard

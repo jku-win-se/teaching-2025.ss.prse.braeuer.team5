@@ -5,11 +5,14 @@ import jku.se.DatabaseConnection;
 import jku.se.Invoice;
 import jku.se.Status;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class InvoiceRepository { //#15 - Magdalena
 
@@ -37,28 +40,115 @@ public class InvoiceRepository { //#15 - Magdalena
         return invoices;
     }
 
-    public boolean save(Invoice invoice) {
-        String sql = "INSERT INTO invoice (user_email, date, amount, category, status, fileUrl, createdAt, reimbursement) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
+
+
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // CHECK / UPLOAD  OF INVOICE FILES AND INFORMATION -----------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    private static final String INSERT_INVOICE_INFO_SQL = "INSERT INTO invoice (user_email, date, amount, category, status, file_url, created_at, reimbursement) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+    // Save the invoice data into the database
+    public static void saveInvoiceInfo(Invoice invoice) {
         try (Connection con = DatabaseConnection.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql)) {
+             PreparedStatement stmt = con.prepareStatement(INSERT_INVOICE_INFO_SQL)) {
 
             stmt.setString(1, invoice.getUserEmail());
-            stmt.setDate(2, Date.valueOf(invoice.getDate()));
+            stmt.setObject(2, invoice.getDate());
             stmt.setDouble(3, invoice.getAmount());
-            stmt.setString(4, invoice.getCategory().name());
-            stmt.setString(5, invoice.getStatus().name());
+            stmt.setString(4, invoice.getCategoryString());
+            stmt.setString(5, invoice.getStatusString());
             stmt.setString(6, invoice.getFileUrl());
-            stmt.setTimestamp(7, Timestamp.valueOf(invoice.getCreatedAt()));
-            stmt.setDouble(8, invoice.calculateRefund());
+            stmt.setObject(7, invoice.getCreatedAt());
+            stmt.setDouble(8, invoice.getReimbursement());
 
-            return stmt.executeUpdate() > 0;
+            stmt.executeUpdate();
+            System.out.println("Invoice info successfully saved");
         } catch (SQLException e) {
-            System.err.println("Fehler beim Speichern: " + e.getMessage());
-            return false;
+            System.err.println("Error saving the invoice information " + e.getMessage());
         }
     }
+
+    // Method to handle upload errors
+    public static void handleUploadError(HttpURLConnection connection) throws IOException {
+        System.err.println("Error uploading the file: " + connection.getResponseMessage());
+        try (java.io.BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(connection.getErrorStream()))) {
+            StringBuilder response = new StringBuilder();
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            System.err.println("Error details: " + response);
+        }
+    }
+
+    // Method to check if the file already exists in the Supabase Storage
+    public static boolean fileExistsInStorage(String fileUrl) {
+        // Extrahiere den Dateinamen aus der URL
+        String fileName = extractFileNameFromUrl(fileUrl);
+
+        // Baue die URL zusammen, um den Speicherort der Datei im Supabase Storage zu überprüfen
+        String checkUrl = "https://dljjtuynbgxgmhkcdypu.supabase.co/storage/v1/object/public/invoicefiles/" + fileName;
+
+        // Überprüfe, ob die Datei bereits im Supabase Storage vorhanden ist
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(checkUrl).openConnection();
+            connection.setRequestMethod("HEAD");  // HEAD request, um nur das Vorhandensein zu prüfen
+            connection.setRequestProperty("Authorization", "Bearer " + DatabaseConnection.API_KEY);
+
+            int responseCode = connection.getResponseCode();
+
+            // Wenn die Datei im Storage existiert, return true (sie existiert bereits)
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                System.out.println("File exists in storage.");
+                return true;  // Datei existiert
+            } else {
+                System.out.println("File does not exist in storage. Response code: " + responseCode);
+            }
+        } catch (IOException e) {
+            System.err.println("Error checking file existence in storage: " + e.getMessage());
+        }
+
+        return false;  // Die Datei existiert nicht im Storage
+    }
+
+    // Extract file name from URL
+    private static String extractFileNameFromUrl(String fileUrl) {
+        String[] parts = fileUrl.split("/");
+        return parts[parts.length - 1];  // Extrahiert den Dateinamen aus der URL
+    }
+
+    // Method to save an invoice after checking file existence
+    public static void saveInvoice(Invoice invoice) {
+        if (fileExistsInStorage(invoice.getFileUrl())) {
+            System.out.println("Error: This file already exists in the storage.");
+            return; // Abort if file exists
+        }
+
+        try {
+            String uploadedFileUrl = DatabaseConnection.uploadFileToBucket(new File(invoice.getFileUrl()));
+            if (uploadedFileUrl != null) {
+                invoice.setFileUrl(uploadedFileUrl);
+                saveInvoiceInfo(invoice);
+                System.out.println("Invoice and image uploaded successfully.");
+            } else {
+                System.out.println("Failed to upload file.");
+            }
+        } catch (IOException e) {
+            System.err.println("Error uploading file: " + e.getMessage());
+        }
+    }
+
+
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // ENDS HERE --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
     public Invoice findById(String id) {
         try (Connection con = DatabaseConnection.getConnection();
