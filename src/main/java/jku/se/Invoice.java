@@ -4,15 +4,14 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.DayOfWeek;
-import java.util.Objects;
 
 public class Invoice {
-    private String userEmail;
+    private static String userEmail;
     private LocalDate date;
     private double amount;
     private Category category;
     private Status status;
-    private String file_Url;
+    private static String file_Url;
     private LocalDateTime createdAt;
     private double reimbursement;
     private static final long MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB in Bytes
@@ -77,52 +76,18 @@ public class Invoice {
         }
     }
 
-
-    public String getUserEmail() {return userEmail;}
-
-    public void setUserEmail(String userEmail) {this.userEmail = userEmail;}
-
+    public static String getUserEmail() {return userEmail;}
     public double getAmount() {return amount;}
-
     public void setAmount(double amount) {this.amount = amount;}
-
     public Category getCategory() {return category;}
-
     public void setCategory(Category category) {this.category = category;}
-
-    public Status getStatus() {
-        return status;
+    public static void setFileUrl(String fileUrl) {
+        file_Url = fileUrl;
     }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public String getFileUrl() {
-        return file_Url;
-    }
-
-    public void setFileUrl(String fileUrl) {
-        this.file_Url = fileUrl;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public double getReimbursement() {
-        return calculateRefund();
-    }
-
-    public void setReimbursement(double reimbursement) {
-        this.reimbursement = reimbursement;
-    }
-
     public LocalDate getDate() {return date;}
+    public static String getFile_Url() {return file_Url;}
+    public LocalDateTime getCreatedAt() {return createdAt;}
+    public double getReimbursement() {return reimbursement;}
 
     public double calculateRefund(){
         double maxRefund = 0;
@@ -149,6 +114,5 @@ public class Invoice {
     public String getCategoryString() {
         return category.name();
     }
-
 
 }

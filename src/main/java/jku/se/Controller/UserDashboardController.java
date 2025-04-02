@@ -39,12 +39,16 @@ public class UserDashboardController {
     @FXML
     private TableColumn<Invoice, Double> reimbursementColumn;
 
-    private String currentUserEmail;
+    private static String currentUserEmail;
 
     // Setter-Methode
     public void setCurrentUserEmail(String email) {
-        this.currentUserEmail = email;
+        currentUserEmail = email;
         loadInvoices();  // Invoices laden, sobald User gesetzt ist
+    }
+
+    public static String getCurrentUserEmail() {
+        return currentUserEmail;
     }
 
     //fill table with invoices

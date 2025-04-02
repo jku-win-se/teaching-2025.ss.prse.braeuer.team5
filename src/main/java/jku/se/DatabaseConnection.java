@@ -2,10 +2,7 @@ package jku.se;
 
 import jku.se.repository.InvoiceRepository;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -55,12 +52,24 @@ public class DatabaseConnection {
             if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
                 return DatabaseConnection.URL_SUPABASE + "/storage/v1/object/public/" + DatabaseConnection.BUCKET + "/" + uniqueFileName;
             } else {
-                InvoiceRepository.handleUploadError(connection);
+                System.out.println("Upload fehlgeschlagen: HTTP " + responseCode);
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getErrorStream()))) {
+                    String inputLine;
+                    StringBuilder response = new StringBuilder();
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    System.out.println("Fehlerdetails: " + response);
+                }
             }
         }catch(Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static String getPublicFileUrl(String filePath){
+        return URL_SUPABASE + "/storage/v1/object/" + DatabaseConnection.BUCKET + "/" + filePath;
     }
 
 
