@@ -13,7 +13,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-feature/5/classfiy-invoice-mihjov13
 
 public class InvoiceRepository { //#15 - Magdalena
 
@@ -44,7 +43,6 @@ public class InvoiceRepository { //#15 - Magdalena
         return invoices;
     }
 
-feature/5/classfiy-invoice-mihjov13
 
     //user view includes only their invoices
     public static List<Invoice> getAllInvoicesUser(String userEmail) { //#9-Magda
@@ -68,18 +66,13 @@ feature/5/classfiy-invoice-mihjov13
 
 
 
-    public boolean save(Invoice invoice) {
-        String sql = "INSERT INTO invoice (user_email, date, amount, category, status, file_Url, created_at, reimbursement) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-
     //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     // CHECK / UPLOAD  OF INVOICE FILES AND INFORMATION -----------------------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    private static final String INSERT_INVOICE_INFO_SQL = "INSERT INTO invoice (user_email, date, amount, category, status, file_url, created_at, reimbursement) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public static final String INSERT_INVOICE_INFO_SQL = "INSERT INTO invoice (user_email, date, amount, category, status, file_url, created_at, reimbursement) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     // Save the invoice data into the database
     public static void saveInvoiceInfo(Invoice invoice) {
@@ -260,6 +253,4 @@ feature/5/classfiy-invoice-mihjov13
                 rs.getDouble("reimbursement")
         );
     }
-
-
 }
