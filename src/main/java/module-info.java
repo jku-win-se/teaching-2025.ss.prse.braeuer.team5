@@ -7,5 +7,10 @@ module Lunchify {
 
     opens jku.se.Controller to javafx.fxml;
     exports jku.se.Controller;
-    opens jku.se to javafx.base;
+
+    opens jku.se to javafx.base, org.junit.platform.commons, org.mockito;
+    exports jku.se;
+
+    opens jku.se.repository to org.junit.platform.commons, org.mockito;
+    exports jku.se.repository;
 }
