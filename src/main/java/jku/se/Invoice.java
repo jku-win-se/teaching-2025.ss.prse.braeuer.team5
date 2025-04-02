@@ -130,4 +130,13 @@ public class Invoice {
         return 0.0;
     }
 
+    //getter for table invoice AdminDashboard
+    public String getStatusString() {
+        return status.name();
+    }
+    public String getCategoryString() {
+        return category.name();
+    }
+
+
 }

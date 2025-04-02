@@ -135,8 +135,8 @@ public class InvoiceRepository { //#15 - Magdalena
                 rs.getDouble("amount"),
                 Category.valueOf(rs.getString("category").toUpperCase()),
                 Status.valueOf(rs.getString("status").toUpperCase()),
-                rs.getString("fileUrl"),
-                rs.getTimestamp("createdAt").toLocalDateTime(),
+                rs.getString("file_url"),
+                rs.getTimestamp("created_at").toLocalDateTime(),
                 rs.getDouble("reimbursement")
         );
     }
