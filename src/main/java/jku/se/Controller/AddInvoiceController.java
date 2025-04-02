@@ -1,36 +1,25 @@
 package jku.se.Controller;
 
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import jku.se.Category;
 import jku.se.Invoice;
 import jku.se.Status;
+import jku.se.DatabaseConnection; // Importiere die DatabaseConnection-Klasse
+import jku.se.repository.InvoiceRepository;
 
-import javax.swing.text.html.ImageView;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
 
 public class AddInvoiceController {
     @FXML private DatePicker datePicker;
@@ -45,14 +34,12 @@ public class AddInvoiceController {
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in Bytes
     private Set<LocalDate> uploadedDates = new HashSet<>(); // Set, um bereits hochgeladene Tage zu speichern
 
-
     @FXML
     public void initialize() {
     }
 
     @FXML
     private void cancelAdd(ActionEvent event) throws IOException {
-        // Wenn der Admin auf "Logout" klickt, lade die Startseite
         loadPage("dashboard1.fxml", event);
     }
 
@@ -61,10 +48,7 @@ public class AddInvoiceController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
         Scene scene = new Scene(loader.load());
 
-        // Hole das aktuelle Fenster (Stage) von einem der UI-Elemente (z. B. einem Node)
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-        // Setze die neue Szene und zeige sie
         stage.setScene(scene);
         stage.show();
     }
@@ -95,14 +79,6 @@ public class AddInvoiceController {
                 selectedFile = null;
             }
         }
-    }
-
-    // Methode für Entfernen-Button
-    @FXML
-    private void handleRemoveFile(ActionEvent event) {
-        selectedFile = null;
-        statusLabel.setText("No file selected");
-        statusLabel.setStyle("-fx-text-fill: black;");
     }
 
     private void validateFile(File file) {
@@ -160,15 +136,20 @@ public class AddInvoiceController {
             return;
         }
 
-        // Erstelle eine Instanz der Invoice-Klasse, um die Rückerstattung zu berechnen  //nochmal anschaun -- example löschen?
-        Invoice invoice = new Invoice("user@example.com", selectedDate, amount, Category.RESTAURANT, Status.PROCESSING, "", LocalDateTime.now(), amount);
+        // Erstelle eine Instanz der Invoice-Klasse, um die Rückerstattung zu berechnen
+        Invoice invoice = new Invoice("user@example.com", selectedDate, amount, Category.SUPERMARKET, Status.PROCESSING, "", LocalDateTime.now(), amount);
 
-        // Reimbursement Validierung: Betrag muss größer als Reimbursement sein
+        // Hier wird jetzt die Rückerstattung aus der `calculateRefund`-Methode abgeholt
         double reimbursement = invoice.calculateRefund();
-        if (amount <= reimbursement) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Amount must be greater than reimbursement");
-            return;
+
+        // Der Betrag wird auf den maximalen Rückerstattungsbetrag angepasst, falls er größer ist
+        if (amount > reimbursement) {
+            amount = reimbursement; // Maximaler Rückerstattungsbetrag
+            statusLabel.setStyle("-fx-text-fill: orange;"); // Hinweis, dass der Betrag angepasst wurde
+            statusLabel.setText("Amount adjusted to the maximum reimbursement.");
+        } else {
+            statusLabel.setStyle("-fx-text-fill: green;");
+            statusLabel.setText("Amount is below or equal to reimbursement.");
         }
 
         if (categoryCombo.getValue() == null) {
@@ -185,33 +166,75 @@ public class AddInvoiceController {
 
         // Validierung erfolgreich, weiter mit dem Hochladen
         try {
-            // Speichern der Datei
-            Path uploadsDir = Paths.get("uploads");
-            if (!Files.exists(uploadsDir)) {
-                Files.createDirectories(uploadsDir);
+            // Lade die Datei in den Supabase-Bucket hoch und bekomme die URL
+            String fileUrl = DatabaseConnection.uploadFileToBucket(selectedFile);
+
+            if (fileUrl != null) {
+                // Setze die URL des Bildes in der Invoice
+                invoice.setFileUrl(fileUrl);
+
+                // Nach erfolgreichem Upload: Füge das Datum der Liste hinzu
+                uploadedDates.add(selectedDate);
+
+                // Update der Statusmeldung
+                statusLabel.setText("Upload successful: " + fileUrl);
+                statusLabel.setStyle("-fx-text-fill: green;");
+
+                // Formular nach dem erfolgreichen Upload zurücksetzen
+                datePicker.setValue(null);
+                amountField.clear();
+                categoryCombo.setValue(null);
+                selectedFile = null;
+                statusLabel.setText("Ready for new upload");
+
+                // Speichere die Rechnung in der Datenbank
+                saveInvoiceToBucket(invoice);
+
+            } else {
+                statusLabel.setText("Error uploading file");
+                statusLabel.setStyle("-fx-text-fill: red;");
             }
-
-            Path destination = uploadsDir.resolve(selectedFile.getName());
-            Files.copy(selectedFile.toPath(), destination, StandardCopyOption.REPLACE_EXISTING);
-
-            // Nach erfolgreichem Upload: Füge das Datum der Liste hinzu
-            uploadedDates.add(selectedDate);
-
-            // Update der Statusmeldung
-            statusLabel.setText("Upload successful: " + destination.toString());
-            statusLabel.setStyle("-fx-text-fill: green;");
-
-            // Formular nach dem erfolgreichen Upload zurücksetzen
-            datePicker.setValue(null);
-            amountField.clear();
-            categoryCombo.setValue(null);
-            selectedFile = null;
-            statusLabel.setText("Ready for new upload");
 
         } catch (IOException e) {
             statusLabel.setText("Upload failed: " + e.getMessage());
             statusLabel.setStyle("-fx-text-fill: red;");
             e.printStackTrace();
+        }
+    }
+
+
+    private void saveInvoiceToBucket(Invoice invoice) {
+        // Überprüfen, ob die Datei bereits im Supabase Storage existiert
+        if (InvoiceRepository.fileExistsInStorage(invoice.getFileUrl())) {
+            // Falls die Datei bereits existiert, gib eine Fehlermeldung aus und beende den Vorgang
+            statusLabel.setStyle("-fx-text-fill: red;");
+            statusLabel.setText("Error: This file already exists in the storage.");
+            return;
+        }
+
+        // Falls die Datei noch nicht existiert, lade sie hoch
+        try {
+            String uploadedFileUrl = DatabaseConnection.uploadFileToBucket(new File(invoice.getFileUrl()));
+
+            // Überprüfe, ob der Upload erfolgreich war
+            if (uploadedFileUrl != null) {
+                // Setze die URL der hochgeladenen Datei in der Invoice ein
+                invoice.setFileUrl(uploadedFileUrl);
+
+                // Speichere die Rechnung in der Datenbank
+                InvoiceRepository.saveInvoiceInfo(invoice);
+
+                statusLabel.setText("Invoice and image uploaded successfully.");
+                statusLabel.setStyle("-fx-text-fill: green;");
+            } else {
+                // Falls der Upload fehlschlägt, gib eine Fehlermeldung aus
+                statusLabel.setStyle("-fx-text-fill: red;");
+                statusLabel.setText("Failed to upload file.");
+            }
+        } catch (IOException e) {
+            // Fehlerbehandlung für Upload-Probleme
+            statusLabel.setStyle("-fx-text-fill: red;");
+            statusLabel.setText("Error uploading file: " + e.getMessage());
         }
     }
 }
