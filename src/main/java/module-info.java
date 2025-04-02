@@ -7,4 +7,5 @@ module Lunchify {
 
     opens jku.se.Controller to javafx.fxml;
     exports jku.se.Controller;
+    opens jku.se to javafx.base;
 }

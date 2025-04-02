@@ -9,7 +9,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.scene.Node;
+import jku.se.Category;
 import jku.se.Invoice;
+import jku.se.Status;
 import jku.se.repository.InvoiceRepository;
 
 import java.io.IOException;
@@ -29,10 +31,10 @@ public class AdminDashboardController {
     private TableColumn<Invoice, Double> amountColumn;
 
     @FXML
-    private TableColumn<Invoice, String> categoryColumn;
+    private TableColumn<Invoice, Category> categoryColumn;
 
     @FXML
-    private TableColumn<Invoice, String> statusColumn;
+    private TableColumn<Invoice, Status> statusColumn;
 
     @FXML
     private TableColumn<Invoice, Double> reimbursementColumn;
@@ -41,12 +43,12 @@ public class AdminDashboardController {
     @FXML
     private void initialize() { //#15- Magdalena
         // Connect columns with the invoice attributes
-        userColumn.setCellValueFactory(new PropertyValueFactory<>("userEmail"));
-        submissionDateColumn.setCellValueFactory(new PropertyValueFactory<>("submissionDate"));
-        amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
-        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
-        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-        reimbursementColumn.setCellValueFactory(new PropertyValueFactory<>("reimbursement"));
+        userColumn.setCellValueFactory(new PropertyValueFactory<>("UserEmail"));
+        submissionDateColumn.setCellValueFactory(new PropertyValueFactory<>("Date"));
+        amountColumn.setCellValueFactory(new PropertyValueFactory<>("Amount"));
+        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("categoryString"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("statusString"));
+        reimbursementColumn.setCellValueFactory(new PropertyValueFactory<>("Reimbursement"));
 
         loadInvoices();
     }
