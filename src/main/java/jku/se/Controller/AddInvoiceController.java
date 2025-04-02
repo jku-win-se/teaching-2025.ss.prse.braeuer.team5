@@ -16,6 +16,8 @@ import jku.se.repository.InvoiceRepository;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -99,6 +101,15 @@ public class AddInvoiceController {
 
     @FXML
     private void handleUpload(ActionEvent event) {
+        // Holen der Benutzerdaten (E-Mail des aktuellen Benutzers)
+        String userEmail = UserDashboardController.getCurrentUserEmail();  // Holt die E-Mail des eingeloggten Benutzers
+
+        if (userEmail == null || userEmail.isEmpty()) {
+            statusLabel.setStyle("-fx-text-fill: red;");
+            statusLabel.setText("User is not logged in or email is missing.");
+            return;
+        }
+
         // Validate all fields
         if (datePicker.getValue() == null) {
             statusLabel.setStyle("-fx-text-fill: red;");
@@ -136,10 +147,43 @@ public class AddInvoiceController {
             return;
         }
 
-        // Erstelle eine Instanz der Invoice-Klasse, um die Rückerstattung zu berechnen
-        Invoice invoice = new Invoice("user@example.com", selectedDate, amount, Category.SUPERMARKET, Status.PROCESSING, "", LocalDateTime.now(), amount);
+        // Holen der Benutzerwahl für die Kategorie (von der ComboBox)
+        Category selectedCategory = Category.valueOf(categoryCombo.getValue());
+        if (selectedCategory == null) {
+            statusLabel.setStyle("-fx-text-fill: red;");
+            statusLabel.setText("Please select a category");
+            return;
+        }
 
-        // Hier wird jetzt die Rückerstattung aus der `calculateRefund`-Methode abgeholt
+        // Setze den Status auf einen Standardwert
+        Status selectedStatus = Status.PROCESSING;  // Standardwert für den Status - muss nachher überschrieben werden (admin)
+
+        // Überprüfen, ob eine Datei ausgewählt wurde
+        if (selectedFile == null) {
+            statusLabel.setStyle("-fx-text-fill: red;");
+            statusLabel.setText("Please select a file to upload");
+            return;
+        }
+
+        // Bild hochladen und die URL erhalten
+        String fileUrl = null;
+        try {
+            fileUrl = DatabaseConnection.uploadFileToBucket(selectedFile);
+            if (fileUrl == null) {
+                statusLabel.setStyle("-fx-text-fill: red;");
+                statusLabel.setText("File upload failed");
+                return;
+            }
+        } catch (IOException e) {
+            statusLabel.setStyle("-fx-text-fill: red;");
+            statusLabel.setText("Error uploading file: " + e.getMessage());
+            return;
+        }
+
+        // Erstelle eine Instanz der Invoice-Klasse mit den Benutzereingaben
+        Invoice invoice = new Invoice(userEmail, selectedDate, amount, selectedCategory, selectedStatus, "", LocalDateTime.now(), amount);
+
+        // Berechne den Rückerstattungsbetrag
         double reimbursement = invoice.calculateRefund();
 
         // Der Betrag wird auf den maximalen Rückerstattungsbetrag angepasst, falls er größer ist
@@ -152,89 +196,29 @@ public class AddInvoiceController {
             statusLabel.setText("Amount is below or equal to reimbursement.");
         }
 
-        if (categoryCombo.getValue() == null) {
+        // Aktualisiere das Invoice-Objekt mit der hochgeladenen Datei-URL
+        invoice.setFileUrl(fileUrl);
+
+        // Speichere die Rechnung in der Datenbank
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            InvoiceRepository.saveInvoiceInfo(
+                    connection,
+                    userEmail,  // Dynamische E-Mail des Benutzers
+                    java.sql.Date.valueOf(selectedDate),
+                    amount,
+                    selectedCategory,  // Benutzerdefinierte Kategorie
+                    selectedStatus,  // Standardstatus
+                    fileUrl,
+                    LocalDateTime.now(),
+                    reimbursement,
+                    selectedFile  // Das hochgeladene Bild
+            );
+            uploadedDates.add(selectedDate);  // Füge das Datum der Liste hinzu, um Mehrfachuploads zu verhindern
+            statusLabel.setStyle("-fx-text-fill: green;");
+            statusLabel.setText("Invoice and file uploaded successfully.");
+        } catch (SQLException e) {
             statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Please select a category");
-            return;
-        }
-
-        if (selectedFile == null) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Please select a file to upload");
-            return;
-        }
-
-        // Validierung erfolgreich, weiter mit dem Hochladen
-        try {
-            // Lade die Datei in den Supabase-Bucket hoch und bekomme die URL
-            String fileUrl = DatabaseConnection.uploadFileToBucket(selectedFile);
-
-            if (fileUrl != null) {
-                // Setze die URL des Bildes in der Invoice
-                invoice.setFileUrl(fileUrl);
-
-                // Nach erfolgreichem Upload: Füge das Datum der Liste hinzu
-                uploadedDates.add(selectedDate);
-
-                // Update der Statusmeldung
-                statusLabel.setText("Upload successful: " + fileUrl);
-                statusLabel.setStyle("-fx-text-fill: green;");
-
-                // Formular nach dem erfolgreichen Upload zurücksetzen
-                datePicker.setValue(null);
-                amountField.clear();
-                categoryCombo.setValue(null);
-                selectedFile = null;
-                statusLabel.setText("Ready for new upload");
-
-                // Speichere die Rechnung in der Datenbank
-                saveInvoiceToBucket(invoice);
-
-            } else {
-                statusLabel.setText("Error uploading file");
-                statusLabel.setStyle("-fx-text-fill: red;");
-            }
-
-        } catch (IOException e) {
-            statusLabel.setText("Upload failed: " + e.getMessage());
-            statusLabel.setStyle("-fx-text-fill: red;");
-            e.printStackTrace();
-        }
-    }
-
-
-    private void saveInvoiceToBucket(Invoice invoice) {
-        // Überprüfen, ob die Datei bereits im Supabase Storage existiert
-        if (InvoiceRepository.fileExistsInStorage(invoice.getFile_Url())) {
-            // Falls die Datei bereits existiert, gib eine Fehlermeldung aus und beende den Vorgang
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Error: This file already exists in the storage.");
-            return;
-        }
-
-        // Falls die Datei noch nicht existiert, lade sie hoch
-        try {
-            String uploadedFileUrl = DatabaseConnection.uploadFileToBucket(new File(invoice.getFile_Url()));
-
-            // Überprüfe, ob der Upload erfolgreich war
-            if (uploadedFileUrl != null) {
-                // Setze die URL der hochgeladenen Datei in der Invoice ein
-                invoice.setFileUrl(uploadedFileUrl);
-
-                // Speichere die Rechnung in der Datenbank
-                InvoiceRepository.saveInvoiceInfo(invoice);
-
-                statusLabel.setText("Invoice and image uploaded successfully.");
-                statusLabel.setStyle("-fx-text-fill: green;");
-            } else {
-                // Falls der Upload fehlschlägt, gib eine Fehlermeldung aus
-                statusLabel.setStyle("-fx-text-fill: red;");
-                statusLabel.setText("Failed to upload file.");
-            }
-        } catch (IOException e) {
-            // Fehlerbehandlung für Upload-Probleme
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Error uploading file: " + e.getMessage());
+            statusLabel.setText("Error saving invoice to database: " + e.getMessage());
         }
     }
 }
