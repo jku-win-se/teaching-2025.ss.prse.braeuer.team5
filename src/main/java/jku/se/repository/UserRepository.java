@@ -55,7 +55,7 @@ public class UserRepository {//#18 Magda
                 emails.add(rs.getString("email"));
             }
         } catch (Exception e) {
-            System.err.println("Fehler beim Abrufen der E-Mails: " + e.getMessage());
+            System.err.println("Error when retrieving emails: " + e.getMessage());
         }
         return emails;
     }
@@ -68,6 +68,7 @@ public class UserRepository {//#18 Magda
              PreparedStatement stmt = con.prepareStatement(DELETE_USER_SQL)) {
 
             stmt.setString(1, email);
+
             int affectedRows = stmt.executeUpdate();
 
             return affectedRows > 0; //delete one row so successfull

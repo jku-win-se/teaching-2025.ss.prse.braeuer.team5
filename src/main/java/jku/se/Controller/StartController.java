@@ -4,12 +4,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import java.io.IOException;
+
 import jku.se.repository.UserRepository;
 import jku.se.User;
 
@@ -20,6 +20,7 @@ public class StartController {
     @FXML private TextField emailFieldAdmin;
     @FXML private TextField passwordFieldAdmin;
     @FXML private Label errorLabel, errorLabel1;
+
     @FXML
     private void handleAdminLogin(ActionEvent event) throws IOException {
         String email = emailFieldAdmin.getText();
@@ -35,6 +36,8 @@ public class StartController {
 
         if (user != null && user.isAdministrator()) {
             user.login();
+
+
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard2.fxml"));
             Scene dashboardScene = new Scene(loader.load());
@@ -65,6 +68,11 @@ public class StartController {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard1.fxml"));
             Scene dashboardScene = new Scene(loader.load());
+
+            //save current user
+            UserDashboardController controller = loader.getController();
+            controller.setCurrentUserEmail(email);
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(dashboardScene);
             stage.show();
@@ -74,6 +82,7 @@ public class StartController {
         }
 
     }
+
 
 
 }

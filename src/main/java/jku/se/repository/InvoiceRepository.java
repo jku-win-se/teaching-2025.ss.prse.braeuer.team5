@@ -13,16 +13,20 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+feature/5/classfiy-invoice-mihjov13
 
 public class InvoiceRepository { //#15 - Magdalena
 
     private static final String SELECT_ALL_INVOICES = "SELECT *  FROM invoice";
+    private static final String SELECT_ALL_INVOICES_USER = "SELECT * FROM invoice WHERE user_email = ?";
     private static final String UPDATE_REIMBURSEMENT = "UPDATE invoice SET reimbursement = ?, status = ? WHERE id = ?";
     private static final String FIND_BY_ID = "SELECT * FROM invoice WHERE id = ?";
     private static final String FIND_BY_USER = "SELECT * FROM invoice WHERE user_email = ?";
     private static final String UPDATE_CATEGORY_REFUND = "UPDATE invoice SET reimbursement = ? WHERE category = ? AND status = 'PENDING'";
 
-    public static List<Invoice> getAllInvoices() {
+
+    //admin view includes all invoices
+    public static List<Invoice> getAllInvoicesAdmin() { //#15-Magda
         List<Invoice> invoices = new ArrayList<>();
 
         try (Connection con = DatabaseConnection.getConnection();
@@ -40,7 +44,33 @@ public class InvoiceRepository { //#15 - Magdalena
         return invoices;
     }
 
+feature/5/classfiy-invoice-mihjov13
 
+    //user view includes only their invoices
+    public static List<Invoice> getAllInvoicesUser(String userEmail) { //#9-Magda
+        List<Invoice> invoices = new ArrayList<>();
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(SELECT_ALL_INVOICES_USER)) {
+
+            stmt.setString(1, userEmail);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    invoices.add(createInvoiceFromResultSet(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving invoices: " + e.getMessage());
+        }
+
+        return invoices;
+    }
+
+
+
+    public boolean save(Invoice invoice) {
+        String sql = "INSERT INTO invoice (user_email, date, amount, category, status, file_Url, created_at, reimbursement) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 
     //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
