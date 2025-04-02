@@ -55,7 +55,7 @@ public class UserRepository {//#18 Magda
                 emails.add(rs.getString("email"));
             }
         } catch (Exception e) {
-            System.err.println("Fehler beim Abrufen der E-Mails: " + e.getMessage());
+            System.err.println("Error when retrieving emails: " + e.getMessage());
         }
         return emails;
     }
