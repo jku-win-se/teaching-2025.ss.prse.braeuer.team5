@@ -205,7 +205,7 @@ public class AddInvoiceController {
 
     private void saveInvoiceToBucket(Invoice invoice) {
         // Überprüfen, ob die Datei bereits im Supabase Storage existiert
-        if (InvoiceRepository.fileExistsInStorage(invoice.getFileUrl())) {
+        if (InvoiceRepository.fileExistsInStorage(invoice.getFile_Url())) {
             // Falls die Datei bereits existiert, gib eine Fehlermeldung aus und beende den Vorgang
             statusLabel.setStyle("-fx-text-fill: red;");
             statusLabel.setText("Error: This file already exists in the storage.");
@@ -214,7 +214,7 @@ public class AddInvoiceController {
 
         // Falls die Datei noch nicht existiert, lade sie hoch
         try {
-            String uploadedFileUrl = DatabaseConnection.uploadFileToBucket(new File(invoice.getFileUrl()));
+            String uploadedFileUrl = DatabaseConnection.uploadFileToBucket(new File(invoice.getFile_Url()));
 
             // Überprüfe, ob der Upload erfolgreich war
             if (uploadedFileUrl != null) {
