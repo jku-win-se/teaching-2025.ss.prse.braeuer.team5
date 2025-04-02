@@ -54,7 +54,7 @@ public class AdminDashboardController {
     }
 
     private void loadInvoices() { //#15-Magdalena
-        List<Invoice> invoices = InvoiceRepository.getAllInvoices();
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
         invoiceTable.getItems().setAll(invoices);
     }
 

@@ -13,7 +13,7 @@ public class Administrator extends User{
 
     //to see all invoices in admin dashboard
     public List<Invoice> viewAllInvoices() { //#15- Magdalena
-        return InvoiceRepository.getAllInvoices();
+        return InvoiceRepository.getAllInvoicesAdmin();
     }
 
     public void checkInovices(){}

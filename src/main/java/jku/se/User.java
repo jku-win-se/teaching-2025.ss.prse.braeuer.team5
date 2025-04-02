@@ -1,5 +1,7 @@
 package jku.se;
 
+import jku.se.repository.InvoiceRepository;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -40,6 +42,11 @@ public class User { //Magdalena #18
 
         receiveNotification(message);
     }
+
+    //to see all invoices in user dashboard
+    public List<Invoice> viewAllInvoices() { //#15- Magdalena
+        return InvoiceRepository.getAllInvoicesUser(getEmail());
+    } //#9 -Magdalena
 
     public List<Invoice> viewHistory() { //jovana #11??
         return invoices;

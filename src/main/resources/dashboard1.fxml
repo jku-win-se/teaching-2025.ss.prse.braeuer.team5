@@ -33,12 +33,13 @@
     <center>
         <VBox alignment="CENTER" spacing="10">
          <PieChart prefHeight="139.0" prefWidth="500.0" />
-            <TableView prefHeight="138.0" prefWidth="406.0" BorderPane.alignment="CENTER">
+            <TableView fx:id="invoiceTable" prefHeight="138.0" prefWidth="406.0" BorderPane.alignment="CENTER">
                 <columns>
-                    <TableColumn prefWidth="132.66665649414062" text="Submission date" />
-                    <TableColumn prefWidth="90.6666259765625" text="Amount" />
-                    <TableColumn prefWidth="132.66668701171875" text="Category" />
-                    <TableColumn prefWidth="136.66668701171875" text="Status" />
+                    <TableColumn fx:id="submissionDateColumn" prefWidth="120.0" text="Submission date" />
+                    <TableColumn fx:id="amountColumn" text="Amount" />
+                    <TableColumn fx:id="categoryColumn" prefWidth="84.0" text="Category" />
+                    <TableColumn fx:id="statusColumn" prefWidth="99.0" text="Status" />
+               <TableColumn fx:id="reimbursementColumn" prefWidth="116.0" text="Reimbursement" />
                 </columns>
             </TableView>
         </VBox>
