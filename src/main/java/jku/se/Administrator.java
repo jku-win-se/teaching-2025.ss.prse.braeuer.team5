@@ -20,14 +20,11 @@ public class Administrator extends User{
 
     public void flagAnomalies(){}
 
-    public void manageUsers(){} //weglassen???
 
     public void sendNotification(String message){}
 
     public void configureRefundAmounts(double restaurant, double supermarket){}
 
-
-    //Sollen wir die zwei Methoden zusammenfassen? Wir haben ja jetzt keine getrennten Tables mehr nur der boolean unterscheidet die zwei
     //new user isAdministrator = false
     public void addUser(String name, String email, String password, boolean isAdministrator) { //#18 Magdalena
         User newUser = new User(name, email, password, isAdministrator);

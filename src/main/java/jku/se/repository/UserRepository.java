@@ -68,6 +68,7 @@ public class UserRepository {//#18 Magda
              PreparedStatement stmt = con.prepareStatement(DELETE_USER_SQL)) {
 
             stmt.setString(1, email);
+
             int affectedRows = stmt.executeUpdate();
 
             return affectedRows > 0; //delete one row so successfull
