@@ -120,7 +120,7 @@ public class AddInvoiceController {
         LocalDate selectedDate = datePicker.getValue();
 
         // Überprüfen, ob bereits eine Rechnung für den gewählten Werktag hochgeladen wurde
-        if (uploadedDates.contains(selectedDate)) {
+        if (uploadedDates.contains(selectedDate) && userEmail.equals(selectedDate.toString())) {
             statusLabel.setStyle("-fx-text-fill: red;");
             statusLabel.setText("You can only upload one invoice per weekday.");
             return;
