@@ -6,12 +6,12 @@ import java.time.LocalDateTime;
 import java.time.DayOfWeek;
 
 public class Invoice {
-    private static String userEmail;
+    private String userEmail;
     private LocalDate date;
     private double amount;
     private Category category;
     private Status status;
-    private static String file_Url;
+    private String file_Url;
     private LocalDateTime createdAt;
     private double reimbursement;
     private static final long MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB in Bytes
@@ -76,16 +76,16 @@ public class Invoice {
         }
     }
 
-    public static String getUserEmail() {return userEmail;}
+    public  String getUserEmail() {return userEmail;}
     public double getAmount() {return amount;}
     public void setAmount(double amount) {this.amount = amount;}
     public Category getCategory() {return category;}
     public void setCategory(Category category) {this.category = category;}
-    public static void setFileUrl(String fileUrl) {
+    public  void setFileUrl(String fileUrl) {
         file_Url = fileUrl;
     }
     public LocalDate getDate() {return date;}
-    public static String getFile_Url() {return file_Url;}
+    public  String getFile_Url() {return file_Url;}
     public LocalDateTime getCreatedAt() {return createdAt;}
     public double getReimbursement() {return reimbursement;}
 
