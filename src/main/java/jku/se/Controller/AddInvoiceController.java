@@ -33,12 +33,7 @@ public class AddInvoiceController {
     @FXML private Button uploadButton;
     private File selectedFile;
 
-    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in Bytes
     private Set<LocalDate> uploadedDates = new HashSet<>(); // Set, um bereits hochgeladene Tage zu speichern
-
-    @FXML
-    public void initialize() {
-    }
 
     @FXML
     private void cancelAdd(ActionEvent event) throws IOException {
@@ -68,7 +63,7 @@ public class AddInvoiceController {
 
         if (selectedFile != null) {
             try {
-                validateFile(selectedFile);
+                Invoice.validateFile(selectedFile);
                 statusLabel.setStyle("-fx-text-fill: green;");
                 statusLabel.setText(String.format(
                         "✓ Selected: %s (%.2f MB)",
@@ -80,22 +75,6 @@ public class AddInvoiceController {
                 statusLabel.setText(e.getMessage());
                 selectedFile = null;
             }
-        }
-    }
-
-    private void validateFile(File file) {
-        // Formatvalidierung
-        String fileName = file.getName().toLowerCase();
-        if (!fileName.matches(".*\\.(jpg|jpeg|png|pdf)$")) {
-            throw new IllegalArgumentException("Only JPG/PNG/PDF allowed");
-        }
-
-        // Größenvalidierung (10MB)
-        if (file.length() > MAX_FILE_SIZE) {
-            throw new IllegalArgumentException(String.format(
-                    "File too large (%.2f MB > 10 MB limit)",
-                    file.length() / (1024.0 * 1024)
-            ));
         }
     }
 
@@ -119,10 +98,25 @@ public class AddInvoiceController {
 
         LocalDate selectedDate = datePicker.getValue();
 
-        // Überprüfen, ob bereits eine Rechnung für den gewählten Werktag hochgeladen wurde
-        if (uploadedDates.contains(selectedDate)) {
+        // Überprüfen, ob das ausgewählte Datum in der Zukunft liegt
+        LocalDate currentDate = LocalDate.now(); // Aktuelles Datum
+        if (selectedDate.isAfter(currentDate)) {
             statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("You can only upload one invoice per weekday.");
+            statusLabel.setText("You cannot use a future date.");
+            return;  // Verhindere den Upload, wenn das Datum in der Zukunft liegt
+        }
+
+        // Überprüfen, ob bereits eine Rechnung für denselben Benutzer und Tag existiert
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            if (InvoiceRepository.invoiceExists(connection, userEmail, java.sql.Date.valueOf(selectedDate))) {
+                statusLabel.setStyle("-fx-text-fill: red;");
+                statusLabel.setText("Upload Limit: One Invoice per day");
+                return;  // Verhindere den Upload, wenn bereits eine Rechnung existiert
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            statusLabel.setStyle("-fx-text-fill: red;");
+            statusLabel.setText("Database error: " + e.getMessage());
             return;
         }
 
@@ -186,16 +180,6 @@ public class AddInvoiceController {
         // Berechne den Rückerstattungsbetrag
         double reimbursement = invoice.calculateRefund();
 
-        // Der Betrag wird auf den maximalen Rückerstattungsbetrag angepasst, falls er größer ist
-        if (amount > reimbursement) {
-            amount = reimbursement; // Maximaler Rückerstattungsbetrag
-            statusLabel.setStyle("-fx-text-fill: orange;"); // Hinweis, dass der Betrag angepasst wurde
-            statusLabel.setText("Amount adjusted to the maximum reimbursement.");
-        } else {
-            statusLabel.setStyle("-fx-text-fill: green;");
-            statusLabel.setText("Amount is below or equal to reimbursement.");
-        }
-
         // Aktualisiere das Invoice-Objekt mit der hochgeladenen Datei-URL
         invoice.setFileUrl(fileUrl);
 
@@ -216,9 +200,19 @@ public class AddInvoiceController {
             uploadedDates.add(selectedDate);  // Füge das Datum der Liste hinzu, um Mehrfachuploads zu verhindern
             statusLabel.setStyle("-fx-text-fill: green;");
             statusLabel.setText("Invoice and file uploaded successfully.");
+
+            resetForm();
         } catch (SQLException e) {
             statusLabel.setStyle("-fx-text-fill: red;");
             statusLabel.setText("Error saving invoice to database: " + e.getMessage());
         }
+    }
+
+    // Zurücksetzen des Formulars
+    private void resetForm() {
+        datePicker.setValue(null);  // Setze das Datum zurück
+        amountField.clear();        // Lösche den Betrag
+        categoryCombo.getSelectionModel().clearSelection();  // Setze die Kategorie zurück
+        selectedFile = null;        // Setze das Bild zurück
     }
 }

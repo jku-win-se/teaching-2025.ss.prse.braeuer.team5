@@ -14,10 +14,10 @@ public class Invoice {
     private String file_Url;
     private LocalDateTime createdAt;
     private double reimbursement;
-    private static final long MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB in Bytes
+    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in Bytes
 
-    private static final double RESTAURANT_REFUND = 3.0;              // maximaler Rückerstattungsbetrag, kann später vom admin geändert werden
-    private static final double SUPERMARKET_REFUND = 2.5;
+    public static final double RESTAURANT_REFUND = 3.0;              // maximaler Rückerstattungsbetrag, kann später vom admin geändert werden
+    public static final double SUPERMARKET_REFUND = 2.5;
 
 
     public Invoice(String userEmail, LocalDate date, double amount, Category category, Status status, String file_Url, LocalDateTime createdAt, double reimbursement) {
@@ -60,19 +60,19 @@ public class Invoice {
         return reimbursement;
     }
 
-    public static void validateFileFormat(File file) throws IllegalArgumentException {
-        if (file == null) {
-            throw new IllegalArgumentException("No file selected");
+    public static void validateFile(File file) {
+        // Formatvalidierung
+        String fileName = file.getName().toLowerCase();
+        if (!fileName.matches(".*\\.(jpg|jpeg|png|pdf)$")) {
+            throw new IllegalArgumentException("Only JPG/PNG/PDF allowed");
         }
 
-        String fileName = file.getName().toLowerCase();
-        if (!fileName.endsWith(".jpg") &&
-                !fileName.endsWith(".jpeg") &&
-                !fileName.endsWith(".png") &&
-                !fileName.endsWith(".pdf")) {
-            throw new IllegalArgumentException(
-                    "Invalid file format. Only JPG, PNG, or PDF allowed."
-            );
+        // Größenvalidierung (10MB)
+        if (file.length() > MAX_FILE_SIZE) {
+            throw new IllegalArgumentException(String.format(
+                    "File too large (%.2f MB > 10 MB limit)",
+                    file.length() / (1024.0 * 1024)
+            ));
         }
     }
 

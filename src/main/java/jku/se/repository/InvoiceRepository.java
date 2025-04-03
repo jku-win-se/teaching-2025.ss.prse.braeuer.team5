@@ -74,10 +74,10 @@ public class InvoiceRepository { //#15 - Magdalena
         public static void saveInvoiceInfo(Connection connection, String user_email, Date date, double amount, Category category, Status status, String file_url, LocalDateTime createdAt, double reimbursement, File imageFile) {
             String INSERT_INVOICE_INFO_SQL = "INSERT INTO invoice (user_email, date, amount, category, status, file_url, created_at, reimbursement) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-            try{
-                connection.setAutoCommit(false);
+            try {
+                connection.setAutoCommit(false); // Deaktiviere Auto-Commit für Transaktionen
 
-                if(invoiceExists(connection, user_email, date)){
+                if (invoiceExists(connection, user_email, date)) {
                     System.out.println("Invoice already exists");
                     connection.rollback();  // Rollback bei Fehler
                     return;
@@ -85,12 +85,13 @@ public class InvoiceRepository { //#15 - Magdalena
 
                 // Hier lade die Datei hoch und erhalte die URL
                 String fileUrl = DatabaseConnection.uploadFileToBucket(imageFile);
-                if(fileUrl == null){
+                if (fileUrl == null) {
                     System.out.println("File url could not be uploaded");
                     connection.rollback();
                     return;
                 }
 
+                // Verwende try-with-resources, um das PreparedStatement automatisch zu schließen
                 try (PreparedStatement stmt = connection.prepareStatement(INSERT_INVOICE_INFO_SQL)) {
                     stmt.setString(1, user_email);
                     stmt.setDate(2, date);
@@ -103,24 +104,24 @@ public class InvoiceRepository { //#15 - Magdalena
 
                     int rowsAffected = stmt.executeUpdate();
                     if (rowsAffected > 0) {
-                        connection.commit();
+                        connection.commit();  // Commit der Transaktion, wenn erfolgreich
                     } else {
-                        connection.rollback();
+                        connection.rollback();  // Rollback, wenn keine Zeilen betroffen sind
                     }
-                } catch (SQLException e){
-                    connection.rollback();
+                } catch (SQLException e) {
+                    connection.rollback();  // Rollback bei Fehler im PreparedStatement
                     System.err.println("Database error: " + e.getMessage());
                 }
-            } catch (SQLException | IOException e){
+            } catch (SQLException | IOException e) {
                 try {
-                    connection.rollback();
+                    connection.rollback();  // Rollback bei Fehler in der Verbindung oder Dateioperation
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
                 e.printStackTrace();
             } finally {
                 try {
-                    connection.setAutoCommit(true);  // Setze Auto-Commit zurück
+                    connection.setAutoCommit(true);  // Stelle Auto-Commit wieder her
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
