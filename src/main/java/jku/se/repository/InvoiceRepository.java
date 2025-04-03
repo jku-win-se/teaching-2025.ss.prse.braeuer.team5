@@ -15,7 +15,7 @@ import java.util.List;
 
 public class InvoiceRepository { //#15 - Magdalena
 
-    private static final String SELECT_ALL_INVOICES = "SELECT *  FROM invoice";
+    private static final String SELECT_ALL_INVOICES = "SELECT * FROM invoice";
     private static final String SELECT_ALL_INVOICES_USER = "SELECT * FROM invoice WHERE user_email = ?";
     private static final String UPDATE_REIMBURSEMENT = "UPDATE invoice SET reimbursement = ?, status = ? WHERE id = ?";
     private static final String FIND_BY_ID = "SELECT * FROM invoice WHERE id = ?";
