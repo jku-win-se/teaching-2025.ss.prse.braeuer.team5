@@ -22,7 +22,7 @@ import java.util.List;
 public class UserDashboardController {
 
     @FXML
-    private TableView<Invoice> invoiceTable;
+    private static TableView<Invoice> invoiceTable;
 
     @FXML
     private TableColumn<Invoice, String> submissionDateColumn;
@@ -42,7 +42,7 @@ public class UserDashboardController {
     private static String currentUserEmail;
 
     // Setter-Methode
-    public void setCurrentUserEmail(String email) {
+    public static void setCurrentUserEmail(String email) {
         currentUserEmail = email;
         loadInvoices();  // Invoices laden, sobald User gesetzt ist
     }
@@ -64,7 +64,7 @@ public class UserDashboardController {
         loadInvoices();
     }
 
-    private void loadInvoices() { //#15-Magdalena
+    private static void loadInvoices() { //#15-Magdalena
         //check if the user only sees his own invoices
 
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser(currentUserEmail);

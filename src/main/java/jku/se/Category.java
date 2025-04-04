@@ -6,7 +6,7 @@ public enum Category {
     SUPERMARKET("Supermarkt");
 
     private final String displayName;
-    private volatile double customRefundAmount = -1; // -1 = Standardwert
+    public volatile double customRefundAmount = -1; // -1 = Standardwert
 
     Category(String displayName) {
         this.displayName = displayName;
@@ -18,14 +18,4 @@ public enum Category {
         category.customRefundAmount = amount;
     }
 
-    public double getRefundAmount() {
-        return customRefundAmount >= 0 ? customRefundAmount : getDefaultRefund();
-    }
-
-    private double getDefaultRefund() {
-        return switch (this) {
-            case RESTAURANT -> 3.00;
-            case SUPERMARKET -> 2.50;
-        };
-    }
 }
