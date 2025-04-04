@@ -18,8 +18,8 @@ public class Invoice {
 
     public Invoice(String userEmail, LocalDate date, double amount, Category category, Status status, String file_Url, LocalDateTime createdAt, double reimbursement) {
         this.userEmail = userEmail;
-        this.date = date;
-        this.amount = amount;
+        this.date = validateDate(date);
+        this.amount = validateAmount(amount); // ZUERST Amount prüfen!
         this.category = category;
         this.status = status;
         this.file_Url = file_Url;
@@ -44,14 +44,29 @@ public class Invoice {
         return amount;
     }
 
+    private double validateReimbursement(double reimbursement, double amount) {
+        double maxAllowed = (category == Category.RESTAURANT) ? RESTAURANT_REFUND : SUPERMARKET_REFUND;
+        double actualRefund = Math.min(amount, maxAllowed); // Rückerstattung darf nie mehr als maxAllowed sein
+
+        if (reimbursement < 0 || reimbursement > actualRefund) {
+            throw new IllegalArgumentException("Rückerstattung entspricht nicht den Regeln");
+        }
+        return reimbursement;
+    }
+
     public static void validateFile(File file) {
+        // Existenzprüfung hinzufügen
+        if (!file.exists()) {
+            throw new IllegalArgumentException("File does not exist");
+        }
+
         // Formatvalidierung
         String fileName = file.getName().toLowerCase();
         if (!fileName.matches(".*\\.(jpg|jpeg|png|pdf)$")) {
             throw new IllegalArgumentException("Only JPG/PNG/PDF allowed");
         }
 
-        // Größenvalidierung (10MB)
+        // Größenvalidierung
         if (file.length() > MAX_FILE_SIZE) {
             throw new IllegalArgumentException(String.format(
                     "File too large (%.2f MB > 10 MB limit)",
