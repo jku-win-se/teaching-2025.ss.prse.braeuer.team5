@@ -22,7 +22,7 @@ import java.util.List;
 public class UserDashboardController {
 
     @FXML
-    private static TableView<Invoice> invoiceTable;
+    private TableView<Invoice> invoiceTable;
 
     @FXML
     private TableColumn<Invoice, String> submissionDateColumn;
@@ -42,7 +42,7 @@ public class UserDashboardController {
     private static String currentUserEmail;
 
     // Setter-Methode
-    public static void setCurrentUserEmail(String email) {
+    public void setCurrentUserEmail(String email) {
         currentUserEmail = email;
         loadInvoices();  // Invoices laden, sobald User gesetzt ist
     }
@@ -55,18 +55,21 @@ public class UserDashboardController {
     @FXML
     private void initialize() { //#15- Magdalena
         // Connect columns with the invoice attributes
-        submissionDateColumn.setCellValueFactory(new PropertyValueFactory<>("Date"));
-        amountColumn.setCellValueFactory(new PropertyValueFactory<>("Amount"));
+        submissionDateColumn.setCellValueFactory(new PropertyValueFactory<>("date")); // Achte auf den genauen Methodennamen in der Invoice-Klasse
+        amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("categoryString"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("statusString"));
-        reimbursementColumn.setCellValueFactory(new PropertyValueFactory<>("Reimbursement"));
+        reimbursementColumn.setCellValueFactory(new PropertyValueFactory<>("reimbursement"));
 
         loadInvoices();
     }
 
-    private static void loadInvoices() { //#15-Magdalena
-        //check if the user only sees his own invoices
-
+    private void loadInvoices() { //#15-Magdalena
+        if (invoiceTable == null) {
+            System.err.println("invoiceTable ist null! Überprüfe, ob das fx:id in der FXML-Datei korrekt gesetzt ist.");
+            return;  // Verhindere, dass die Methode weiter ausgeführt wird, wenn die TableView null ist
+        }
+        // Lade die Rechnungen aus der Datenbank
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser(currentUserEmail);
         invoiceTable.getItems().setAll(invoices);
     }

@@ -64,47 +64,36 @@ public class Invoice {
     public String getUserEmail() {
         return userEmail;
     }
-
     public double getAmount() {
         return amount;
     }
-
     public void setAmount(double amount) {
         this.amount = amount;
     }
-
     public Category getCategory() {
         return category;
     }
-
     public void setCategory(Category category) {
         this.category = category;
     }
-
     public void setFileUrl(String fileUrl) {
         this.file_Url = fileUrl;
     }
-
     public LocalDate getDate() {
         return date;
     }
-
     public String getFile_Url() {
         return file_Url;
     }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-
     public double getReimbursement() {
         return reimbursement;
     }
-
     public void setReimbursement(double reimbursement) {
         this.reimbursement = reimbursement;
     }
-
     public Status getStatus() {
         return status;
     }
