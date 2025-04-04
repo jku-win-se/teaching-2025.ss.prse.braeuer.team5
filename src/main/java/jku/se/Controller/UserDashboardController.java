@@ -84,7 +84,6 @@ public class UserDashboardController {
     private void handleUploadInvoice(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddInvoice.fxml"));
         Scene scene = new Scene(loader.load());
-
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         stage.setScene(scene);
@@ -95,8 +94,6 @@ public class UserDashboardController {
     private void handleLogoutUser(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/start.fxml"));
         Scene scene = new Scene(loader.load());
-
-
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         stage.setScene(scene);

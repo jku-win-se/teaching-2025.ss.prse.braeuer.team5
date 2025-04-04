@@ -53,7 +53,7 @@ public class AddInvoiceController {
 
     //Dateiauswahl-Validierung: hat die Datei das richtige Format (pdf, jpeg, png)
     @FXML
-    public void handleFileSelect(ActionEvent event) {
+    private void handleFileSelect(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Invoice (max 10MB)");
         fileChooser.getExtensionFilters().addAll(
@@ -80,7 +80,7 @@ public class AddInvoiceController {
     }
 
     @FXML
-    public void handleUpload(ActionEvent event) {
+    private void handleUpload(ActionEvent event) {
         // Holen der Benutzerdaten (E-Mail des aktuellen Benutzers)
         String userEmail = UserDashboardController.getCurrentUserEmail();  // Holt die E-Mail des eingeloggten Benutzers
 
