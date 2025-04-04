@@ -24,14 +24,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AddInvoiceController {
-    @FXML private DatePicker datePicker;
-    @FXML private TextField amountField;
-    @FXML private Label statusLabel;
+    @FXML
+    public DatePicker datePicker;
+    @FXML
+    public TextField amountField;
+    @FXML
+    public Label statusLabel;
     @FXML private Button removeImageBtn;
-    @FXML ComboBox<String> categoryCombo;
+    @FXML
+    public ComboBox<String> categoryCombo;
     private Label cancelAdd;
     @FXML private Button uploadButton;
-    private File selectedFile;
+    public File selectedFile;
 
     private Set<LocalDate> uploadedDates = new HashSet<>(); // Set, um bereits hochgeladene Tage zu speichern
 
@@ -52,7 +56,7 @@ public class AddInvoiceController {
 
     //Dateiauswahl-Validierung: hat die Datei das richtige Format (pdf, jpeg, png)
     @FXML
-    private void handleFileSelect(ActionEvent event) {
+    public void handleFileSelect(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Invoice (max 10MB)");
         fileChooser.getExtensionFilters().addAll(
@@ -79,7 +83,7 @@ public class AddInvoiceController {
     }
 
     @FXML
-    private void handleUpload(ActionEvent event) {
+    public void handleUpload(ActionEvent event) {
         // Holen der Benutzerdaten (E-Mail des aktuellen Benutzers)
         String userEmail = UserDashboardController.getCurrentUserEmail();  // Holt die E-Mail des eingeloggten Benutzers
 

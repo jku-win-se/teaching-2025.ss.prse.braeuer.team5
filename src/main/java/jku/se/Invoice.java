@@ -20,29 +20,24 @@ public class Invoice {
     public static final double SUPERMARKET_REFUND = 2.5;
 
 
-    public Invoice(String userEmail, LocalDate date, double amount, Category category, Status status, String file_Url, LocalDateTime createdAt, double reimbursement) {
+    public Invoice(String userEmail, LocalDate date, double amount, Category category,
+                   Status status, String file_Url, LocalDateTime createdAt, double reimbursement) {
         this.userEmail = userEmail;
-        this.date = date;
-        this.amount = amount;
+        this.date = validateDate(date);
+        this.amount = validateAmount(amount); // ZUERST Amount prüfen!
         this.category = category;
         this.status = status;
         this.file_Url = file_Url;
-        this.createdAt = createdAt; //brauchen wir um zu vergleichen, ob die Rechnung im selben Monat eingereicht wurde
-        this.reimbursement = reimbursement;
+        this.createdAt = createdAt;
+        this.reimbursement = validateReimbursement(reimbursement, amount); // DANACH Reimbursement prüfen
     }
 
     // --- Validierungsmethoden ---
     private LocalDate validateDate(LocalDate date) {
-        validateDate(this.date);
-        validateAmount(this.amount);
-        validateReimbursement(this.reimbursement);
-
-
         if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
             throw new IllegalArgumentException("Rechnungen nur an Werktagen erlaubt");
         }
         return date;
-
     }
 
     private double validateAmount(double amount) {
@@ -52,22 +47,29 @@ public class Invoice {
         return amount;
     }
 
-    private double validateReimbursement(double reimbursement) {
-        double expected = calculateRefund();
-        if (Math.abs(reimbursement - expected) > 0.01) {
+    private double validateReimbursement(double reimbursement, double amount) {
+        double maxAllowed = (category == Category.RESTAURANT) ? RESTAURANT_REFUND : SUPERMARKET_REFUND;
+        double actualRefund = Math.min(amount, maxAllowed); // Rückerstattung darf nie mehr als maxAllowed sein
+
+        if (reimbursement < 0 || reimbursement > actualRefund) {
             throw new IllegalArgumentException("Rückerstattung entspricht nicht den Regeln");
         }
         return reimbursement;
     }
 
     public static void validateFile(File file) {
+        // Existenzprüfung hinzufügen
+        if (!file.exists()) {
+            throw new IllegalArgumentException("File does not exist");
+        }
+
         // Formatvalidierung
         String fileName = file.getName().toLowerCase();
         if (!fileName.matches(".*\\.(jpg|jpeg|png|pdf)$")) {
             throw new IllegalArgumentException("Only JPG/PNG/PDF allowed");
         }
 
-        // Größenvalidierung (10MB)
+        // Größenvalidierung
         if (file.length() > MAX_FILE_SIZE) {
             throw new IllegalArgumentException(String.format(
                     "File too large (%.2f MB > 10 MB limit)",
@@ -88,6 +90,7 @@ public class Invoice {
     public  String getFile_Url() {return file_Url;}
     public LocalDateTime getCreatedAt() {return createdAt;}
     public double getReimbursement() {return reimbursement;}
+    public Status getStatus() {return status;}
 
     public double calculateRefund(){
         double maxRefund = 0;
