@@ -32,6 +32,7 @@ public class AddInvoiceController {
     private Label cancelAdd;
     @FXML private Button uploadButton;
     private File selectedFile;
+    private double reimbursement;
 
     private Set<LocalDate> uploadedDates = new HashSet<>(); // Set, um bereits hochgeladene Tage zu speichern
 
@@ -149,6 +150,12 @@ public class AddInvoiceController {
             return;
         }
 
+        // Berechne den Rückerstattungsbetrag hier, bevor das Invoice-Objekt erstellt wird
+        double reimbursement = selectedCategory.getRefundAmount();
+        if (amount < reimbursement) {
+            reimbursement = amount;  // Wenn der Betrag kleiner ist als der Rückerstattungsbetrag, setze den Betrag als Rückerstattung
+        }
+
         // Setze den Status auf einen Standardwert
         Status selectedStatus = Status.PROCESSING;  // Standardwert für den Status - muss nachher überschrieben werden (admin)
 
@@ -175,10 +182,7 @@ public class AddInvoiceController {
         }
 
         // Erstelle eine Instanz der Invoice-Klasse mit den Benutzereingaben
-        Invoice invoice = new Invoice(userEmail, selectedDate, amount, selectedCategory, selectedStatus, "", LocalDateTime.now(), amount);
-
-        // Berechne den Rückerstattungsbetrag
-        double reimbursement = invoice.calculateRefund();
+        Invoice invoice = new Invoice(userEmail, selectedDate, amount, selectedCategory, selectedStatus, "", LocalDateTime.now(), reimbursement);
 
         // Aktualisiere das Invoice-Objekt mit der hochgeladenen Datei-URL
         invoice.setFileUrl(fileUrl);
