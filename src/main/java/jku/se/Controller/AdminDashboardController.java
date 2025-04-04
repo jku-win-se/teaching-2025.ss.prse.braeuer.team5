@@ -114,5 +114,16 @@ public class AdminDashboardController {
         stage.show();
     }
 
+    @FXML
+    private void changeReimbursement(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ChangeReimbursement.fxml"));
+        Scene scene = new Scene(loader.load());
+
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        stage.setScene(scene);
+        stage.show();
+    }
 
 }

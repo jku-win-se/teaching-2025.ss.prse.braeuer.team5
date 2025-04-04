@@ -86,7 +86,7 @@ public class InvoiceRepositoryTest {
         assertEquals(Category.RESTAURANT, firstInvoice.getCategory());
         assertEquals(Status.PROCESSING.name(), firstInvoice.getStatusString());
         assertEquals("https://example.com/file.pdf" ,firstInvoice.getFile_Url());
-        assertEquals(3, firstInvoice.getReimbursement());
+        assertEquals(3, firstInvoice.getCategory().getRefundAmount());
 
         assertNotNull(secondInvoice, "The second invoice should exist.");
         assertEquals(LocalDate.of(2025, 4, 2), secondInvoice.getDate());
@@ -94,7 +94,7 @@ public class InvoiceRepositoryTest {
         assertEquals(Category.SUPERMARKET, secondInvoice.getCategory());
         assertEquals(Status.PROCESSING.name(), secondInvoice.getStatusString());
         assertEquals("https://example.com/file.pdf2", secondInvoice.getFile_Url());
-        assertEquals(2.5, secondInvoice.getReimbursement());
+        assertEquals(2.5, secondInvoice.getCategory().getRefundAmount());
     }
 
 

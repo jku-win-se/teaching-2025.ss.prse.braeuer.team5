@@ -16,12 +16,7 @@ public class Invoice {
     private double reimbursement;
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in Bytes
 
-    public static final double RESTAURANT_REFUND = 3.0;              // maximaler Rückerstattungsbetrag, kann später vom admin geändert werden
-    public static final double SUPERMARKET_REFUND = 2.5;
-
-
-    public Invoice(String userEmail, LocalDate date, double amount, Category category,
-                   Status status, String file_Url, LocalDateTime createdAt, double reimbursement) {
+    public Invoice(String userEmail, LocalDate date, double amount, Category category, Status status, String file_Url, LocalDateTime createdAt, double reimbursement) {
         this.userEmail = userEmail;
         this.date = validateDate(date);
         this.amount = validateAmount(amount); // ZUERST Amount prüfen!
@@ -29,11 +24,13 @@ public class Invoice {
         this.status = status;
         this.file_Url = file_Url;
         this.createdAt = createdAt;
-        this.reimbursement = validateReimbursement(reimbursement, amount); // DANACH Reimbursement prüfen
+        this.reimbursement = reimbursement;
     }
 
     // --- Validierungsmethoden ---
     private LocalDate validateDate(LocalDate date) {
+        validateAmount(this.amount);
+
         if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
             throw new IllegalArgumentException("Rechnungen nur an Werktagen erlaubt");
         }
@@ -78,44 +75,31 @@ public class Invoice {
         }
     }
 
-    public  String getUserEmail() {return userEmail;}
+    public String getUserEmail() {return userEmail;}
     public double getAmount() {return amount;}
     public void setAmount(double amount) {this.amount = amount;}
     public Category getCategory() {return category;}
     public void setCategory(Category category) {this.category = category;}
-    public  void setFileUrl(String fileUrl) {
-        file_Url = fileUrl;
-    }
+    public void setFileUrl(String fileUrl) {file_Url = fileUrl;}
     public LocalDate getDate() {return date;}
-    public  String getFile_Url() {return file_Url;}
+    public String getFile_Url() {return file_Url;}
     public LocalDateTime getCreatedAt() {return createdAt;}
     public double getReimbursement() {return reimbursement;}
-    public Status getStatus() {return status;}
+    public void setReimbursement(double reimbursement) {this.reimbursement = reimbursement;}
 
-    public double calculateRefund(){
-        double maxRefund = 0;
-
-        if (category == Category.RESTAURANT){
-            maxRefund = RESTAURANT_REFUND;
-        }else if(category == Category.SUPERMARKET){
-            maxRefund = SUPERMARKET_REFUND;
-        }
-
-        // Wenn der Rechnungsbetrag kleiner ist als der maximal mögliche Rückerstattungsbetrag,
-        // gibt es nur so viel Rückerstattung wie der Rechnungsbetrag
-        if (amount < maxRefund) {
-            return amount;
-        } else {
-            return maxRefund;
-        }
+    // Berechnung des Rückerstattungsbetrags unter Verwendung der Kategorie und deren Standard-/benutzerdefinierten Rückerstattungsbetrag
+    public double calculateRefund() {
+        // Rückerstattungsbetrag basierend auf der Kategorie und deren gesetztem oder Standardwert
+        if (amount < category.getRefundAmount()) return amount;
+        return category.getRefundAmount();
     }
 
-    //getter for table invoice AdminDashboard
+    // Getter für die Tabelle der Rechnungen im AdminDashboard
     public String getStatusString() {
         return status.name();
     }
+
     public String getCategoryString() {
         return category.name();
     }
-
 }
