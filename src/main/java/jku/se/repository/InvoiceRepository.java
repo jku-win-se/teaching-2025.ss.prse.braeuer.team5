@@ -17,13 +17,17 @@ public class InvoiceRepository { //#15 - Magdalena
 
     private static final String SELECT_ALL_INVOICES = "SELECT * FROM invoice";
     private static final String SELECT_ALL_INVOICES_USER = "SELECT * FROM invoice WHERE user_email = ?";
-    private static final String UPDATE_REIMBURSEMENT = "UPDATE invoice SET reimbursement = ?, status = ? WHERE id = ?";
+    private static final String UPDATE_REIMBURSEMENT = "UPDATE invoice SET reimbursement = ? WHERE user_email = ? AND date = ?";
     private static final String FIND_BY_ID = "SELECT * FROM invoice WHERE id = ?";
     private static final String FIND_BY_USER = "SELECT * FROM invoice WHERE user_email = ?";
     private static final String UPDATE_CATEGORY_REFUND = "UPDATE invoice SET reimbursement = ? WHERE category = ? AND status = 'PENDING'";
+    private static final String UPDATE_AMOUNT = "UPDATE invoice SET amount = ? WHERE user_email = ? AND date = ?";
+    private static final String UPDATE_STATUS = "UPDATE invoice SET status = ? WHERE user_email = ? AND date = ?";
+    private static final String UPDATE_DATE = "UPDATE invoice SET date = ? WHERE user_email = ? AND date = ?";
+    private static final String UPDATE_CATEGORY = "UPDATE invoice SET category = ? WHERE user_email = ? AND date=?";
 
 
-    //admin view includes all invoices
+    //admin view includes all invoices also for Statistics
     public static List<Invoice> getAllInvoicesAdmin() { //#15-Magda
         List<Invoice> invoices = new ArrayList<>();
 
@@ -164,4 +168,86 @@ public class InvoiceRepository { //#15 - Magdalena
         }
 
 
+    public static void updateInvoiceDate(Invoice invoice) {
+
+        try(Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(UPDATE_DATE)) {
+            stmt.setDate(1, Date.valueOf(invoice.getDate()));
+            stmt.setString(2, invoice.getUserEmail());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
+    public static void updateInvoiceAmount(Invoice invoice) {
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(UPDATE_AMOUNT)) {
+
+            stmt.setDouble(1, invoice.getAmount());
+
+            stmt.setString(2, invoice.getUserEmail());
+
+            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Invoice amount updated successfully.");
+            } else {
+                System.out.println("No invoice found to update.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating invoice amount: " + e.getMessage());
+        }
+    }
+
+    //update invoice status
+    public static void updateInvoiceStatus(Invoice invoice) {
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(UPDATE_STATUS)) {
+
+            stmt.setString(1, invoice.getStatus().name());
+            stmt.setString(2, invoice.getUserEmail());
+            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error updating invoice status: " + e.getMessage());
+        }
+    }
+    public static void updateInvoiceCategory(Invoice invoice) {
+
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(UPDATE_CATEGORY)) {
+
+            stmt.setString(1, invoice.getCategory().name());
+            stmt.setString(2, invoice.getUserEmail());
+            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void updateInvoiceReimbursement(Invoice invoice) {
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(UPDATE_REIMBURSEMENT)) {
+
+            stmt.setDouble(1, invoice.getReimbursement());
+
+            stmt.setString(2, invoice.getUserEmail());
+
+            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Invoice amount updated successfully.");
+            } else {
+                System.out.println("No invoice found to update.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating invoice amount: " + e.getMessage());
+        }
+    }
+}

@@ -79,6 +79,7 @@ public class Invoice {
     public void setFileUrl(String fileUrl) {
         this.file_Url = fileUrl;
     }
+    public void setDate(LocalDate date){this.date = date;}
     public LocalDate getDate() {
         return date;
     }
@@ -94,6 +95,7 @@ public class Invoice {
     public void setReimbursement(double reimbursement) {
         this.reimbursement = reimbursement;
     }
+    public void setStatus(Status status){this.status = status;}
     public Status getStatus() {
         return status;
     }
@@ -117,5 +119,24 @@ public class Invoice {
 
     public String getCategoryString() {
         return category.name();
+    }
+
+    //using these methods, the admins can approve the individual invoices, etc.
+    public void approve() {
+        this.status = Status.APPROVED;
+    }
+
+    public void declined() {
+        this.status = Status.DECLINED;
+    }
+
+    public void correct(double newAmount, Category newCategory, LocalDate newDate) {
+        this.amount = newAmount;
+        this.category = newCategory;
+        this.date = newDate;
+        this.status = Status.PROCESSING; //if the invoice is corrected so it is again in the process
+    }
+    public String toString() {
+        return date.toString(); // oder z.B. date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
     }
 }

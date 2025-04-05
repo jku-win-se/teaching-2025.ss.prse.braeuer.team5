@@ -3,6 +3,7 @@ package jku.se;
 import jku.se.repository.InvoiceRepository;
 import jku.se.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class Administrator extends User{
@@ -15,6 +16,7 @@ public class Administrator extends User{
     public List<Invoice> viewAllInvoices() { //#15- Magdalena
         return InvoiceRepository.getAllInvoicesAdmin();
     }
+
 
     public void checkInovices(){}
 
@@ -42,5 +44,21 @@ public class Administrator extends User{
     //delete admin/user
     public boolean deleteUser(String email) {
         return UserRepository.deleteUser(email);
+    }
+
+
+    // using these methods, the admins can approve the individual invoices, etc.
+    public void approveInvoice(Invoice invoice) {
+        invoice.setStatus(Status.APPROVED); // Status setzen
+        InvoiceRepository.updateInvoiceStatus(invoice); // Status in der Datenbank aktualisieren
+    }
+
+    public void declinedInvoice(Invoice invoice) {
+        invoice.setStatus(Status.DECLINED); // Status setzen
+        InvoiceRepository.updateInvoiceStatus(invoice); // Status in der Datenbank aktualisieren
+    }
+
+    public void correctInvoice(Invoice invoice, double newAmount, Category newCategory, LocalDate newDate) {
+        invoice.correct(newAmount, newCategory, newDate);
     }
 }
