@@ -8,6 +8,7 @@ import jku.se.repository.InvoiceRepository;
 import jku.se.repository.UserRepository;
 import org.junit.jupiter.api.*;
 
+import java.io.File;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -95,6 +96,44 @@ public class InvoiceRepositoryTest {
         assertEquals(Status.PROCESSING.name(), secondInvoice.getStatusString());
         assertEquals("https://example.com/file.pdf2", secondInvoice.getFile_Url());
         assertEquals(2.5, secondInvoice.getCategory().getRefundAmount());
+    }
+
+    @Test
+    void testUserCannotSubmitMultipleInvoicesOnSameDay() {
+        String userEmail = "testuser1@lunchify.com";
+        LocalDate sameDate = LocalDate.now();
+
+        // Erste Rechnung einfügen – sollte klappen
+        insertTestInvoice(userEmail, sameDate, 20.00, Category.RESTAURANT, Status.PROCESSING, "https://example.com/first.pdf", LocalDateTime.now(), 3.0);
+
+        // Überprüfen, ob schon eine Rechnung an diesem Tag existiert
+        boolean invoiceExists = false;
+        try (Connection connection = DriverManager.getConnection(URL, USER, PWD)) {
+            String sql = "SELECT COUNT(*) FROM invoice WHERE user_email = ? AND date = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, userEmail);
+                statement.setDate(2, Date.valueOf(sameDate));
+                try (ResultSet rs = statement.executeQuery()) {
+                    if (rs.next()) {
+                        invoiceExists = rs.getInt(1) > 0;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            fail("Fehler beim Überprüfen auf doppelte Rechnungen.");
+        }
+
+        // Wenn Rechnung existiert, darf keine weitere eingefügt werden
+        if (invoiceExists) {
+            Exception exception = assertThrows(RuntimeException.class, () -> {
+                insertTestInvoice(userEmail, sameDate, 25.00, Category.SUPERMARKET, Status.PROCESSING, "https://example.com/second.pdf", LocalDateTime.now(), 2.5);
+            });
+
+            assertTrue(exception.getMessage().contains("Error when inserting"), "Fehler wegen doppeltem Datum erwartet.");
+        } else {
+            fail("Es hätte schon eine Rechnung an diesem Tag existieren sollen.");
+        }
     }
 
 
