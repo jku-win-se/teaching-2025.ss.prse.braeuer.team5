@@ -14,23 +14,23 @@
     <!-- Titel -->
     <Label layoutX="202.0" layoutY="26.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-alignment: CENTER;" text="Manage invoice" />
 
-    <!-- Dropdown für Rechnungs-Auswahl -->
+
     <Label layoutX="111.0" layoutY="135.0" text="Select invoice:" AnchorPane.leftAnchor="111.0" />
-    <ComboBox fx:id="invoiceComboBox" layoutX="240.0" layoutY="131.0" prefHeight="25.0" prefWidth="204.0" AnchorPane.leftAnchor="240.0">
-        <!-- Hier könnte eine Liste von Rechnungen eingefügt werden -->
+    <ComboBox fx:id="selectInvoice" layoutX="240.0" layoutY="131.0" onAction="#searchInvoice" prefHeight="25.0" prefWidth="204.0" AnchorPane.leftAnchor="240.0">
+
     </ComboBox>
 
-    <!-- Rechnungsbetrag -->
+
     <Label layoutX="117.0" layoutY="185.0" text="Amount (€):" AnchorPane.leftAnchor="111.0" />
     <TextField fx:id="amountField" layoutX="240.0" layoutY="181.0" prefHeight="25.0" prefWidth="204.0" AnchorPane.leftAnchor="240.0" />
 
-    <!-- Rechnungsdatum -->
-    <Label layoutX="114.0" layoutY="235.0" text="Invoice date:" AnchorPane.leftAnchor="111.0" />
-    <DatePicker fx:id="datePicker" layoutX="240.0" layoutY="231.0" prefHeight="25.0" prefWidth="204.0" AnchorPane.leftAnchor="240.0" />
 
-    <!-- Klassifizierung -->
+    <Label layoutX="114.0" layoutY="235.0" text="Invoice date:" AnchorPane.leftAnchor="111.0" />
+    <DatePicker fx:id="invoiceDateField" layoutX="240.0" layoutY="231.0" prefHeight="25.0" prefWidth="204.0" AnchorPane.leftAnchor="240.0" />
+
+
     <Label layoutX="156.0" layoutY="281.0" text="Category:" AnchorPane.leftAnchor="111.0" />
-    <ComboBox fx:id="classificationComboBox" layoutX="240.0" layoutY="277.0" prefHeight="25.0" prefWidth="204.0" AnchorPane.leftAnchor="240.0">
+    <ComboBox fx:id="categoryCombobox" layoutX="240.0" layoutY="277.0" prefHeight="25.0" prefWidth="204.0" AnchorPane.leftAnchor="240.0">
         <items>
             <FXCollections fx:factory="observableArrayList">
                 <String fx:value="Restaurant" />
@@ -40,11 +40,14 @@
     </ComboBox>
 
     <!-- Buttons für Speichern und Abbrechen -->
-    <Button layoutX="190.0" layoutY="335.0" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Change" />
-    <Button layoutX="324.0" layoutY="335.0" onAction="#cancelEditAdmin" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Exit" />
+    <Button fx:id="changeButton" layoutX="468.0" layoutY="181.0" onAction="#changeInvoiceDetails" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Change" />
+    <Button layoutX="468.0" layoutY="231.0" onAction="#cancelEditAdmin" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Exit" />
    <Label layoutX="111.0" layoutY="82.0" text="Select User:" AnchorPane.leftAnchor="111.0" />
-   <ComboBox fx:id="invoiceComboBox1" layoutX="240.0" layoutY="78.0" prefHeight="25.0" prefWidth="204.0" AnchorPane.leftAnchor="240.0" />
-   <Button layoutX="468.0" layoutY="277.0" prefWidth="100.0" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-font-weight: bold;" text="Delete" />
-   <Button layoutX="468.0" layoutY="231.0" prefWidth="100.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" text="Accept" />
+   <ComboBox fx:id="selectUser" layoutX="240.0" layoutY="78.0" onAction="#searchUser" prefHeight="25.0" prefWidth="204.0" AnchorPane.leftAnchor="240.0" />
+   <Button fx:id="declinedButton" layoutX="468.0" layoutY="323.0" onAction="#handleDeclinedInvoice" prefWidth="100.0" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-font-weight: bold;" text="Declined" />
+   <Button fx:id="invoiceAcceptButton" layoutX="468.0" layoutY="277.0" onAction="#handleAcceptInvoice" prefWidth="100.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" text="Accept" />
 
+   <Label layoutX="111.0" layoutY="327.0" text="Reimbursement:" />
+   <TextField fx:id="reimbursementField" layoutX="240.0" layoutY="323.0" prefHeight="25.0" prefWidth="204.0" />
+    <Label fx:id="statusLabel" layoutX="240.0" layoutY="360.0" style="-fx-font-size: 14px; -fx-text-fill: green;" />
 </AnchorPane>

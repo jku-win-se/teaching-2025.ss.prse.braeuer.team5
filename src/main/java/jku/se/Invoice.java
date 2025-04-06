@@ -79,6 +79,7 @@ public class Invoice {
     public void setFileUrl(String fileUrl) {
         this.file_Url = fileUrl;
     }
+    public void setDate(LocalDate date){this.date = date;}
     public LocalDate getDate() {
         return date;
     }
@@ -94,6 +95,7 @@ public class Invoice {
     public void setReimbursement(double reimbursement) {
         this.reimbursement = reimbursement;
     }
+    public void setStatus(Status status){this.status = status;}
     public Status getStatus() {
         return status;
     }
@@ -118,9 +120,6 @@ public class Invoice {
     public String getCategoryString() {
         return category.name();
     }
-
-    public boolean isEditable(){
-        LocalDateTime endOfMonth = this.createdAt.withDayOfMonth(this.createdAt.toLocalDate().lengthOfMonth()).withHour(23).withMinute(59);
-        return LocalDateTime.now().isBefore(endOfMonth);
+>>>>>> main
     }
 }

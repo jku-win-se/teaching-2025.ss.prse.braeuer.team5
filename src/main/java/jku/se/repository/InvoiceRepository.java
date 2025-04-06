@@ -17,13 +17,17 @@ public class InvoiceRepository { //#15 - Magdalena
 
     private static final String SELECT_ALL_INVOICES = "SELECT * FROM invoice";
     private static final String SELECT_ALL_INVOICES_USER = "SELECT * FROM invoice WHERE user_email = ?";
-    private static final String UPDATE_REIMBURSEMENT = "UPDATE invoice SET reimbursement = ?, status = ? WHERE id = ?";
+    private static final String UPDATE_REIMBURSEMENT = "UPDATE invoice SET reimbursement = ? WHERE user_email = ? AND date = ?";
     private static final String FIND_BY_ID = "SELECT * FROM invoice WHERE id = ?";
     private static final String FIND_BY_USER = "SELECT * FROM invoice WHERE user_email = ?";
     private static final String UPDATE_CATEGORY_REFUND = "UPDATE invoice SET reimbursement = ? WHERE category = ? AND status = 'PENDING'";
+    private static final String UPDATE_AMOUNT = "UPDATE invoice SET amount = ? WHERE user_email = ? AND date = ?";
+    private static final String UPDATE_STATUS = "UPDATE invoice SET status = ? WHERE user_email = ? AND date = ?";
+    private static final String UPDATE_DATE = "UPDATE invoice SET date = ? WHERE user_email = ? AND date = ?";
+    private static final String UPDATE_CATEGORY = "UPDATE invoice SET category = ? WHERE user_email = ? AND date=?";
 
 
-    //admin view includes all invoices
+    //admin view includes all invoices also for Statistics
     public static List<Invoice> getAllInvoicesAdmin() { //#15-Magda
         List<Invoice> invoices = new ArrayList<>();
 
@@ -174,20 +178,3 @@ public class InvoiceRepository { //#15 - Magdalena
                 LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
                 LocalDateTime endOfMonth = createdAt.withDayOfMonth(createdAt.toLocalDate().lengthOfMonth()).withHour(23).withMinute(59);
 
-                if (LocalDateTime.now().isAfter(endOfMonth)) {
-                    System.out.println("Invoice cannot be deleted anymore.");
-                    return false;
-                }
-
-                try (PreparedStatement deleteStmt = con.prepareStatement("DELETE FROM invoice WHERE id = ?")) {
-                    deleteStmt.setInt(1, invoiceId);
-                    return deleteStmt.executeUpdate() > 0;
-                }
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Error deleting invoice: " + e.getMessage());
-        }
-        return false;
-    }
-    }

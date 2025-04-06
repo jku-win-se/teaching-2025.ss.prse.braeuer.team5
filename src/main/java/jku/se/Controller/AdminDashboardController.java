@@ -125,5 +125,4 @@ public class AdminDashboardController {
         stage.setScene(scene);
         stage.show();
     }
-
 }
