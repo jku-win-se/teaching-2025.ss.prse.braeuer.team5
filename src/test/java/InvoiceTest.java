@@ -195,6 +195,25 @@ class InvoiceTest {
         assertEquals("Invalid amount", exception.getMessage());
     }
 
+    @Test
+    void invoiceEditableWithinSameMonth_ShouldReturnTrue() { // Rechnung sollte editierbar sein
+        LocalDateTime createdAt = LocalDateTime.now().minusDays(3);
+        Invoice invoice = new Invoice(TEST_EMAIL, TEST_DATE, 100.0, TEST_CATEGORY, TEST_STATUS, TEST_URL, createdAt, 3.0);
+
+        assertTrue(invoice.isEditable(), "Invoice should be editable before the end of the same month");
+    }
+
+    @Test
+    void invoiceNotEditableAfterMonthPassed_ShouldReturnFalse() {// Rechnung sollte nicht mehr editierbar sein
+        LocalDateTime createdAt = LocalDateTime.now().minusMonths(2);
+        Invoice invoice = new Invoice(TEST_EMAIL, TEST_DATE, 100.0, TEST_CATEGORY, TEST_STATUS, TEST_URL, createdAt, 3.0);
+
+        assertFalse(invoice.isEditable(), "Invoice should NOT be editable after the submission month has passed");
+    }
+
+
+
+
     /*@Test
     void enterAmountExceedingMaxLimit_ShouldThrowError() {
         // Mock die Connection

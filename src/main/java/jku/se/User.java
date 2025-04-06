@@ -13,6 +13,7 @@ public class User { //Magdalena #18
     private List<Invoice> invoices;
 
     private String preferredNotificationMethod;
+    private Notification notification = new Notification();
 
     public User(String name, String email, String password, boolean isAdministrator) {
         this.name = name;
@@ -77,6 +78,10 @@ public class User { //Magdalena #18
         }else{
             System.out.println("Ungültige Eingabe. Mögliche Optionen: Email, In-App, Both");
         }
+    }
+
+    public void setNotification(Notification notification) {
+        this.notification = notification;
     }
 
 }

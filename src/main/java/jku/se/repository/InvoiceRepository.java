@@ -163,5 +163,31 @@ public class InvoiceRepository { //#15 - Magdalena
             );
         }
 
+    public static boolean deleteInvoiceIfEditable(int invoiceId) {
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement("SELECT * FROM invoice WHERE id = ?")) {
 
+            stmt.setInt(1, invoiceId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
+                LocalDateTime endOfMonth = createdAt.withDayOfMonth(createdAt.toLocalDate().lengthOfMonth()).withHour(23).withMinute(59);
+
+                if (LocalDateTime.now().isAfter(endOfMonth)) {
+                    System.out.println("Invoice cannot be deleted anymore.");
+                    return false;
+                }
+
+                try (PreparedStatement deleteStmt = con.prepareStatement("DELETE FROM invoice WHERE id = ?")) {
+                    deleteStmt.setInt(1, invoiceId);
+                    return deleteStmt.executeUpdate() > 0;
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error deleting invoice: " + e.getMessage());
+        }
+        return false;
+    }
     }

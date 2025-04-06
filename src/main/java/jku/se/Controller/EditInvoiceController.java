@@ -10,10 +10,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import jku.se.Invoice;
 
 import java.io.IOException;
 
 public class EditInvoiceController {
+    private Invoice invoice;
 
     @FXML
     private void cancelEdit(ActionEvent event) throws IOException {
@@ -24,4 +26,11 @@ public class EditInvoiceController {
 
         stage.setScene(dashboardScene);
         stage.show();
-    }}
+
+        if (!invoice.isEditable()) {
+            throw new IllegalArgumentException("Rechnung kann nicht mehr bearbeitet werden!");
+        }
+    }
+
+
+}

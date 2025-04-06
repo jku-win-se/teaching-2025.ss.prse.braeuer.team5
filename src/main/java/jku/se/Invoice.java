@@ -118,4 +118,9 @@ public class Invoice {
     public String getCategoryString() {
         return category.name();
     }
+
+    public boolean isEditable(){
+        LocalDateTime endOfMonth = this.createdAt.withDayOfMonth(this.createdAt.toLocalDate().lengthOfMonth()).withHour(23).withMinute(59);
+        return LocalDateTime.now().isBefore(endOfMonth);
+    }
 }
