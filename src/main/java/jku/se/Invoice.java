@@ -140,6 +140,18 @@ public class Invoice {
         return date.toString(); // oder z.B. date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
     }
 
+    public boolean isEditable() {
+        if (createdAt == null) {
+            return false;
+        }
+
+        LocalDate invoiceDate = createdAt.toLocalDate();
+        LocalDate now = LocalDate.now();
+
+        // Die Rechnung ist nur im selben Monat und Jahr editierbar
+        return invoiceDate.getMonth() == now.getMonth() && invoiceDate.getYear() == now.getYear();
+    }
+
 }
 
 
