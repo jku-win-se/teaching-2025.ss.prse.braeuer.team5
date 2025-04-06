@@ -17,7 +17,7 @@ public class InvoiceRepository { //#15 - Magdalena
 
     private static final String SELECT_ALL_INVOICES = "SELECT * FROM invoice";
     private static final String SELECT_ALL_INVOICES_USER = "SELECT * FROM invoice WHERE user_email = ?";
-    private static final String UPDATE_REIMBURSEMENT = "UPDATE invoice SET reimbursement = ? WHERE user_email = ? AND date = ?";
+    private static final String UPDATE_REIMBURSEMENT = "UPDATE invoice SET reimbursement = ? WHERE user_email ? AND date = ?";
     private static final String FIND_BY_ID = "SELECT * FROM invoice WHERE id = ?";
     private static final String FIND_BY_USER = "SELECT * FROM invoice WHERE user_email = ?";
     private static final String UPDATE_CATEGORY_REFUND = "UPDATE invoice SET reimbursement = ? WHERE category = ? AND status = 'PENDING'";
@@ -67,106 +67,191 @@ public class InvoiceRepository { //#15 - Magdalena
         return invoices;
     }
 
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        // CHECK / UPLOAD  OF INVOICE FILES AND INFORMATION -----------------------------------------------------------------------------------------------------------------------------
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        // AI generated-------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // CHECK / UPLOAD  OF INVOICE FILES AND INFORMATION -----------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // AI generated-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        // Save the invoice data into the database
-        public static void saveInvoiceInfo(Connection connection, String user_email, Date date, double amount, Category category, Status status, String file_url, LocalDateTime createdAt, double reimbursement, File imageFile) {
-            String INSERT_INVOICE_INFO_SQL = "INSERT INTO invoice (user_email, date, amount, category, status, file_url, created_at, reimbursement) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    // Save the invoice data into the database
+    public static void saveInvoiceInfo(Connection connection, String user_email, Date date, double amount, Category category, Status status, String file_url, LocalDateTime createdAt, double reimbursement, File imageFile) {
+        String INSERT_INVOICE_INFO_SQL = "INSERT INTO invoice (user_email, date, amount, category, status, file_url, created_at, reimbursement) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-            try {
-                connection.setAutoCommit(false); // Deaktiviere Auto-Commit für Transaktionen
+        try {
+            connection.setAutoCommit(false); // Deaktiviere Auto-Commit für Transaktionen
 
-                if (invoiceExists(connection, user_email, date)) {
-                    System.out.println("Invoice already exists");
-                    connection.rollback();  // Rollback bei Fehler
-                    return;
-                }
-
-                // Hier lade die Datei hoch und erhalte die URL
-                String fileUrl = DatabaseConnection.uploadFileToBucket(imageFile);
-                if (fileUrl == null) {
-                    System.out.println("File url could not be uploaded");
-                    connection.rollback();
-                    return;
-                }
-
-                // Verwende try-with-resources, um das PreparedStatement automatisch zu schließen
-                try (PreparedStatement stmt = connection.prepareStatement(INSERT_INVOICE_INFO_SQL)) {
-                    stmt.setString(1, user_email);
-                    stmt.setDate(2, date);
-                    stmt.setDouble(3, amount);
-                    stmt.setString(4, category.name());
-                    stmt.setString(5, status.name());
-                    stmt.setString(6, file_url);  // Speichern der URL
-                    stmt.setObject(7, createdAt);
-                    stmt.setDouble(8, reimbursement);
-
-                    int rowsAffected = stmt.executeUpdate();
-                    if (rowsAffected > 0) {
-                        connection.commit();  // Commit der Transaktion, wenn erfolgreich
-                    } else {
-                        connection.rollback();  // Rollback, wenn keine Zeilen betroffen sind
-                    }
-                } catch (SQLException e) {
-                    connection.rollback();  // Rollback bei Fehler im PreparedStatement
-                    System.err.println("Database error: " + e.getMessage());
-                }
-            } catch (SQLException | IOException e) {
-                try {
-                    connection.rollback();  // Rollback bei Fehler in der Verbindung oder Dateioperation
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-                e.printStackTrace();
-            } finally {
-                try {
-                    connection.setAutoCommit(true);  // Stelle Auto-Commit wieder her
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
+            if (invoiceExists(connection, user_email, date)) {
+                System.out.println("Invoice already exists");
+                connection.rollback();  // Rollback bei Fehler
+                return;
             }
-        }
 
-        public static boolean invoiceExists(Connection connection, String user_email, Date date){
-            String sql = "SELECT 1 FROM invoice WHERE user_email = ? AND date = ?";
+            // Hier lade die Datei hoch und erhalte die URL
+            String fileUrl = DatabaseConnection.uploadFileToBucket(imageFile);
+            if (fileUrl == null) {
+                System.out.println("File url could not be uploaded");
+                connection.rollback();
+                return;
+            }
 
-            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-                pstmt.setString(1, user_email);
-                pstmt.setDate(2, date);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    return rs.next(); // Gibt true zurück, wenn ein Eintrag existiert
+            // Verwende try-with-resources, um das PreparedStatement automatisch zu schließen
+            try (PreparedStatement stmt = connection.prepareStatement(INSERT_INVOICE_INFO_SQL)) {
+                stmt.setString(1, user_email);
+                stmt.setDate(2, date);
+                stmt.setDouble(3, amount);
+                stmt.setString(4, category.name());
+                stmt.setString(5, status.name());
+                stmt.setString(6, file_url);  // Speichern der URL
+                stmt.setObject(7, createdAt);
+                stmt.setDouble(8, reimbursement);
+
+                int rowsAffected = stmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    connection.commit();  // Commit der Transaktion, wenn erfolgreich
+                } else {
+                    connection.rollback();  // Rollback, wenn keine Zeilen betroffen sind
                 }
             } catch (SQLException e) {
-                System.out.println("Error while searching: " + e.getMessage());
+                connection.rollback();  // Rollback bei Fehler im PreparedStatement
+                System.err.println("Database error: " + e.getMessage());
             }
-            return false;
+        } catch (SQLException | IOException e) {
+            try {
+                connection.rollback();  // Rollback bei Fehler in der Verbindung oder Dateioperation
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.setAutoCommit(true);  // Stelle Auto-Commit wieder her
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
+    }
 
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        // ENDS HERE --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    public static boolean invoiceExists(Connection connection, String user_email, Date date){
+        String sql = "SELECT 1 FROM invoice WHERE user_email = ? AND date = ?";
 
-
-        private static Invoice createInvoiceFromResultSet(ResultSet rs) throws SQLException {
-            return new Invoice(
-                    rs.getString("user_email"),
-                    rs.getDate("date").toLocalDate(),
-                    rs.getDouble("amount"),
-                    Category.valueOf(rs.getString("category").toUpperCase()),
-                    Status.valueOf(rs.getString("status").toUpperCase()),
-                    rs.getString("file_url"),
-                    rs.getTimestamp("created_at").toLocalDateTime(),
-                    rs.getDouble("reimbursement")
-            );
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, user_email);
+            pstmt.setDate(2, date);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next(); // Gibt true zurück, wenn ein Eintrag existiert
+            }
+        } catch (SQLException e) {
+            System.out.println("Error while searching: " + e.getMessage());
         }
+        return false;
+    }
 
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // ENDS HERE --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+    private static Invoice createInvoiceFromResultSet(ResultSet rs) throws SQLException {
+        return new Invoice(
+                rs.getString("user_email"),
+                rs.getDate("date").toLocalDate(),
+                rs.getDouble("amount"),
+                Category.valueOf(rs.getString("category").toUpperCase()),
+                Status.valueOf(rs.getString("status").toUpperCase()),
+                rs.getString("file_url"),
+                rs.getTimestamp("created_at").toLocalDateTime(),
+                rs.getDouble("reimbursement")
+        );
+    }
+
+
+    public static void updateInvoiceDate(Invoice invoice) {
+
+        try(Connection con = DatabaseConnection.getConnection();
+            PreparedStatement stmt = con.prepareStatement(UPDATE_DATE)) {
+            stmt.setDate(1, Date.valueOf(invoice.getDate()));
+            stmt.setString(2, invoice.getUserEmail());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateInvoiceAmount(Invoice invoice) {
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(UPDATE_AMOUNT)) {
+
+            stmt.setDouble(1, invoice.getAmount());
+
+            stmt.setString(2, invoice.getUserEmail());
+
+            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Invoice amount updated successfully.");
+            } else {
+                System.out.println("No invoice found to update.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating invoice amount: " + e.getMessage());
+        }
+    }
+
+    //update invoice status
+    public static void updateInvoiceStatus(Invoice invoice) {
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(UPDATE_STATUS)) {
+
+            stmt.setString(1, invoice.getStatus().name()); // Status als String setzen
+            stmt.setString(2, invoice.getUserEmail());
+            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+
+        } catch (SQLException e) {
+            System.err.println("Error updating invoice status: " + e.getMessage());
+        }
+    }
+    public static void updateInvoiceCategory(Invoice invoice) {
+
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(UPDATE_CATEGORY)) {
+
+            stmt.setString(1, invoice.getCategory().name());
+            stmt.setString(2, invoice.getUserEmail());
+            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void updateInvoiceReimbursement(Invoice invoice) {
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(UPDATE_REIMBURSEMENT)) {
+
+            stmt.setDouble(1, invoice.getReimbursement());
+
+            stmt.setString(2, invoice.getUserEmail());
+
+            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Invoice amount updated successfully.");
+            } else {
+                System.out.println("No invoice found to update.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating invoice amount: " + e.getMessage());
+        }
+    }
+}
+    /**
     public static boolean deleteInvoiceIfEditable(int invoiceId) {
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement("SELECT * FROM invoice WHERE id = ?")) {
@@ -178,3 +263,5 @@ public class InvoiceRepository { //#15 - Magdalena
                 LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
                 LocalDateTime endOfMonth = createdAt.withDayOfMonth(createdAt.toLocalDate().lengthOfMonth()).withHour(23).withMinute(59);
 
+            }
+     */

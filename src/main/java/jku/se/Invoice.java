@@ -120,6 +120,23 @@ public class Invoice {
     public String getCategoryString() {
         return category.name();
     }
->>>>>> main
+
+    //using these methods, the admins can approve the individual invoices, etc.
+    public void approve() {
+        this.status = Status.APPROVED;
+    }
+
+    public void declined() {
+        this.status = Status.DECLINED;
+    }
+
+    public void correct(double newAmount, Category newCategory, LocalDate newDate) {
+        this.amount = newAmount;
+        this.category = newCategory;
+        this.date = newDate;
+        this.status = Status.PROCESSING; //if the invoice is corrected so it is again in the process
+    }
+    public String toString() {
+        return date.toString(); // oder z.B. date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
     }
 }
