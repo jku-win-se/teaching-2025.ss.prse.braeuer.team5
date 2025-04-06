@@ -61,4 +61,5 @@ public class Administrator extends User{
     public void correctInvoice(Invoice invoice, double newAmount, Category newCategory, LocalDate newDate) {
         invoice.correct(newAmount, newCategory, newDate);
     }
+
 }

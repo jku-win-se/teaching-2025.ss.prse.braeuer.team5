@@ -154,27 +154,113 @@ public class InvoiceRepository { //#15 - Magdalena
         //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-        private static Invoice createInvoiceFromResultSet(ResultSet rs) throws SQLException {
-            return new Invoice(
-                    rs.getString("user_email"),
-                    rs.getDate("date").toLocalDate(),
-                    rs.getDouble("amount"),
-                    Category.valueOf(rs.getString("category").toUpperCase()),
-                    Status.valueOf(rs.getString("status").toUpperCase()),
-                    rs.getString("file_url"),
-                    rs.getTimestamp("created_at").toLocalDateTime(),
-                    rs.getDouble("reimbursement")
-            );
+    private static Invoice createInvoiceFromResultSet(ResultSet rs) throws SQLException {
+        return new Invoice(
+                rs.getString("user_email"),
+                rs.getDate("date").toLocalDate(),
+                rs.getDouble("amount"),
+                Category.valueOf(rs.getString("category").toUpperCase()),
+                Status.valueOf(rs.getString("status").toUpperCase()),
+                rs.getString("file_url"),
+                rs.getTimestamp("created_at").toLocalDateTime(),
+                rs.getDouble("reimbursement")
+        );
+    }
+
+
+    public static void updateInvoiceDate(Invoice invoice) {
+
+        try(Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(UPDATE_DATE)) {
+            stmt.setDate(1, Date.valueOf(invoice.getDate()));
+            stmt.setString(2, invoice.getUserEmail());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+    }
 
-    public static boolean deleteInvoiceIfEditable(int invoiceId) {
+    public static void updateInvoiceAmount(Invoice invoice) {
         try (Connection con = DatabaseConnection.getConnection();
-             PreparedStatement stmt = con.prepareStatement("SELECT * FROM invoice WHERE id = ?")) {
+             PreparedStatement stmt = con.prepareStatement(UPDATE_AMOUNT)) {
 
-            stmt.setInt(1, invoiceId);
-            ResultSet rs = stmt.executeQuery();
+            stmt.setDouble(1, invoice.getAmount());
 
-            if (rs.next()) {
-                LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
-                LocalDateTime endOfMonth = createdAt.withDayOfMonth(createdAt.toLocalDate().lengthOfMonth()).withHour(23).withMinute(59);
+            stmt.setString(2, invoice.getUserEmail());
+
+            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Invoice amount updated successfully.");
+            } else {
+                System.out.println("No invoice found to update.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating invoice amount: " + e.getMessage());
+        }
+    }
+
+    //update invoice status
+    public static void updateInvoiceStatus(Invoice invoice) {
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(UPDATE_STATUS)) {
+
+            stmt.setString(1, invoice.getStatus().name());
+            stmt.setString(2, invoice.getUserEmail());
+            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error updating invoice status: " + e.getMessage());
+        }
+    }
+    public static void updateInvoiceCategory(Invoice invoice) {
+
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(UPDATE_CATEGORY)) {
+
+            stmt.setString(1, invoice.getCategory().name());
+            stmt.setString(2, invoice.getUserEmail());
+            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void updateInvoiceReimbursement(Invoice invoice) {
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(UPDATE_REIMBURSEMENT)) {
+
+            stmt.setDouble(1, invoice.getReimbursement());
+
+            stmt.setString(2, invoice.getUserEmail());
+
+            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Invoice amount updated successfully.");
+            } else {
+                System.out.println("No invoice found to update.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating invoice amount: " + e.getMessage());
+        }
+    }}
+
+    /**
+    public static boolean deleteInvoiceIfEditable(int invoiceId) {
+            try (Connection con = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = con.prepareStatement("SELECT * FROM invoice WHERE id = ?")) {
+
+                stmt.setInt(1, invoiceId);
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
+                    LocalDateTime endOfMonth = createdAt.withDayOfMonth(createdAt.toLocalDate().lengthOfMonth()).withHour(23).withMinute(59);
+    */
 

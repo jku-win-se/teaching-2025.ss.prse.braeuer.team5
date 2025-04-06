@@ -26,10 +26,10 @@ public class EditInvoiceController {
 
         stage.setScene(dashboardScene);
         stage.show();
-
+    /**
         if (!invoice.isEditable()) {
             throw new IllegalArgumentException("Rechnung kann nicht mehr bearbeitet werden!");
-        }
+        }*/
     }
 
 
