@@ -98,6 +98,7 @@ public class InvoiceRepositoryTest {
     }
 
 
+
     private void insertTestInvoice(String userEmail, LocalDate date, double amount, Category category, Status status, String fileUrl, LocalDateTime createdAt, double reimbursement) {
         try (Connection connection = DriverManager.getConnection(URL, USER, PWD)) {
             String sql = "INSERT INTO invoice (user_email, date, amount, category, status, file_url, created_at, reimbursement) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
