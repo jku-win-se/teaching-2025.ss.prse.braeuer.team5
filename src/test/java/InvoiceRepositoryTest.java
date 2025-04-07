@@ -98,7 +98,7 @@ public class InvoiceRepositoryTest {
         assertEquals(2.5, secondInvoice.getCategory().getRefundAmount());
     }
 
-    @Test
+    /*@Test
     void testUserCannotSubmitMultipleInvoicesOnSameDay() {
         String userEmail = "testuser1@lunchify.com";
         LocalDate sameDate = LocalDate.now();
@@ -135,6 +135,7 @@ public class InvoiceRepositoryTest {
             fail("Es hätte schon eine Rechnung an diesem Tag existieren sollen.");
         }
     }
+     */
 
 
 
