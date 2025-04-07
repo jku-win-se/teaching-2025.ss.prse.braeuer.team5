@@ -57,10 +57,10 @@ public class AdminInvoiceManagementController {
         });
     }
 
-    //choice user
+    //choice user - current user are not in
     @FXML
     private void searchUser(ActionEvent event) throws IOException {
-        List<String> emails = UserRepository.getAllUserEmails();
+        List<String> emails = UserRepository.getAllUsersWithoutLoggedAdmin(UserDashboardController.getCurrentUserEmail());
 
         selectUser.setItems(FXCollections.observableArrayList(emails));
     }
@@ -72,17 +72,16 @@ public class AdminInvoiceManagementController {
         System.out.println("Selected user email: " + selectedUserEmail); // Debug
 
         if (selectedUserEmail == null || selectedUserEmail.isEmpty()) {
-            statusLabel.setText("Please select a user first.");
+            statusLabel.setText("Please select an user first.");
             return;
         }
 
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser(selectedUserEmail);
-        System.out.println("Invoices loaded: " + invoices.size()); // Debug
 
         selectInvoice.setItems(FXCollections.observableArrayList(invoices));
     }
 
-    //uis changed when you press the change button
+    //is changed when you press the change button
     @FXML
     private void changeInvoiceDetails(ActionEvent event) {
         Invoice selectedInvoice = selectInvoice.getValue();
@@ -122,8 +121,6 @@ public class AdminInvoiceManagementController {
         if (selectedInvoice != null) {
             selectedInvoice.setStatus(Status.APPROVED);
             InvoiceRepository.updateInvoiceStatus(selectedInvoice);
-
-            // Bestätigung im Label anzeigen
             statusLabel.setText("Invoice accepted successfully.");
             statusLabel.setStyle("-fx-text-fill: green;");
         }

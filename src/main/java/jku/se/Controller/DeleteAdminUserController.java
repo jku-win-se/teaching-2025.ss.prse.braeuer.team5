@@ -64,7 +64,6 @@ public class DeleteAdminUserController { //#18 Magdalena
     //exit
     @FXML
     private void cancelDeleteAdminUser(ActionEvent event) throws IOException {
-        // Wenn der Admin auf "Logout" klickt, lade die Startseite
         loadPage("dashboard2.fxml", event);
     }
 

@@ -44,18 +44,17 @@ public class UserDashboardController {
     // Setter-Methode
     public void setCurrentUserEmail(String email) {
         currentUserEmail = email;
-        loadInvoices();  // Invoices laden, sobald User gesetzt ist
+        loadInvoices();
     }
-
     public static String getCurrentUserEmail() {
         return currentUserEmail;
     }
 
     //fill table with invoices
     @FXML
-    private void initialize() { //#15- Magdalena
+    private void initialize() {
         // Connect columns with the invoice attributes
-        submissionDateColumn.setCellValueFactory(new PropertyValueFactory<>("date")); // Achte auf den genauen Methodennamen in der Invoice-Klasse
+        submissionDateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("categoryString"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("statusString"));
@@ -64,12 +63,12 @@ public class UserDashboardController {
         loadInvoices();
     }
 
-    private void loadInvoices() { //#15-Magdalena
+    private void loadInvoices() {
         if (invoiceTable == null) {
-            System.err.println("invoiceTable ist null! Überprüfe, ob das fx:id in der FXML-Datei korrekt gesetzt ist.");
-            return;  // Verhindere, dass die Methode weiter ausgeführt wird, wenn die TableView null ist
+            System.err.println("invoiceTable is null! Check whether the fx:id is set correctly in the FXML file.");
+            return;  // Prevent the method from being executed further if the TableView is null
         }
-        // Lade die Rechnungen aus der Datenbank
+        // load invoices
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser(currentUserEmail);
         invoiceTable.getItems().setAll(invoices);
     }

@@ -5,7 +5,7 @@ import jku.se.repository.InvoiceRepository;
 import java.util.List;
 import java.util.ArrayList;
 
-public class User { //Magdalena #18
+public class User {
     private String name;
     private String email;
     private String password;
@@ -15,6 +15,7 @@ public class User { //Magdalena #18
     private String preferredNotificationMethod;
     private Notification notification = new Notification();
 
+    //Constructor
     public User(String name, String email, String password, boolean isAdministrator) {
         this.name = name;
         this.email = email;

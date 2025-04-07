@@ -13,9 +13,10 @@ public class Invoice {
     private Status status;
     private String file_Url;
     private LocalDateTime createdAt;
-    private double reimbursement; // Der Rückerstattungsbetrag
+    private double reimbursement; // The refund amount
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in Bytes
 
+    //Constructor
     public Invoice(String userEmail, LocalDate date, double amount, Category category, Status status, String file_Url, LocalDateTime createdAt, double reimbursement) {
         this.userEmail = userEmail;
         this.date = date;
@@ -60,7 +61,7 @@ public class Invoice {
             ));
         }
     }
-
+    //getter setter
     public String getUserEmail() {
         return userEmail;
     }
@@ -100,19 +101,19 @@ public class Invoice {
         return status;
     }
 
-    // Berechnung des Rückerstattungsbetrags anhand der Kategorie und des Betrags
+    // Calculation of the refund amount based on the category and amount
     public double calculateRefund() {
-        // Die Rückerstattung hängt vom Betrag und der Kategorie ab
-        double maxRefund = category.getRefundAmount();  // Der Rückerstattungsbetrag je nach Kategorie
+        // The refund depends on the amount and the category
+        double maxRefund = category.getRefundAmount();  // The refund amount depending on the category
 
         if (amount < maxRefund) {
-            return amount;  // Wenn der Rechnungsbetrag kleiner ist als der Rückerstattungsbetrag, gibt es nur den Betrag als Rückerstattung
+            return amount;  //  If the invoice amount is less than the refund amount, only the amount is refunded
         } else {
-            return maxRefund;  // Ansonsten den maximalen Rückerstattungsbetrag
+            return maxRefund;  //Otherwise the maximum refund amount
         }
     }
 
-    // Diese Methode wird verwendet, um die Informationen zu einer Rechnung für die Anzeige in einer Tabelle zu formatieren
+    // This method is used to format the information on an invoice for display in a table
     public String getStatusString() {
         return status.name();
     }
@@ -136,8 +137,9 @@ public class Invoice {
         this.date = newDate;
         this.status = Status.PROCESSING; //if the invoice is corrected so it is again in the process
     }
+    //we need if the admin wants to select the invoice, he can then select the invoice by date using the email
     public String toString() {
-        return date.toString(); // oder z.B. date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+        return date.toString();
     }
 
     public boolean isEditable() {
