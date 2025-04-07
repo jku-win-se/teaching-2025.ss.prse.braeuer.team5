@@ -81,8 +81,8 @@ public class AddInvoiceController {
 
     @FXML
     private void handleUpload(ActionEvent event) {
-        // Holen der Benutzerdaten (E-Mail des aktuellen Benutzers)
-        String userEmail = UserDashboardController.getCurrentUserEmail();  // Holt die E-Mail des eingeloggten Benutzers
+        // Get user data (e-mail of the current user)
+        String userEmail = UserDashboardController.getCurrentUserEmail();  // Fetches the e-mail of the logged-in user
 
         if (userEmail == null || userEmail.isEmpty()) {
             statusLabel.setStyle("-fx-text-fill: red;");
@@ -99,20 +99,20 @@ public class AddInvoiceController {
 
         LocalDate selectedDate = datePicker.getValue();
 
-        // Überprüfen, ob das ausgewählte Datum in der Zukunft liegt
-        LocalDate currentDate = LocalDate.now(); // Aktuelles Datum
+        // Check whether the selected date is in the future
+        LocalDate currentDate = LocalDate.now(); // Current date
         if (selectedDate.isAfter(currentDate)) {
             statusLabel.setStyle("-fx-text-fill: red;");
             statusLabel.setText("You cannot use a future date.");
-            return;  // Verhindere den Upload, wenn das Datum in der Zukunft liegt
+            return;  // Prevent the upload if the date is in the future
         }
 
-        // Überprüfen, ob bereits eine Rechnung für denselben Benutzer und Tag existiert
+        // Check whether an invoice already exists for the same user and day
         try (Connection connection = DatabaseConnection.getConnection()) {
             if (InvoiceRepository.invoiceExists(connection, userEmail, java.sql.Date.valueOf(selectedDate))) {
                 statusLabel.setStyle("-fx-text-fill: red;");
                 statusLabel.setText("Upload Limit: One Invoice per day");
-                return;  // Verhindere den Upload, wenn bereits eine Rechnung existiert
+                return;  // Prevent the upload if an invoice already exists
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -131,7 +131,7 @@ public class AddInvoiceController {
         double amount;
         try {
             amount = Double.parseDouble(amountField.getText());
-            if (amount <= 0) { // Amount muss größer als 0 sein
+            if (amount <= 0) { // Amount must be greater than 0
                 statusLabel.setStyle("-fx-text-fill: red;");
                 statusLabel.setText("Amount must be greater than 0");
                 return;
@@ -142,7 +142,7 @@ public class AddInvoiceController {
             return;
         }
 
-        // Holen der Benutzerwahl für die Kategorie (von der ComboBox)
+        // Get the user selection for the category (from the ComboBox)
         Category selectedCategory = Category.valueOf(categoryCombo.getValue());
         if (selectedCategory == null) {
             statusLabel.setStyle("-fx-text-fill: red;");
@@ -150,23 +150,23 @@ public class AddInvoiceController {
             return;
         }
 
-        // Berechne den Rückerstattungsbetrag hier, bevor das Invoice-Objekt erstellt wird
+        // Calculate the refund amount here before the Invoice object is created
         double reimbursement = selectedCategory.getRefundAmount();
         if (amount < reimbursement) {
-            reimbursement = amount;  // Wenn der Betrag kleiner ist als der Rückerstattungsbetrag, setze den Betrag als Rückerstattung
+            reimbursement = amount;  // If the amount is less than the refund amount, set the amount as refund
         }
 
-        // Setze den Status auf einen Standardwert
-        Status selectedStatus = Status.PROCESSING;  // Standardwert für den Status - muss nachher überschrieben werden (admin)
+        // Set the status to a default value
+        Status selectedStatus = Status.PROCESSING;  // Default value for the status - must be overwritten later (admin)
 
-        // Überprüfen, ob eine Datei ausgewählt wurde
+        // Check whether a file has been selected
         if (selectedFile == null) {
             statusLabel.setStyle("-fx-text-fill: red;");
             statusLabel.setText("Please select a file to upload");
             return;
         }
 
-        // Bild hochladen und die URL erhalten
+        // Upload image and get the URL
         String fileUrl = null;
         try {
             fileUrl = DatabaseConnection.uploadFileToBucket(selectedFile);
@@ -181,27 +181,27 @@ public class AddInvoiceController {
             return;
         }
 
-        // Erstelle eine Instanz der Invoice-Klasse mit den Benutzereingaben
+        // Create an instance of the Invoice class with the user input
         Invoice invoice = new Invoice(userEmail, selectedDate, amount, selectedCategory, selectedStatus, "", LocalDateTime.now(), reimbursement);
 
-        // Aktualisiere das Invoice-Objekt mit der hochgeladenen Datei-URL
+        // Update the Invoice object with the uploaded file URL
         invoice.setFileUrl(fileUrl);
 
-        // Speichere die Rechnung in der Datenbank
+        // Save the invoice in the database
         try (Connection connection = DatabaseConnection.getConnection()) {
             InvoiceRepository.saveInvoiceInfo(
                     connection,
-                    userEmail,  // Dynamische E-Mail des Benutzers
+                    userEmail,  // Dynamic e-mail of the user
                     java.sql.Date.valueOf(selectedDate),
                     amount,
-                    selectedCategory,  // Benutzerdefinierte Kategorie
-                    selectedStatus,  // Standardstatus
+                    selectedCategory,  // User-defined category
+                    selectedStatus,  // default status
                     fileUrl,
                     LocalDateTime.now(),
                     reimbursement,
-                    selectedFile  // Das hochgeladene Bild
+                    selectedFile  // uploaded image
             );
-            uploadedDates.add(selectedDate);  // Füge das Datum der Liste hinzu, um Mehrfachuploads zu verhindern
+            uploadedDates.add(selectedDate);  // Add the date to the list to prevent multiple uploads
             statusLabel.setStyle("-fx-text-fill: green;");
             statusLabel.setText("Invoice and file uploaded successfully.");
 
@@ -214,9 +214,9 @@ public class AddInvoiceController {
 
     // Zurücksetzen des Formulars
     private void resetForm() {
-        datePicker.setValue(null);  // Setze das Datum zurück
-        amountField.clear();        // Lösche den Betrag
-        categoryCombo.getSelectionModel().clearSelection();  // Setze die Kategorie zurück
-        selectedFile = null;        // Setze das Bild zurück
+        datePicker.setValue(null);  // Reset the date
+        amountField.clear();        // delete the image
+        categoryCombo.getSelectionModel().clearSelection();  // Reset the category
+        selectedFile = null;        // reset the image
     }
 }

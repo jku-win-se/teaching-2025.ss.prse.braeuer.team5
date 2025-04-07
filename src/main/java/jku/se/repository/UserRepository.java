@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserRepository {//#18 Magda
+public class UserRepository {
 
     //new user insert
     private static final String INSERT_USER_SQL = "INSERT INTO userlunchify (email, name, password, isadministrator) VALUES (?, ?, ?, ?)";
@@ -35,7 +35,7 @@ public class UserRepository {//#18 Magda
     //filter for User/Admin - delete user
     private static final String GET_ALL_ADMINS_SQL = "SELECT email FROM userlunchify WHERE isadministrator = true";
     private static final String GET_ALL_USERS_SQL = "SELECT email FROM userlunchify WHERE isadministrator = false";
-
+    private static final String GET_ALL_USERS_WITHOUT_LOGGED_ADMIN = "SELECT email FROM userlunchify WHERE NOT IN user_email =?";
 
     //choicebox delete user email - difference between user and admin
     public static List<String> getAllAdminEmails() {
@@ -44,6 +44,11 @@ public class UserRepository {//#18 Magda
 
     public static List<String> getAllUserEmails() {
         return getEmails(GET_ALL_USERS_SQL);
+    }
+
+    //function to output all users without the logged in admin, as he is not allowed to edit his own invoices
+    public static List<String> getAllUsersWithoutLoggedAdmin(String e_mail) {
+        return getEmails(GET_ALL_USERS_WITHOUT_LOGGED_ADMIN);
     }
 
     private static List<String> getEmails(String query) {

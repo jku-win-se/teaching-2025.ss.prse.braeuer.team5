@@ -22,7 +22,9 @@ public class AddAdminUserController { //#18 Magdalena
     @FXML private CheckBox chkUser;
     @FXML private Label message;
 
-    //add user
+
+    //only admins may create users or other admins
+    //add user - if the admin checkbox is ticked, an admin is created
     @FXML
     private void addAdminUser(ActionEvent event) throws IOException{
         String email = txtEmail.getText();
@@ -42,7 +44,7 @@ public class AddAdminUserController { //#18 Magdalena
         clearFields();
     }
 
-    //delete the fields after insert
+    //delete the fields after insert  - ai
     private void clearFields() {
         txtEmail.clear();
         txtName.clear();

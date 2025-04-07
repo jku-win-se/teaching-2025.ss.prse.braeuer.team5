@@ -39,7 +39,7 @@ public class AdminDashboardController {
     @FXML
     private TableColumn<Invoice, Double> reimbursementColumn;
 
-    //fill table with invoices
+    //fill table with invoices -ai
     @FXML
     private void initialize() { //#15- Magdalena
         // Connect columns with the invoice attributes
@@ -53,11 +53,13 @@ public class AdminDashboardController {
         loadInvoices();
     }
 
+    //load all invoices for admin
     private void loadInvoices() { //#15-Magdalena
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
         invoiceTable.getItems().setAll(invoices);
     }
 
+    //the next methods switch to the individual functions
     @FXML
     private void handleEditInvoice(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdminInvoiceManagement.fxml"));

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class InvoiceRepository { //#15 - Magdalena
+public class InvoiceRepository {
 
     private static final String SELECT_ALL_INVOICES = "SELECT * FROM invoice";
     private static final String SELECT_ALL_INVOICES_USER = "SELECT * FROM invoice WHERE user_email = ?";
@@ -168,7 +168,7 @@ public class InvoiceRepository { //#15 - Magdalena
         );
     }
 
-
+    //change invoice date
     public static void updateInvoiceDate(Invoice invoice) {
 
         try (Connection con = DatabaseConnection.getConnection();
@@ -177,10 +177,10 @@ public class InvoiceRepository { //#15 - Magdalena
             stmt.setString(2, invoice.getUserEmail());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error updating invoice date: " + e.getMessage());
         }
     }
-
+    //change invoice amount
     public static void updateInvoiceAmount(Invoice invoice) {
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(UPDATE_AMOUNT)) {
@@ -191,18 +191,12 @@ public class InvoiceRepository { //#15 - Magdalena
 
             stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
 
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Invoice amount updated successfully.");
-            } else {
-                System.out.println("No invoice found to update.");
-            }
         } catch (SQLException e) {
             System.err.println("Error updating invoice amount: " + e.getMessage());
         }
     }
 
-    //update invoice status
+    //change invoice status
     public static void updateInvoiceStatus(Invoice invoice) {
 
         try (Connection con = DatabaseConnection.getConnection();
@@ -217,6 +211,7 @@ public class InvoiceRepository { //#15 - Magdalena
         }
     }
 
+    //change invoice category
     public static void updateInvoiceCategory(Invoice invoice) {
 
 
@@ -229,10 +224,10 @@ public class InvoiceRepository { //#15 - Magdalena
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error updating invoice category: " + e.getMessage());
         }
     }
-
+   //change reimbursement
     public static void updateInvoiceReimbursement(Invoice invoice) {
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(UPDATE_REIMBURSEMENT)) {
@@ -243,13 +238,7 @@ public class InvoiceRepository { //#15 - Magdalena
 
             stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
 
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Invoice amount updated successfully.");
-            } else {
-                System.out.println("No invoice found to update.");
-            }
-        } catch (SQLException e) {
+            } catch (SQLException e) {
             System.err.println("Error updating invoice amount: " + e.getMessage());
         }
     }
