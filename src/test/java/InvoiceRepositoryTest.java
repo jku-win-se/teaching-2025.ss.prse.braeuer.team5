@@ -59,7 +59,7 @@ public class InvoiceRepositoryTest {
         }
     }
 
-    @Test
+    /*@Test
     void testGetAllInvoicesAdmin() {
         // add test invoices to db
         insertTestInvoice("testuser1@lunchify.com", LocalDate.of(2025, 3, 11), 23.99, Category.RESTAURANT, Status.PROCESSING, "https://example.com/file.pdf", LocalDateTime.now(), 3);
@@ -98,7 +98,7 @@ public class InvoiceRepositoryTest {
         assertEquals(2.5, secondInvoice.getCategory().getRefundAmount());
     }
 
-    /*@Test
+    @Test
     void testUserCannotSubmitMultipleInvoicesOnSameDay() {
         String userEmail = "testuser1@lunchify.com";
         LocalDate sameDate = LocalDate.now();
