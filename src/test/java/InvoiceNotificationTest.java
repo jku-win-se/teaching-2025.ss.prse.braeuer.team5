@@ -38,11 +38,13 @@ public class InvoiceNotificationTest {
         );
     }
 
-    /*@Test
+    @Test
     void testConfirmationMessageContainsCorrectReimbursementAmount() {
         user.changeNotificationSettings("In-App");
         user.uploadInvoice(invoice);
+
         assertFalse(Notification.messagesSent.isEmpty(), "Notification should be sent");
+
         String message = Notification.messagesSent.get(0);
         assertTrue(message.contains("3.0"), "Message should contain the reimbursement amount");
     }
@@ -68,5 +70,5 @@ public class InvoiceNotificationTest {
         assertTrue(message.startsWith("[In-App]"), "Message should appear in-app");
         assertTrue(message.contains("3.0"), "In-app message should contain reimbursement amount");
     }
-     */
+
 }

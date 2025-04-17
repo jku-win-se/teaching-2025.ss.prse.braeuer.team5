@@ -26,6 +26,8 @@ public class InvoiceRepository {
     private static final String UPDATE_STATUS = "UPDATE invoice SET status = ? WHERE user_email = ? AND date = ?";
     private static final String UPDATE_DATE = "UPDATE invoice SET date = ? WHERE user_email = ? AND date = ?";
     private static final String UPDATE_CATEGORY = "UPDATE invoice SET category = ? WHERE user_email = ? AND date=?";
+    public static boolean TEST_MODE = false;
+
 
 
     //admin view includes all invoices also for Statistics
@@ -82,18 +84,11 @@ public class InvoiceRepository {
         try {
             connection.setAutoCommit(false); // Deaktiviere Auto-Commit für Transaktionen
 
-            if (invoiceExists(connection, user_email, date)) {
-                System.out.println("Invoice already exists");
-                connection.rollback();  // Rollback bei Fehler
-                return;
-            }
 
             // Hier lade die Datei hoch und erhalte die URL
             String fileUrl = DatabaseConnection.uploadFileToBucket(imageFile);
             if (fileUrl == null) {
-                System.out.println("File url could not be uploaded");
-                connection.rollback();
-                return;
+                throw new RuntimeException("File url could not be uploaded");
             }
 
             // Verwende try-with-resources, um das PreparedStatement automatisch zu schließen
@@ -270,5 +265,25 @@ public class InvoiceRepository {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static void saveInvoiceWithDuplicationCheck(Connection connection, Invoice invoice) {
+        if (invoiceExists(connection, invoice.getUserEmail(), java.sql.Date.valueOf(invoice.getDate()))) {
+            throw new RuntimeException("Invoice already submitted for this date");
+        }
+
+        // Wenn kein Duplikat, dann normal speichern
+        saveInvoiceInfo(
+                connection,
+                invoice.getUserEmail(),
+                java.sql.Date.valueOf(invoice.getDate()),
+                invoice.getAmount(),
+                invoice.getCategory(),
+                invoice.getStatus(),
+                invoice.getFile_Url(),
+                invoice.getCreatedAt(),
+                invoice.getReimbursement(),
+                new File(invoice.getFile_Url())
+        );
     }
 }

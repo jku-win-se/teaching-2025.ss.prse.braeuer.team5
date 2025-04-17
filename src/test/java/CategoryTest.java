@@ -30,14 +30,15 @@ class CategoryTest {
         assertEquals(4.0, Category.RESTAURANT.customRefundAmount, "Refund amount for restaurant should be updated");
     }
 
-    /*@Test
-    void testSetInvalidCustomRefundAmount() {
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
-            Category.setCustomRefundAmount(Category.RESTAURANT, -5.0);
-        });
-        assertEquals("Betrag muss positiv sein", thrown.getMessage());
+    @Test
+    void testSetInvalidCustomRefundAmount_ShouldThrowException() {
+        IllegalArgumentException thrown = assertThrows(
+                IllegalArgumentException.class,
+                () -> Category.setCustomRefundAmount(Category.RESTAURANT, -5.0)
+        );
+
+        assertEquals("Amount has to be positive", thrown.getMessage());
     }
-     */
 
     @Test
     void selectCategory_Restaurant_ShouldSaveCorrectly() {
@@ -58,46 +59,23 @@ class CategoryTest {
         assertEquals(validReimbursement, invoice.getReimbursement(), "Reimbursement should be correctly set");
     }
 
-    /*@Test
-    void selectCategory_NoSelection_ShouldThrowError() throws SQLException {
-        // Erstelle eine gemockte Connection und PreparedStatement
-        Connection mockConnection = mock(Connection.class);
-        PreparedStatement mockPreparedStatement = mock(PreparedStatement.class);
-
-        // Simuliere das Verhalten des PreparedStatement
-        when(mockConnection.prepareStatement(any(String.class))).thenReturn(mockPreparedStatement);
-
-        // Erstelle eine Invoice-Instanz mit allen notwendigen Parametern
-        Invoice invoice = new Invoice(
-                "test@example.com",          // Benutzer-E-Mail
-                LocalDate.now(),             // Datum
-                100.0,                       // Betrag
-                null,                        // Kategorie absichtlich null (Fehlerfall)
-                Status.PROCESSING,           // Status
-                "file_url",                  // Dateipfad
-                LocalDateTime.now(),         // Erstellungsdatum
-                0.0                          // Rückerstattung
+    @Test
+    void selectCategory_NoSelection_ShouldThrowNullPointer() {
+        NullPointerException thrown = assertThrows(
+                NullPointerException.class,
+                () -> new Invoice(
+                        TEST_EMAIL,
+                        TEST_DATE,
+                        100.0,
+                        null,
+                        TEST_STATUS,
+                        TEST_URL,
+                        TEST_DATETIME,
+                        0.0
+                )
         );
 
-        // Teste, ob die Ausnahme "Please select a category" geworfen wird
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> InvoiceRepository.saveInvoiceInfo(mockConnection,
-                        invoice.getUserEmail(),
-                        java.sql.Date.valueOf(invoice.getDate()),
-                        invoice.getAmount(),
-                        invoice.getCategory(),       // Hier wird null für Kategorie übergeben
-                        invoice.getStatus(),
-                        invoice.getFile_Url(),
-                        invoice.getCreatedAt(),
-                        invoice.getReimbursement(),
-                        new File(invoice.getFile_Url())) // Sicherstellen, dass die Verbindung funktioniert
-        );
-
-        // Überprüfe, ob die erwartete Fehlermeldung geworfen wurde
-        assertEquals("Please select a category", exception.getMessage());
+        assertEquals("Category cannot be null", thrown.getMessage());
     }
-
-     */
 
 }
