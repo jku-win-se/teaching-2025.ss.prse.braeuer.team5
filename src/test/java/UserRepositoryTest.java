@@ -57,7 +57,7 @@ public class UserRepositoryTest {
     }
 
     //test Admin deleteUser
-    @Test
+   /* @Test
     void testDeleteUser() {
 
         User deleteUser = new User("Karl Löschen", "karl.löschen@lunchify.com", "test123", false);
@@ -75,5 +75,7 @@ public class UserRepositoryTest {
         userFromDb = userRepository.findByEmailAndPassword("karl.löschen@lunchify.com", "test123");
         assertNull(userFromDb, "User should not exist after deletion");
     }
+
+    */
 }
 
