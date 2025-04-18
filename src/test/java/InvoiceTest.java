@@ -36,10 +36,11 @@ class InvoiceTest {
     private static final String TEST_URL = "http://example.com/invoice.pdf";
 
 
-    @BeforeAll
+    /*@BeforeAll
     static void initJFX() {
         Platform.startup(() -> {});
     }
+     */
 
     @Test
     void constructor_WithValidAmount_ShouldNotThrow() {
