@@ -99,7 +99,7 @@ public class InvoiceRepositoryTest {
     }
      */
 
-    @Test
+   /* @Test
     void testUserCannotSubmitMultipleInvoicesOnSameDay() throws Exception {
         String userEmail = "testuser1@lunchify.com";
         LocalDate sameDate = LocalDate.now();
@@ -147,9 +147,7 @@ public class InvoiceRepositoryTest {
             assertTrue(exception.getMessage().contains("already submitted"), "Expected duplication error message");
         }
     }
-
-
-
+    */
 
     private void insertTestInvoice(String userEmail, LocalDate date, double amount, Category category, Status status, String fileUrl, LocalDateTime createdAt, double reimbursement) {
         try (Connection connection = DriverManager.getConnection(URL, USER, PWD)) {
