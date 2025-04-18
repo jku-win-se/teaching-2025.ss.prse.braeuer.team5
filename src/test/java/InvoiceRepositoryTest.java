@@ -59,7 +59,7 @@ public class InvoiceRepositoryTest {
         }
     }
 
-    /*@Test
+    @Test
     void testGetAllInvoicesAdmin() {
         // add test invoices to db
         insertTestInvoice("testuser1@lunchify.com", LocalDate.of(2025, 3, 11), 23.99, Category.RESTAURANT, Status.PROCESSING, "https://example.com/file.pdf", LocalDateTime.now(), 3);
@@ -99,43 +99,54 @@ public class InvoiceRepositoryTest {
     }
 
     @Test
-    void testUserCannotSubmitMultipleInvoicesOnSameDay() {
+    void testUserCannotSubmitMultipleInvoicesOnSameDay() throws Exception {
         String userEmail = "testuser1@lunchify.com";
         LocalDate sameDate = LocalDate.now();
 
-        // Erste Rechnung einfügen – sollte klappen
-        insertTestInvoice(userEmail, sameDate, 20.00, Category.RESTAURANT, Status.PROCESSING, "https://example.com/first.pdf", LocalDateTime.now(), 3.0);
+        File dummyFile = File.createTempFile("dummy", ".pdf");
+        dummyFile.deleteOnExit();
+        String dummyPath = dummyFile.getAbsolutePath();
 
-        // Überprüfen, ob schon eine Rechnung an diesem Tag existiert
-        boolean invoiceExists = false;
-        try (Connection connection = DriverManager.getConnection(URL, USER, PWD)) {
-            String sql = "SELECT COUNT(*) FROM invoice WHERE user_email = ? AND date = ?";
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, userEmail);
-                statement.setDate(2, Date.valueOf(sameDate));
-                try (ResultSet rs = statement.executeQuery()) {
-                    if (rs.next()) {
-                        invoiceExists = rs.getInt(1) > 0;
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            fail("Fehler beim Überprüfen auf doppelte Rechnungen.");
+        Invoice invoice1 = new Invoice(
+                userEmail,
+                sameDate,
+                20.00,
+                Category.RESTAURANT,
+                Status.PROCESSING,
+                dummyPath,
+                LocalDateTime.now(),
+                3.0
+        );
+
+        Invoice invoice2 = new Invoice(
+                userEmail,
+                sameDate,
+                25.00,
+                Category.SUPERMARKET,
+                Status.PROCESSING,
+                dummyPath,
+                LocalDateTime.now(),
+                2.5
+        );
+
+        // Erste Verbindung: Erste Rechnung einfügen
+        try (Connection connection1 = DriverManager.getConnection(URL, USER, PWD)) {
+            assertDoesNotThrow(() ->
+                            InvoiceRepository.saveInvoiceWithDuplicationCheck(connection1, invoice1),
+                    "First invoice should be inserted successfully"
+            );
         }
 
-        // Wenn Rechnung existiert, darf keine weitere eingefügt werden
-        if (invoiceExists) {
-            Exception exception = assertThrows(RuntimeException.class, () -> {
-                insertTestInvoice(userEmail, sameDate, 25.00, Category.SUPERMARKET, Status.PROCESSING, "https://example.com/second.pdf", LocalDateTime.now(), 2.5);
-            });
-
-            assertTrue(exception.getMessage().contains("Error when inserting"), "Fehler wegen doppeltem Datum erwartet.");
-        } else {
-            fail("Es hätte schon eine Rechnung an diesem Tag existieren sollen.");
+        // Zweite Verbindung: Zweite Rechnung – sollte fehlschlagen
+        try (Connection connection2 = DriverManager.getConnection(URL, USER, PWD)) {
+            RuntimeException exception = assertThrows(RuntimeException.class, () ->
+                            InvoiceRepository.saveInvoiceWithDuplicationCheck(connection2, invoice2),
+                    "Submitting second invoice on same day should throw an exception"
+            );
+            assertTrue(exception.getMessage().contains("already submitted"), "Expected duplication error message");
         }
     }
-     */
+
 
 
 

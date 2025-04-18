@@ -22,7 +22,7 @@ public enum Category {
     // Stellt sicher, dass der benutzerdefinierte Rückerstattungsbetrag positiv ist
     public static void setCustomRefundAmount(Category category, double amount) {
         if (amount < 0) {
-            throw new IllegalArgumentException("Der Betrag muss positiv sein.");
+            throw new IllegalArgumentException("Amount has to be positive");
         }
         category.customRefundAmount = amount;
     }

@@ -18,6 +18,22 @@ public class Invoice {
 
     //Constructor
     public Invoice(String userEmail, LocalDate date, double amount, Category category, Status status, String file_Url, LocalDateTime createdAt, double reimbursement) {
+        if (category == null) {
+            throw new NullPointerException("Category cannot be null");
+        }
+
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount has to be positive");
+        }
+
+        if (reimbursement < 0 || reimbursement > category.getRefundAmount()) {
+            throw new IllegalArgumentException("Refund does not comply with the rules");
+        }
+
+        if (amount > 1000.0) {
+            throw new IllegalArgumentException("Amount cannot be greater than 1000 €");
+        }
+
         this.userEmail = userEmail;
         this.date = date;
         this.amount = amount;
@@ -47,17 +63,21 @@ public class Invoice {
 
     // Diese Methode validiert das Dateiformat und die Größe der hochgeladenen Datei
     public static void validateFile(File file) {
-        // Formatvalidierung
+        // Existenzprüfung
+        if (file == null || !file.exists()) {
+            throw new IllegalArgumentException("Datei existiert nicht");
+        }
+
+        // Formatprüfung
         String fileName = file.getName().toLowerCase();
         if (!fileName.matches(".*\\.(jpg|jpeg|png|pdf)$")) {
             throw new IllegalArgumentException("Nur JPG/PNG/PDF-Dateien sind erlaubt");
         }
 
-        // Größenvalidierung (max. 10MB)
+        // Größenprüfung (max 10MB)
         if (file.length() > MAX_FILE_SIZE) {
             throw new IllegalArgumentException(String.format(
-                    "Datei zu groß (%.2f MB > 10 MB Limit)",
-                    file.length() / (1024.0 * 1024)
+                    "Datei zu groß (%.2f MB > 10 MB Limit)", file.length() / (1024.0 * 1024)
             ));
         }
     }

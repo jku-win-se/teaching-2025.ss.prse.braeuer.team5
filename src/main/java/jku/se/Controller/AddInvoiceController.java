@@ -24,14 +24,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AddInvoiceController {
-    @FXML private DatePicker datePicker;
-    @FXML private TextField amountField;
-    @FXML private Label statusLabel;
-    @FXML private Button removeImageBtn;
-    @FXML ComboBox<String> categoryCombo;
+    @FXML public DatePicker datePicker;
+    @FXML public TextField amountField;
+    @FXML public Label statusLabel;
+    @FXML public Button removeImageBtn;
+    @FXML
+    public ComboBox<String> categoryCombo;
     private Label cancelAdd;
-    @FXML private Button uploadButton;
-    private File selectedFile;
+    @FXML public Button uploadButton;
+    public File selectedFile;
     private double reimbursement;
 
     private Set<LocalDate> uploadedDates = new HashSet<>(); // Set, um bereits hochgeladene Tage zu speichern
@@ -80,7 +81,7 @@ public class AddInvoiceController {
     }
 
     @FXML
-    private void handleUpload(ActionEvent event) {
+    public void handleUpload(ActionEvent event) {
         // Get user data (e-mail of the current user)
         String userEmail = UserDashboardController.getCurrentUserEmail();  // Fetches the e-mail of the logged-in user
 
@@ -218,5 +219,29 @@ public class AddInvoiceController {
         amountField.clear();        // delete the image
         categoryCombo.getSelectionModel().clearSelection();  // Reset the category
         selectedFile = null;        // reset the image
+    }
+
+    public void setDatePicker(DatePicker datePicker) {
+        this.datePicker = datePicker;
+    }
+
+    public void setAmountField(TextField amountField) {
+        this.amountField = amountField;
+    }
+
+    public void setCategoryCombo(ComboBox<String> categoryCombo) {
+        this.categoryCombo = categoryCombo;
+    }
+
+    public void setSelectedFile(File file) {
+        this.selectedFile = file;
+    }
+
+    public Label getStatusLabel() {
+        return statusLabel;
+    }
+
+    public void setStatusLabel(Label label) {
+        this.statusLabel = label;
     }
 }
