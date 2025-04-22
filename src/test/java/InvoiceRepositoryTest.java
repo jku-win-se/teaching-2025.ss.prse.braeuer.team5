@@ -12,6 +12,7 @@ import java.io.File;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,6 +39,7 @@ public class InvoiceRepositoryTest {
         // add test invoices to db
         insertTestInvoice("testuser1@lunchify.com", LocalDate.of(2025, 3, 11), 23.99, Category.RESTAURANT, Status.PROCESSING, "https://example.com/file.pdf", LocalDateTime.now(), 3);
         insertTestInvoice("testuser2@lunchify.com", LocalDate.of(2025, 4, 2), 30.00, Category.SUPERMARKET, Status.PROCESSING, "https://example.com/file.pdf2", LocalDateTime.now(), 2.5);
+        insertTestInvoice("testuser2@lunchify.com", LocalDate.of(2025, 4, 22), 2.50, Category.SUPERMARKET, Status.APPROVED, "https://example.com/file.pdf2", LocalDateTime.now(), 2.5);
     }
 
     @AfterEach
@@ -67,11 +69,13 @@ public class InvoiceRepositoryTest {
     @Test
     void testGetAllInvoicesAdmin() {
 
-        // Test-Methode aufrufen
-        List<Invoice> invoices = invoiceRepository.getAllInvoicesAdmin();
+
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
+
+        assertNotNull(invoices, "Invoices list should not be null");
+        assertTrue(invoices.size() >= 3, "There should be at least three invoices in total.");
 
 
-        // search for test invoices
         Invoice firstInvoice = invoices.stream()
                 .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
                 .findFirst()
@@ -82,13 +86,19 @@ public class InvoiceRepositoryTest {
                 .findFirst()
                 .orElse(null);
 
-        //check if expected data and data are the same
+        Invoice thirdInvoice = invoices.stream()
+                .filter(i -> i.getUserEmail().equals("testuser2@lunchify.com"))
+                .skip(1)  // Zweite Rechnung für testuser2
+                .findFirst()
+                .orElse(null);
+
+
         assertNotNull(firstInvoice, "The first invoice should exist.");
         assertEquals(LocalDate.of(2025, 3, 11), firstInvoice.getDate());
         assertEquals(23.99, firstInvoice.getAmount());
         assertEquals(Category.RESTAURANT, firstInvoice.getCategory());
         assertEquals(Status.PROCESSING.name(), firstInvoice.getStatusString());
-        assertEquals("https://example.com/file.pdf" ,firstInvoice.getFile_Url());
+        assertEquals("https://example.com/file.pdf", firstInvoice.getFile_Url());
         assertEquals(3, firstInvoice.getCategory().getRefundAmount());
 
         assertNotNull(secondInvoice, "The second invoice should exist.");
@@ -96,6 +106,48 @@ public class InvoiceRepositoryTest {
         assertEquals(30.00, secondInvoice.getAmount());
         assertEquals(Category.SUPERMARKET, secondInvoice.getCategory());
         assertEquals(Status.PROCESSING.name(), secondInvoice.getStatusString());
+        assertEquals("https://example.com/file.pdf2", secondInvoice.getFile_Url());
+        assertEquals(2.5, secondInvoice.getCategory().getRefundAmount());
+
+        assertNotNull(thirdInvoice, "The third invoice should exist.");
+        assertEquals(LocalDate.of(2025, 4, 22), thirdInvoice.getDate());
+        assertEquals(2.50, thirdInvoice.getAmount());
+        assertEquals(Category.SUPERMARKET, thirdInvoice.getCategory());
+        assertEquals(Status.APPROVED.name(), thirdInvoice.getStatusString());
+        assertEquals("https://example.com/file.pdf2", thirdInvoice.getFile_Url());
+        assertEquals(2.50, thirdInvoice.getCategory().getRefundAmount());
+    }
+
+    //ai
+    @Test
+    void testGetAllInvoicesUser() {
+        // Fetch invoices for the user
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser("testuser2@lunchify.com");
+
+        // Ensure there are invoices to test
+        assertNotNull(invoices, "Invoices list should not be null");
+        assertTrue(invoices.size() >= 2, "There should be at least two invoices for this user.");
+
+        // Sort invoices by date
+        invoices.sort(Comparator.comparing(Invoice::getDate));
+
+        // Check the first invoice
+        Invoice firstInvoice = invoices.get(0);
+        assertNotNull(firstInvoice, "The first invoice should exist.");
+        assertEquals(LocalDate.of(2025, 4, 2), firstInvoice.getDate());
+        assertEquals(30.00, firstInvoice.getAmount());
+        assertEquals(Category.SUPERMARKET, firstInvoice.getCategory());
+        assertEquals(Status.PROCESSING.name(), firstInvoice.getStatusString());
+        assertEquals("https://example.com/file.pdf2", firstInvoice.getFile_Url());
+        assertEquals(2.5, firstInvoice.getCategory().getRefundAmount());
+
+        // Check the second invoice
+        Invoice secondInvoice = invoices.get(1);
+        assertNotNull(secondInvoice, "The second invoice should exist.");
+        assertEquals(LocalDate.of(2025, 4, 22), secondInvoice.getDate());
+        assertEquals(2.50, secondInvoice.getAmount());
+        assertEquals(Category.SUPERMARKET, secondInvoice.getCategory());
+        assertEquals(Status.APPROVED.name(), secondInvoice.getStatusString());
         assertEquals("https://example.com/file.pdf2", secondInvoice.getFile_Url());
         assertEquals(2.5, secondInvoice.getCategory().getRefundAmount());
     }
@@ -135,7 +187,7 @@ public class InvoiceRepositoryTest {
     void testAdminDeclinedInvoice() {
         //choice invoice to change
         Invoice invoice = InvoiceRepository.getAllInvoicesAdmin().stream()
-                .filter(i -> i.getUserEmail().equals("testuser2@lunchify.com"))
+                .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
                 .findFirst()
                 .orElse(null);
 
@@ -149,7 +201,7 @@ public class InvoiceRepositoryTest {
 
         // search for invoice again
         Invoice updatedInvoice = InvoiceRepository.getAllInvoicesAdmin().stream()
-                .filter(i -> i.getUserEmail().equals("testuser2@lunchify.com"))
+                .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
                 .findFirst()
                 .orElse(null);
 
