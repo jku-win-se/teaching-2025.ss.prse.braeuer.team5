@@ -28,7 +28,7 @@ public class InvoiceRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        invoiceRepository = new InvoiceRepository();
+        invoiceRepository = new InvoiceRepository(); 
         cleanUpTestInvoices();
 
         //before add user to connect with test invoices
