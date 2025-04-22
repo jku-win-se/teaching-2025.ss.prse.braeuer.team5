@@ -22,7 +22,7 @@ import java.util.List;
 public class UserDashboardController {
 
     @FXML
-    private static TableView<Invoice> invoiceTable;
+    private  TableView<Invoice> invoiceTable;
 
     @FXML
     private TableColumn<Invoice, String> submissionDateColumn;
@@ -42,7 +42,7 @@ public class UserDashboardController {
     private static String currentUserEmail;
 
     // Setter-Methode
-    public static void setCurrentUserEmail(String email) {
+    public  void setCurrentUserEmail(String email) {
         currentUserEmail = email;
         loadInvoices();
     }
@@ -54,7 +54,7 @@ public class UserDashboardController {
     @FXML
     private void initialize() {
         // Connect columns with the invoice attributes
-        submissionDateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+        submissionDateColumn.setCellValueFactory(new PropertyValueFactory<>("CreatedAtString"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("categoryString"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("statusString"));
@@ -63,7 +63,7 @@ public class UserDashboardController {
         loadInvoices();
     }
 
-    private static void loadInvoices() {
+    private void loadInvoices() {
         if (invoiceTable == null) {
             System.err.println("invoiceTable is null! Check whether the fx:id is set correctly in the FXML file.");
             return;  // Prevent the method from being executed further if the TableView is null
