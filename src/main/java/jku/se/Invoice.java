@@ -45,7 +45,7 @@ public class Invoice {
     }
 
     // --- Validierungsmethoden ---
-    private LocalDate validateDate(LocalDate date) {
+    public LocalDate validateDate(LocalDate date) {
         validateAmount(this.amount);
 
         if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
@@ -172,6 +172,19 @@ public class Invoice {
 
         // Die Rechnung ist nur im selben Monat und Jahr editierbar
         return invoiceDate.getMonth() == now.getMonth() && invoiceDate.getYear() == now.getYear();
+    }
+
+    //is required in AdminInvoiceManagementController to check the data
+    public boolean isDateOnWeekday(LocalDate date) {
+        return !(date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY);
+    }
+
+    public boolean isInCurrentMonth(LocalDate date, LocalDate now) {
+        return date.getMonth().equals(now.getMonth()) && date.getYear() == now.getYear();
+    }
+
+    public boolean isValidAmount(double amount) {
+        return amount >= 0 && amount <= 1000.0;
     }
 
 }

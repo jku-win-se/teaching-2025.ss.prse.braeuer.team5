@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
+import org.testng.annotations.BeforeTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -357,4 +358,35 @@ class InvoiceTest {
         assertEquals("Amount must be greater than 0", controller.statusLabel.getText());
     }
      */
+
+    @Test
+    void testIsDateOnWeekday() {
+        Invoice invoice = new Invoice(("testuser1@lunchify.com"), LocalDate.of(2025, 3, 11), 23.99, Category.RESTAURANT, Status.PROCESSING, "https://example.com/file.pdf", LocalDateTime.now(), 3);
+        assertTrue(invoice.isDateOnWeekday(LocalDate.of(2025, 4, 21)), "This day is a working day");
+        assertTrue(invoice.isDateOnWeekday(LocalDate.of(2025, 4, 24)), "Donnerstag sollte ein Werktag sein");
+
+        assertFalse(invoice.isDateOnWeekday(LocalDate.of(2025, 4, 20)), "This day is a working day");
+        assertFalse(invoice.isDateOnWeekday(LocalDate.of(2025, 4, 19)), "This day is a working day");
+    }
+
+    @Test
+    void testIsInCurrentMonth() {
+        Invoice invoice = new Invoice(("testuser1@lunchify.com"), LocalDate.of(2025, 3, 11), 23.99, Category.RESTAURANT, Status.PROCESSING, "https://example.com/file.pdf", LocalDateTime.now(), 3);
+        LocalDate now = LocalDate.of(2025, 4, 22);
+
+        assertTrue(invoice.isInCurrentMonth(LocalDate.of(2025, 4, 1), now), "Date in the same month and year");
+        assertFalse(invoice.isInCurrentMonth(LocalDate.of(2025, 3, 31), now), "Date is not in the same month");
+        assertFalse(invoice.isInCurrentMonth(LocalDate.of(2024, 4, 22), now), "Date is not in the same year");
+    }
+
+    @Test
+    void testIsValidAmount() {
+        Invoice invoice = new Invoice(("testuser1@lunchify.com"), LocalDate.of(2025, 3, 11), 23.99, Category.RESTAURANT, Status.PROCESSING, "https://example.com/file.pdf", LocalDateTime.now(), 3);
+        assertTrue(invoice.isValidAmount(0.0), "0  is valid");
+        assertTrue(invoice.isValidAmount(999.99), "Amount is not valid");
+        assertTrue(invoice.isValidAmount(1000.0), "Amount is valid");
+
+        assertFalse(invoice.isValidAmount(-1.0), "Amount is not valid");
+        assertFalse(invoice.isValidAmount(1000.01), "Amount is not valid");
+    }
 }
