@@ -10,15 +10,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import jku.se.Administrator;
-import jku.se.Category;
-import jku.se.Invoice;
-import jku.se.Status;
+import jku.se.*;
 import jku.se.repository.InvoiceRepository;
 import jku.se.repository.UserRepository;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 public class AdminInvoiceManagementController {
@@ -84,34 +83,87 @@ public class AdminInvoiceManagementController {
     //is changed when you press the change button
     @FXML
     private void changeInvoiceDetails(ActionEvent event) {
+
         Invoice selectedInvoice = selectInvoice.getValue();
+
+        if (selectedInvoice == null) {
+            statusLabel.setText("Please select an invoice to update.");
+            statusLabel.setStyle("-fx-text-fill: red;");
+            return;
+        }
+        //save old and new date for changing date
+        LocalDate oldDate = selectedInvoice.getDate();
+        Category oldCategory = selectedInvoice.getCategory();
+
+        //check if invoice is in current month
+        LocalDate now = LocalDate.now();
+        if(!selectedInvoice.isInCurrentMonth(oldDate, now)){
+            statusLabel.setText("The invoice can no longer be changed - only possible in the current month!");
+            statusLabel.setStyle("-fx-text-fill: red;");
+            return;
+        }
 
         if (selectedInvoice != null) {
             try {
                 double newAmount = Double.parseDouble(amountField.getText());
-                double newReimbursement = Double.parseDouble(reimbursementField.getText());
                 String newCategory = categoryCombobox.getValue();
-                var newDate = invoiceDateField.getValue();
+                LocalDate newDate = invoiceDateField.getValue();
+
+                if (!selectedInvoice.isValidAmount(newAmount)) {
+                    statusLabel.setText("Amount must be greater than 0 and less than 1000!");
+                    statusLabel.setStyle("-fx-text-fill: red;");
+                    return;
+                }
 
                 selectedInvoice.setAmount(newAmount);
-                selectedInvoice.setReimbursement(newReimbursement);
                 selectedInvoice.setCategory(Category.valueOf(newCategory));
+
+                if(!selectedInvoice.isDateOnWeekday(newDate)){
+                    statusLabel.setText("Invoice date must be a weekday!");
+                    statusLabel.setStyle("-fx-text-fill: red;");
+                    return;
+                }
+                // Check if date changed - AI generated
+                if (!newDate.equals(oldDate)) {
+                    try (Connection con = DatabaseConnection.getConnection()) {
+                        boolean exists = InvoiceRepository.invoiceExists(con, selectedInvoice.getUserEmail(), java.sql.Date.valueOf(newDate));
+                        if (exists) {
+                            statusLabel.setText("An invoice already exists for this user on the selected date.");
+                            statusLabel.setStyle("-fx-text-fill: red;");
+                            return;
+                        }
+                    } catch (SQLException e) {
+                        statusLabel.setText("Database error: " + e.getMessage());
+                        statusLabel.setStyle("-fx-text-fill: red;");
+                        return;
+                    }
+                }
                 selectedInvoice.setDate(newDate);
                 selectedInvoice.setStatus(Status.PROCESSING);  // after update invoice details set status to processing
 
-                InvoiceRepository.updateInvoiceAmount(selectedInvoice);
-                InvoiceRepository.updateInvoiceReimbursement(selectedInvoice);
-                InvoiceRepository.updateInvoiceCategory(selectedInvoice);
-                InvoiceRepository.updateInvoiceDate(selectedInvoice);
-                InvoiceRepository.updateInvoiceStatus(selectedInvoice);
+                //after changing category or amount - change reimbursement
+                double newReimbursement = selectedInvoice.calculateRefund();
+                selectedInvoice.setReimbursement(newReimbursement);
 
+                InvoiceRepository.updateInvoiceAmount(selectedInvoice);
+                InvoiceRepository.updateInvoiceCategory(selectedInvoice);
+                InvoiceRepository.updateInvoiceDate(selectedInvoice, oldDate);
+                InvoiceRepository.updateInvoiceStatus(selectedInvoice);
+                InvoiceRepository.updateInvoiceReimbursement(selectedInvoice);
                 statusLabel.setText("Invoice updated successfully.");
                 statusLabel.setStyle("-fx-text-fill: green;");
+
+                //Update data output in JAVAFX
+                amountField.setText(String.valueOf(selectedInvoice.getAmount()));
+                reimbursementField.setText(String.valueOf(selectedInvoice.getReimbursement()));
+                invoiceDateField.setValue(selectedInvoice.getDate());
+                categoryCombobox.setValue(selectedInvoice.getCategory().name());
             } catch (Exception e) {
                 statusLabel.setText("Update failed: " + e.getMessage());
                 statusLabel.setStyle("-fx-text-fill: red;");
             }
         }
+
     }
     //accept invoice update db
     @FXML
