@@ -36,7 +36,7 @@ public class StatisticsController {
     @FXML
     public void initialize() {
         //calculate totalRefund and averageInvoices
-        double totalRefund = statistics.getReimbursementForAYear();
+        double totalRefund = statistics.getReimbursementForAYear(); 
         TextFieldTotalRefund.setText(String.format("%.2f €", totalRefund));
         double averageInvoicesPerson = statistics.getAverageOfInvoicesPerUserPerMonth();
         TextFieldAverageInvoices.setText(String.format("%.2f ", averageInvoicesPerson));
