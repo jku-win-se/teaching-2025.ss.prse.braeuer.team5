@@ -12,6 +12,7 @@ import java.io.File;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,7 +28,7 @@ public class InvoiceRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        invoiceRepository = new InvoiceRepository();
+        invoiceRepository = new InvoiceRepository(); 
         cleanUpTestInvoices();
 
         //before add user to connect with test invoices
@@ -35,6 +36,10 @@ public class InvoiceRepositoryTest {
         UserRepository.addUser(testuser1);
         User testuser2 = new User("testuser2", "testuser2@lunchify.com", "test123", false);
         UserRepository.addUser(testuser2);
+        // add test invoices to db
+        insertTestInvoice("testuser1@lunchify.com", LocalDate.of(2025, 3, 11), 23.99, Category.RESTAURANT, Status.PROCESSING, "https://example.com/file.pdf", LocalDateTime.now(), 3);
+        insertTestInvoice("testuser2@lunchify.com", LocalDate.of(2025, 4, 2), 30.00, Category.SUPERMARKET, Status.PROCESSING, "https://example.com/file.pdf2", LocalDateTime.now(), 2.5);
+        insertTestInvoice("testuser2@lunchify.com", LocalDate.of(2025, 4, 22), 2.50, Category.SUPERMARKET, Status.APPROVED, "https://example.com/file.pdf2", LocalDateTime.now(), 2.5);
     }
 
     @AfterEach
@@ -59,17 +64,18 @@ public class InvoiceRepositoryTest {
         }
     }
 
-    /*@Test
+
+
+    @Test
     void testGetAllInvoicesAdmin() {
-        // add test invoices to db
-        insertTestInvoice("testuser1@lunchify.com", LocalDate.of(2025, 3, 11), 23.99, Category.RESTAURANT, Status.PROCESSING, "https://example.com/file.pdf", LocalDateTime.now(), 3);
-        insertTestInvoice("testuser2@lunchify.com", LocalDate.of(2025, 4, 2), 30.00, Category.SUPERMARKET, Status.PROCESSING, "https://example.com/file.pdf2", LocalDateTime.now(), 2.5);
-
-        // Test-Methode aufrufen
-        List<Invoice> invoices = invoiceRepository.getAllInvoicesAdmin();
 
 
-        // search for test invoices
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
+
+        assertNotNull(invoices, "Invoices list should not be null");
+        assertTrue(invoices.size() >= 3, "There should be at least three invoices in total.");
+
+
         Invoice firstInvoice = invoices.stream()
                 .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
                 .findFirst()
@@ -80,13 +86,19 @@ public class InvoiceRepositoryTest {
                 .findFirst()
                 .orElse(null);
 
-        //check if expected data and data are the same
+        Invoice thirdInvoice = invoices.stream()
+                .filter(i -> i.getUserEmail().equals("testuser2@lunchify.com"))
+                .skip(1)  // Zweite Rechnung für testuser2
+                .findFirst()
+                .orElse(null);
+
+
         assertNotNull(firstInvoice, "The first invoice should exist.");
         assertEquals(LocalDate.of(2025, 3, 11), firstInvoice.getDate());
         assertEquals(23.99, firstInvoice.getAmount());
         assertEquals(Category.RESTAURANT, firstInvoice.getCategory());
         assertEquals(Status.PROCESSING.name(), firstInvoice.getStatusString());
-        assertEquals("https://example.com/file.pdf" ,firstInvoice.getFile_Url());
+        assertEquals("https://example.com/file.pdf", firstInvoice.getFile_Url());
         assertEquals(3, firstInvoice.getCategory().getRefundAmount());
 
         assertNotNull(secondInvoice, "The second invoice should exist.");
@@ -96,8 +108,194 @@ public class InvoiceRepositoryTest {
         assertEquals(Status.PROCESSING.name(), secondInvoice.getStatusString());
         assertEquals("https://example.com/file.pdf2", secondInvoice.getFile_Url());
         assertEquals(2.5, secondInvoice.getCategory().getRefundAmount());
+
+        assertNotNull(thirdInvoice, "The third invoice should exist.");
+        assertEquals(LocalDate.of(2025, 4, 22), thirdInvoice.getDate());
+        assertEquals(2.50, thirdInvoice.getAmount());
+        assertEquals(Category.SUPERMARKET, thirdInvoice.getCategory());
+        assertEquals(Status.APPROVED.name(), thirdInvoice.getStatusString());
+        assertEquals("https://example.com/file.pdf2", thirdInvoice.getFile_Url());
+        assertEquals(2.50, thirdInvoice.getCategory().getRefundAmount());
     }
-     */
+
+    //ai
+    @Test
+    void testGetAllInvoicesUser() {
+        // Fetch invoices for the user
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser("testuser2@lunchify.com");
+
+        // Ensure there are invoices to test
+        assertNotNull(invoices, "Invoices list should not be null");
+        assertTrue(invoices.size() >= 2, "There should be at least two invoices for this user.");
+
+        // Sort invoices by date
+        invoices.sort(Comparator.comparing(Invoice::getDate));
+
+        // Check the first invoice
+        Invoice firstInvoice = invoices.get(0);
+        assertNotNull(firstInvoice, "The first invoice should exist.");
+        assertEquals(LocalDate.of(2025, 4, 2), firstInvoice.getDate());
+        assertEquals(30.00, firstInvoice.getAmount());
+        assertEquals(Category.SUPERMARKET, firstInvoice.getCategory());
+        assertEquals(Status.PROCESSING.name(), firstInvoice.getStatusString());
+        assertEquals("https://example.com/file.pdf2", firstInvoice.getFile_Url());
+        assertEquals(2.5, firstInvoice.getCategory().getRefundAmount());
+
+        // Check the second invoice
+        Invoice secondInvoice = invoices.get(1);
+        assertNotNull(secondInvoice, "The second invoice should exist.");
+        assertEquals(LocalDate.of(2025, 4, 22), secondInvoice.getDate());
+        assertEquals(2.50, secondInvoice.getAmount());
+        assertEquals(Category.SUPERMARKET, secondInvoice.getCategory());
+        assertEquals(Status.APPROVED.name(), secondInvoice.getStatusString());
+        assertEquals("https://example.com/file.pdf2", secondInvoice.getFile_Url());
+        assertEquals(2.5, secondInvoice.getCategory().getRefundAmount());
+    }
+
+
+    //ai generated
+    @Test
+    void testAdminApprovesInvoice() {
+        //choice invoice to change
+        Invoice invoice = InvoiceRepository.getAllInvoicesAdmin().stream()
+                .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(invoice, "The invoice should exist");
+        //check if status is processing
+        assertEquals(Status.PROCESSING, invoice.getStatus(), "The status should be ‘PROCESSING’ at the beginning");
+
+        // approve invoice
+        invoice.setStatus(Status.APPROVED);
+        InvoiceRepository.updateInvoiceStatus(invoice);
+        // search for invoice again
+        Invoice updatedInvoice = InvoiceRepository.getAllInvoicesAdmin().stream()
+                .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(updatedInvoice, "The updated invoice should exist");
+
+        // Check whether the status of the invoice has been set to ‘APPROVED’
+        assertEquals(Status.APPROVED, updatedInvoice.getStatus(), "The status should be ‘APPROVED’ after authorisation");
+
+        System.out.println("Invoice status after authorisation: " + updatedInvoice.getStatus());
+    }
+
+    @Test
+    void testAdminDeclinedInvoice() {
+        //choice invoice to change
+        Invoice invoice = InvoiceRepository.getAllInvoicesAdmin().stream()
+                .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(invoice, "The invoice should exist");
+        //check if status is not declined
+        assertNotEquals(Status.DECLINED, invoice.getStatus(), "The status should not be ‘DECLINED’ at the beginning");
+
+        // declined invoice
+        invoice.setStatus(Status.DECLINED);
+        InvoiceRepository.updateInvoiceStatus(invoice);
+
+        // search for invoice again
+        Invoice updatedInvoice = InvoiceRepository.getAllInvoicesAdmin().stream()
+                .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(updatedInvoice, "The updated invoice should exist");
+
+        // check if status is declined
+        assertEquals(Status.DECLINED, updatedInvoice.getStatus(), "The status should be ‘DECLINED’ after rejection");
+
+        System.out.println("Invoice status after rejection: " + updatedInvoice.getStatus());
+    }
+
+
+    @Test
+    void testUpdateInvoiceAmountReimbursement() {
+        Invoice invoice = InvoiceRepository.getAllInvoicesAdmin().stream()
+                .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(invoice);
+
+        double newAmount = 1.99;
+        invoice.setAmount(newAmount);
+        double expectedReimbursement = invoice.calculateRefund();
+        invoice.setReimbursement(expectedReimbursement);
+
+        InvoiceRepository.updateInvoiceAmount(invoice);
+        InvoiceRepository.updateInvoiceReimbursement(invoice);
+
+        Invoice updated = InvoiceRepository.getAllInvoicesAdmin().stream()
+                .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(updated);
+        assertEquals(newAmount, updated.getAmount(), 0.01);
+        assertEquals(expectedReimbursement, updated.getReimbursement(), 0.01);
+    }
+
+    @Test
+    void testUpdateInvoiceCategoryReimbursement() {
+        Invoice invoice = InvoiceRepository.getAllInvoicesAdmin().stream()
+                .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(invoice);
+
+        Category newCategory = Category.SUPERMARKET;
+        invoice.setCategory(newCategory);
+        double expectedReimbursement = newCategory.getRefundAmount();
+        invoice.setReimbursement(expectedReimbursement);
+
+        InvoiceRepository.updateInvoiceCategory(invoice);
+        InvoiceRepository.updateInvoiceReimbursement(invoice);
+
+        Invoice updated = InvoiceRepository.getAllInvoicesAdmin().stream()
+                .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(updated);
+        assertEquals(newCategory, updated.getCategory());
+        assertEquals(expectedReimbursement, updated.getReimbursement(), 0.01);
+    }
+
+    @Test
+    void testUpdateInvoiceDate() {
+        Invoice invoice = InvoiceRepository.getAllInvoicesAdmin().stream()
+                .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(invoice);
+
+        LocalDate oldDate = invoice.getDate();
+        LocalDate newDate = LocalDate.now().withDayOfMonth(15);
+
+        while (newDate.getDayOfWeek().getValue() >= 6) {
+            newDate = newDate.plusDays(1);
+        }
+
+        invoice.setDate(newDate);
+        InvoiceRepository.updateInvoiceDate(invoice, oldDate); // ← Wichtig
+
+        Invoice updated = InvoiceRepository.getAllInvoicesAdmin().stream()
+                .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(updated);
+        assertEquals(newDate, updated.getDate());
+    }
+
 
    /* @Test
     void testUserCannotSubmitMultipleInvoicesOnSameDay() throws Exception {

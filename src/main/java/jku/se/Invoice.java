@@ -4,6 +4,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.DayOfWeek;
+import java.time.format.DateTimeFormatter;
 
 public class Invoice {
     private String userEmail;
@@ -45,7 +46,7 @@ public class Invoice {
     }
 
     // --- Validierungsmethoden ---
-    private LocalDate validateDate(LocalDate date) {
+    public LocalDate validateDate(LocalDate date) {
         validateAmount(this.amount);
 
         if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
@@ -110,7 +111,7 @@ public class Invoice {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-    public double getReimbursement() {
+        public double getReimbursement() {
         return reimbursement;
     }
     public void setReimbursement(double reimbursement) {
@@ -142,6 +143,16 @@ public class Invoice {
         return category.name();
     }
 
+    //need a string for user dashboard table
+    public String getCreatedAtString() {
+        return createdAt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
+
+    //we need if the admin wants to select the invoice, he can then select the invoice by date using the email
+    public String toString() {
+        return date.toString();
+    }
+
     //using these methods, the admins can approve the individual invoices, etc.
     public void approve() {
         this.status = Status.APPROVED;
@@ -157,10 +168,6 @@ public class Invoice {
         this.date = newDate;
         this.status = Status.PROCESSING; //if the invoice is corrected so it is again in the process
     }
-    //we need if the admin wants to select the invoice, he can then select the invoice by date using the email
-    public String toString() {
-        return date.toString();
-    }
 
     public boolean isEditable() {
         if (createdAt == null) {
@@ -172,6 +179,19 @@ public class Invoice {
 
         // Die Rechnung ist nur im selben Monat und Jahr editierbar
         return invoiceDate.getMonth() == now.getMonth() && invoiceDate.getYear() == now.getYear();
+    }
+
+    //is required in AdminInvoiceManagementController to check the data
+    public boolean isDateOnWeekday(LocalDate date) {
+        return !(date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY);
+    }
+
+    public boolean isInCurrentMonth(LocalDate date, LocalDate now) {
+        return date.getMonth().equals(now.getMonth()) && date.getYear() == now.getYear();
+    }
+
+    public boolean isValidAmount(double amount) {
+        return amount >= 0 && amount <= 1000.0;
     }
 
 }

@@ -3,6 +3,7 @@ module Lunchify {
     requires javafx.fxml;
     requires java.sql;
     requires java.desktop;
+    requires org.jfree.jfreechart;
 
 
     opens jku.se.Controller to javafx.fxml;
