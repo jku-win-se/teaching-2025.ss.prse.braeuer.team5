@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import jku.se.Category;
 import jku.se.Invoice;
 import jku.se.Status;
-import jku.se.DatabaseConnection; // Importiere die DatabaseConnection-Klasse
+import jku.se.DatabaseConnection;
 import jku.se.repository.InvoiceRepository;
 
 import java.io.File;
@@ -24,18 +24,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AddInvoiceController {
+
     @FXML public DatePicker datePicker;
     @FXML public TextField amountField;
-    @FXML public Label statusLabel;
+    @FXML public ComboBox<String> categoryCombo;
     @FXML public Button removeImageBtn;
-    @FXML
-    public ComboBox<String> categoryCombo;
-    private Label cancelAdd;
     @FXML public Button uploadButton;
+
     public File selectedFile;
     private double reimbursement;
-
-    private Set<LocalDate> uploadedDates = new HashSet<>(); // Set, um bereits hochgeladene Tage zu speichern
+    private Set<LocalDate> uploadedDates = new HashSet<>();
 
     @FXML
     private void cancelAdd(ActionEvent event) throws IOException {
@@ -46,13 +44,11 @@ public class AddInvoiceController {
     private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
         Scene scene = new Scene(loader.load());
-
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
     }
 
-    //Dateiauswahl-Validierung: hat die Datei das richtige Format (pdf, jpeg, png)
     @FXML
     private void handleFileSelect(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -66,15 +62,13 @@ public class AddInvoiceController {
         if (selectedFile != null) {
             try {
                 Invoice.validateFile(selectedFile);
-                statusLabel.setStyle("-fx-text-fill: green;");
-                statusLabel.setText(String.format(
+                showAlert(String.format(
                         "✓ Selected: %s (%.2f MB)",
                         selectedFile.getName(),
                         selectedFile.length() / (1024.0 * 1024)
-                ));
+                ), Alert.AlertType.INFORMATION);
             } catch (IllegalArgumentException e) {
-                statusLabel.setStyle("-fx-text-fill: red;");
-                statusLabel.setText(e.getMessage());
+                showAlert(e.getMessage(), Alert.AlertType.ERROR);
                 selectedFile = null;
             }
         }
@@ -82,166 +76,177 @@ public class AddInvoiceController {
 
     @FXML
     public void handleUpload(ActionEvent event) {
-        // Get user data (e-mail of the current user)
-        String userEmail = UserDashboardController.getCurrentUserEmail();  // Fetches the e-mail of the logged-in user
+        String userEmail = getCurrentUserEmail();
+        if (userEmail == null) return;
 
-        if (userEmail == null || userEmail.isEmpty()) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("User is not logged in or email is missing.");
-            return;
-        }
-
-        // Validate all fields
-        if (datePicker.getValue() == null) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Please select an invoice date");
-            return;
-        }
+        if (!validateDate()) return;
 
         LocalDate selectedDate = datePicker.getValue();
+        if (!validateInvoiceUniqueness(userEmail, selectedDate)) return;
 
-        // Check whether the selected date is in the future
-        LocalDate currentDate = LocalDate.now(); // Current date
-        if (selectedDate.isAfter(currentDate)) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("You cannot use a future date.");
-            return;  // Prevent the upload if the date is in the future
+        if (!validateAmount()) return;
+
+        Category selectedCategory = getSelectedCategory();
+        if (selectedCategory == null) return;
+
+        if (!validateFileSelection()) return;
+
+        String fileUrl = uploadFile();
+        if (fileUrl == null) return;
+
+        Invoice invoice = createInvoice(userEmail, selectedDate, selectedCategory, fileUrl);
+        saveInvoice(invoice, fileUrl, selectedDate);
+    }
+
+    private String getCurrentUserEmail() {
+        String userEmail = UserDashboardController.getCurrentUserEmail();
+        if (userEmail == null || userEmail.isEmpty()) {
+            showAlert("User is not logged in or email is missing.", Alert.AlertType.ERROR);
+            return null;
+        }
+        return userEmail;
+    }
+
+    private boolean validateDate() {
+        if (datePicker.getValue() == null) {
+            showAlert("Please select an invoice date.", Alert.AlertType.ERROR);
+            return false;
         }
 
-        // Check whether an invoice already exists for the same user and day
+        if (datePicker.getValue().isAfter(LocalDate.now())) {
+            showAlert("You cannot use a future date.", Alert.AlertType.ERROR);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateInvoiceUniqueness(String userEmail, LocalDate selectedDate) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             if (InvoiceRepository.invoiceExists(connection, userEmail, java.sql.Date.valueOf(selectedDate))) {
-                statusLabel.setStyle("-fx-text-fill: red;");
-                statusLabel.setText("Upload Limit: One Invoice per day");
-                return;  // Prevent the upload if an invoice already exists
+                showAlert("Upload Limit: One Invoice per day.", Alert.AlertType.ERROR);
+                return false;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Database error: " + e.getMessage());
-            return;
+            showAlert("Database error: " + e.getMessage(), Alert.AlertType.ERROR);
+            return false;
         }
+        return true;
+    }
 
-        // Amount Validierung: Betrag muss größer als 0 sein
+    private boolean validateAmount() {
         if (amountField.getText().isEmpty()) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Please enter an amount");
-            return;
+            showAlert("Please enter an amount.", Alert.AlertType.ERROR);
+            return false;
         }
 
-        double amount;
         try {
-            amount = Double.parseDouble(amountField.getText());
-            if (amount <= 0) { // Amount must be greater than 0
-                statusLabel.setStyle("-fx-text-fill: red;");
-                statusLabel.setText("Amount must be greater than 0");
-                return;
+            double amount = Double.parseDouble(amountField.getText());
+            if (amount <= 0) {
+                showAlert("Amount must be greater than 0.", Alert.AlertType.ERROR);
+                return false;
             }
         } catch (NumberFormatException e) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Please enter a valid amount");
-            return;
+            showAlert("Please enter a valid amount.", Alert.AlertType.ERROR);
+            return false;
         }
+        return true;
+    }
 
-        // Get the user selection for the category (from the ComboBox)
-        Category selectedCategory = Category.valueOf(categoryCombo.getValue());
-        if (selectedCategory == null) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Please select a category");
-            return;
+    private Category getSelectedCategory() {
+        try {
+            return Category.valueOf(categoryCombo.getValue());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            showAlert("Please select a category.", Alert.AlertType.ERROR);
+            return null;
         }
+    }
 
-        // Calculate the refund amount here before the Invoice object is created
+    private boolean validateFileSelection() {
+        if (selectedFile == null) {
+            showAlert("Please select a file to upload.", Alert.AlertType.ERROR);
+            return false;
+        }
+        return true;
+    }
+
+    private String uploadFile() {
+        try {
+            String fileUrl = DatabaseConnection.uploadFileToBucket(selectedFile);
+            if (fileUrl == null) {
+                showAlert("File upload failed.", Alert.AlertType.ERROR);
+            }
+            return fileUrl;
+        } catch (IOException e) {
+            showAlert("Error uploading file: " + e.getMessage(), Alert.AlertType.ERROR);
+            return null;
+        }
+    }
+
+    private Invoice createInvoice(String userEmail, LocalDate selectedDate, Category selectedCategory, String fileUrl) {
+        double amount = Double.parseDouble(amountField.getText());
         double reimbursement = selectedCategory.getRefundAmount();
         if (amount < reimbursement) {
-            reimbursement = amount;  // If the amount is less than the refund amount, set the amount as refund
+            reimbursement = amount;
         }
 
-        // Set the status to a default value
-        Status selectedStatus = Status.PROCESSING;  // Default value for the status - must be overwritten later (admin)
-
-        // Check whether a file has been selected
-        if (selectedFile == null) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Please select a file to upload");
-            return;
-        }
-
-        // Upload image and get the URL
-        String fileUrl = null;
-        try {
-            fileUrl = DatabaseConnection.uploadFileToBucket(selectedFile);
-            if (fileUrl == null) {
-                statusLabel.setStyle("-fx-text-fill: red;");
-                statusLabel.setText("File upload failed");
-                return;
-            }
-        } catch (IOException e) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Error uploading file: " + e.getMessage());
-            return;
-        }
-
-        // Create an instance of the Invoice class with the user input
-        Invoice invoice = new Invoice(userEmail, selectedDate, amount, selectedCategory, selectedStatus, "", LocalDateTime.now(), reimbursement);
-
-        // Update the Invoice object with the uploaded file URL
+        Invoice invoice = new Invoice(
+                userEmail,
+                selectedDate,
+                amount,
+                selectedCategory,
+                Status.PROCESSING,
+                "",
+                LocalDateTime.now(),
+                reimbursement
+        );
         invoice.setFileUrl(fileUrl);
+        return invoice;
+    }
 
-        // Save the invoice in the database
+    private void saveInvoice(Invoice invoice, String fileUrl, LocalDate selectedDate) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             InvoiceRepository.saveInvoiceInfo(
                     connection,
-                    userEmail,  // Dynamic e-mail of the user
-                    java.sql.Date.valueOf(selectedDate),
-                    amount,
-                    selectedCategory,  // User-defined category
-                    selectedStatus,  // default status
+                    invoice.getUserEmail(),
+                    java.sql.Date.valueOf(invoice.getDate()),
+                    invoice.getAmount(),
+                    invoice.getCategory(),
+                    invoice.getStatus(),
                     fileUrl,
-                    LocalDateTime.now(),
-                    reimbursement,
-                    selectedFile  // uploaded image
+                    invoice.getCreatedAt(),
+                    invoice.getReimbursement(),
+                    selectedFile
             );
-            uploadedDates.add(selectedDate);  // Add the date to the list to prevent multiple uploads
-            statusLabel.setStyle("-fx-text-fill: green;");
-            statusLabel.setText("Invoice and file uploaded successfully.");
-
+            uploadedDates.add(selectedDate);
+            showAlert("Invoice and file uploaded successfully.", Alert.AlertType.INFORMATION);
             resetForm();
         } catch (SQLException e) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Error saving invoice to database: " + e.getMessage());
+            showAlert("Error saving invoice to database: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
-    // Zurücksetzen des Formulars
+    private void showAlert(String message, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(alertType == Alert.AlertType.ERROR ? "Error" : "Success");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     private void resetForm() {
-        datePicker.setValue(null);  // Reset the date
-        amountField.clear();        // delete the image
-        categoryCombo.getSelectionModel().clearSelection();  // Reset the category
-        selectedFile = null;        // reset the image
+        datePicker.setValue(null);
+        amountField.clear();
+        categoryCombo.getSelectionModel().clearSelection();
+        selectedFile = null;
+        if (removeImageBtn != null) {
+            removeImageBtn.setDisable(true);
+        }
+        if (uploadButton != null) {
+            uploadButton.setDisable(false); // wieder aktivieren, falls du Upload-Button deaktivierst
+        }
     }
 
-    public void setDatePicker(DatePicker datePicker) {
-        this.datePicker = datePicker;
-    }
+    public void setSelectedFile(Object o) {
 
-    public void setAmountField(TextField amountField) {
-        this.amountField = amountField;
-    }
-
-    public void setCategoryCombo(ComboBox<String> categoryCombo) {
-        this.categoryCombo = categoryCombo;
-    }
-
-    public void setSelectedFile(File file) {
-        this.selectedFile = file;
-    }
-
-    public Label getStatusLabel() {
-        return statusLabel;
-    }
-
-    public void setStatusLabel(Label label) {
-        this.statusLabel = label;
     }
 }
