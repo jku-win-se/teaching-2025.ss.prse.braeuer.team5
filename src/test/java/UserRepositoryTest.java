@@ -48,34 +48,34 @@ public class UserRepositoryTest {
 
         User testUser = new User("Karl Test", "karl.test@lunchify.com", "test123", false);
 
-        userRepository.addUser(testUser);  // add testuser to db
+        UserRepository.addUser(testUser);  // add testuser to db
 
-        User userFromDb = userRepository.findByEmailAndPassword("karl.test@lunchify.com", "test123");
+        User userFromDb = UserRepository.findByEmailAndPassword("karl.test@lunchify.com", "test123");
         assertNotNull(userFromDb);  // check if User exists
         assertEquals(testUser.getEmail(), userFromDb.getEmail());  //check if email of testuser and userfromdb is equal
 
     }
 
     //test Admin deleteUser
-   /* @Test
+   @Test
     void testDeleteUser() {
 
         User deleteUser = new User("Karl Löschen", "karl.löschen@lunchify.com", "test123", false);
 
-        userRepository.addUser(deleteUser);  // add testuser to db
+        UserRepository.addUser(deleteUser);  // add testuser to db
 
-        User userFromDb = userRepository.findByEmailAndPassword("karl.löschen@lunchify.com", "test123");
+        User userFromDb = UserRepository.findByEmailAndPassword("karl.löschen@lunchify.com", "test123");
         assertNotNull(userFromDb, "User should exist before deletion");
 
         // Try to delete the user and assert success.
-        boolean deleteSuccess = userRepository.deleteUser(deleteUser.getEmail());  // Use only email
+        boolean deleteSuccess = UserRepository.deleteUser(deleteUser.getEmail());  // Use only email
         assertTrue(deleteSuccess, "User should be deleted successfully");
 
         // Ensure the user is deleted by trying to retrieve the user again.
-        userFromDb = userRepository.findByEmailAndPassword("karl.löschen@lunchify.com", "test123");
+        userFromDb = UserRepository.findByEmailAndPassword("karl.löschen@lunchify.com", "test123");
         assertNull(userFromDb, "User should not exist after deletion");
     }
 
-    */
+
 }
 
