@@ -158,10 +158,10 @@ public class Invoice {
         this.status = Status.PROCESSING; //if the invoice is corrected so it is again in the process
     }
     //we need if the admin wants to select the invoice, he can then select the invoice by date using the email
+    @Override
     public String toString() {
-        return date.toString();
+        return String.format("%s - %.2f €", date, amount);
     }
-
     public boolean isEditable() {
         if (createdAt == null) {
             return false;

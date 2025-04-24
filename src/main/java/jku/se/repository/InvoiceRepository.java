@@ -186,6 +186,7 @@ public class InvoiceRepository {
 
             stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
 
+            stmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error updating invoice amount: " + e.getMessage());
         }
@@ -233,6 +234,7 @@ public class InvoiceRepository {
 
             stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
 
+            stmt.executeUpdate();
             } catch (SQLException e) {
             System.err.println("Error updating invoice amount: " + e.getMessage());
         }
@@ -286,4 +288,44 @@ public class InvoiceRepository {
                 new File(invoice.getFile_Url())
         );
     }
+
+    public static List<Invoice> getDeclinedInvoicesCurrentMonth(String userEmail) {
+        List<Invoice> declinedInvoices = new ArrayList<>();
+        LocalDate now = LocalDate.now();
+
+        String query = "SELECT * FROM invoice WHERE user_email = ? AND status = 'DECLINED'";
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+
+            stmt.setString(1, userEmail);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Invoice invoice = createInvoiceFromResultSet(rs);
+
+                    // Filtere auf aktuellen Monat
+                    if (invoice.getDate().getMonth() == now.getMonth() &&
+                            invoice.getDate().getYear() == now.getYear()) {
+                        declinedInvoices.add(invoice);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error loading declined invoices: " + e.getMessage());
+        }
+
+        return declinedInvoices;
+    }
+
+
+    public static void updateInvoice(Invoice invoice) {
+        updateInvoiceAmount(invoice);
+        updateInvoiceDate(invoice);
+        updateInvoiceCategory(invoice);
+        updateInvoiceStatus(invoice);
+        updateInvoiceReimbursement(invoice); // Optional – falls Erstattung neu berechnet wurde
+    }
+
 }

@@ -6,23 +6,26 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import jku.se.Category;
 import jku.se.Invoice;
 import jku.se.Status;
 import jku.se.repository.InvoiceRepository;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
 public class UserDashboardController {
+    @FXML
+    private TableView<Invoice> invoiceTable;
 
     @FXML
-    private static TableView<Invoice> invoiceTable;
+    private Button toggleTableSize;
 
     @FXML
     private TableColumn<Invoice, String> submissionDateColumn;
@@ -40,10 +43,13 @@ public class UserDashboardController {
     private TableColumn<Invoice, Double> reimbursementColumn;
 
     private static String currentUserEmail;
+    private boolean isTableExpanded = false;
+    private final double COLLAPSED_HEIGHT = 138.0;
+    private final double EXPANDED_HEIGHT = 400.0;
 
     // Setter-Methode
-    public static void setCurrentUserEmail(String email) {
-        currentUserEmail = email;
+    public void setCurrentUserEmail(String email) {
+        this.currentUserEmail = email;
         loadInvoices();
     }
     public static String getCurrentUserEmail() {
@@ -63,7 +69,7 @@ public class UserDashboardController {
         loadInvoices();
     }
 
-    private static void loadInvoices() {
+    private void loadInvoices() {
         if (invoiceTable == null) {
             System.err.println("invoiceTable is null! Check whether the fx:id is set correctly in the FXML file.");
             return;  // Prevent the method from being executed further if the TableView is null
@@ -72,6 +78,30 @@ public class UserDashboardController {
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser(currentUserEmail);
         invoiceTable.getItems().setAll(invoices);
     }
+
+
+    @FXML
+    private void toggleTableSize(ActionEvent event) {
+        try {
+            isTableExpanded = !isTableExpanded;
+            String arrow = isTableExpanded ? "▼" : "▲";
+
+            // Lösung 1: Direkter Zugriff
+            toggleTableSize.setText(arrow);
+
+            // ODER Lösung 2: Mit Null-Check
+            if (toggleTableSize != null) {
+                toggleTableSize.setText(arrow);
+            }
+
+            // Höhenanpassung wie zuvor
+            invoiceTable.setPrefHeight(isTableExpanded ? EXPANDED_HEIGHT : COLLAPSED_HEIGHT);
+
+        } catch (Exception e) {
+            System.err.println("Fehler beim Button-Update: " + e.getMessage());
+        }
+    }
+
     @FXML
     private void handleEditInvoiceUser(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/EditInvoice.fxml"));
@@ -101,7 +131,4 @@ public class UserDashboardController {
         stage.setScene(scene);
         stage.show();
     }
-
-
-
 }
