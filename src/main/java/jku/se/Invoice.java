@@ -148,11 +148,6 @@ public class Invoice {
         return createdAt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
-    //we need if the admin wants to select the invoice, he can then select the invoice by date using the email
-    public String toString() {
-        return date.toString();
-    }
-
     //using these methods, the admins can approve the individual invoices, etc.
     public void approve() {
         this.status = Status.APPROVED;
