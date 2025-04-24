@@ -99,10 +99,11 @@ public class AdminInvoiceManagementController {
                 selectedInvoice.setDate(newDate);
                 selectedInvoice.setStatus(Status.PROCESSING);  // after update invoice details set status to processing
 
+                // Update the database with the modified invoice details
                 InvoiceRepository.updateInvoiceAmount(selectedInvoice);
                 InvoiceRepository.updateInvoiceReimbursement(selectedInvoice);
                 InvoiceRepository.updateInvoiceCategory(selectedInvoice);
-                InvoiceRepository.updateInvoiceDate(selectedInvoice);
+                InvoiceRepository.updateInvoiceDate(selectedInvoice); // Ensure this method accepts the Invoice object correctly
                 InvoiceRepository.updateInvoiceStatus(selectedInvoice);
 
                 statusLabel.setText("Invoice updated successfully.");
@@ -113,6 +114,7 @@ public class AdminInvoiceManagementController {
             }
         }
     }
+
     //accept invoice update db
     @FXML
     private void handleAcceptInvoice(ActionEvent event) {
