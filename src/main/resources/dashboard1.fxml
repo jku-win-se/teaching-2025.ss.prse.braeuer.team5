@@ -6,14 +6,13 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jku.se.Controller.UserDashboardController">
 
     <top>
-        <TextField editable="false" prefHeight="73.0" prefWidth="600.0" style="-fx-background-color:lightblue;" text="Dashboard" BorderPane.alignment="CENTER">
+        <TextField prefHeight="73.0" prefWidth="600.0" style="-fx-background-color:lightblue;" text="Dashboard" BorderPane.alignment="CENTER">
             <font>
                 <Font name="System Bold" size="18.0" />
             </font>
@@ -27,17 +26,13 @@
                 <Button accessibleRole="IMAGE_VIEW" mnemonicParsing="false" onAction="#handleEditInvoiceUser" prefHeight="46.0" prefWidth="100.0" text="Edit invoice" textAlignment="CENTER" wrapText="true" />
                 <Button accessibleRole="IMAGE_VIEW" mnemonicParsing="false" onAction="#handleUploadInvoice" prefHeight="46.0" prefWidth="100.0" text="Upload invoice" textAlignment="CENTER" wrapText="true" />
                 <Button fx:id="logoutUser" accessibleRole="IMAGE_VIEW" mnemonicParsing="false" onAction="#handleLogoutUser" prefHeight="46.0" prefWidth="100.0" text="Logout" textAlignment="CENTER" wrapText="true" />
-                <Button fx:id="toggleTableSize" onAction="#toggleTableSize" prefHeight="25.0" prefWidth="99.0" style="-fx-font-weight: bold; -fx-min-width: 30;" text="↕" />
             </children>
         </VBox>
     </left>
 
     <center>
         <VBox alignment="CENTER" spacing="10">
-            <HBox alignment="CENTER_RIGHT" />
-         <PieChart prefHeight="139.0" prefWidth="500.0" />
          <PieChart fx:id="PieChartDistribution" prefHeight="200.0" prefWidth="300.0" />
-
             <TableView fx:id="invoiceTable" prefHeight="138.0" prefWidth="406.0" BorderPane.alignment="CENTER">
                 <columns>
                     <TableColumn fx:id="submissionDateColumn" prefWidth="120.0" text="Submission date" />
