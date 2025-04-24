@@ -164,66 +164,49 @@ public class InvoiceRepository {
     }
 
     //change invoice date
-    public static void updateInvoiceDate(Invoice invoice, LocalDate oldDate) {
-
+    public static void updateInvoiceDate(Invoice invoice, LocalDate oldDate) throws SQLException {
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(UPDATE_DATE)) {
             stmt.setDate(1, Date.valueOf(invoice.getDate()));
             stmt.setString(2, invoice.getUserEmail());
-            stmt.setDate(3, java.sql.Date.valueOf(oldDate));
+            stmt.setDate(3, Date.valueOf(oldDate));
             stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error updating invoice date: " + e.getMessage());
         }
     }
     //change invoice amount
-    public static void updateInvoiceAmount(Invoice invoice) {
+    public static void updateInvoiceAmount(Invoice invoice) throws SQLException {
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(UPDATE_AMOUNT)) {
-
             stmt.setDouble(1, invoice.getAmount());
-
             stmt.setString(2, invoice.getUserEmail());
-
-            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+            stmt.setDate(3, Date.valueOf(invoice.getDate()));
             stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error updating invoice amount: " + e.getMessage());
         }
     }
 
     //change invoice status
-    public static void updateInvoiceStatus(Invoice invoice) {
-
+    public static void updateInvoiceStatus(Invoice invoice) throws SQLException {
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(UPDATE_STATUS)) {
-
             stmt.setString(1, invoice.getStatus().name());
             stmt.setString(2, invoice.getUserEmail());
-            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+            stmt.setDate(3, Date.valueOf(invoice.getDate()));
             stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error updating invoice status: " + e.getMessage());
         }
     }
 
     //change invoice category
-    public static void updateInvoiceCategory(Invoice invoice) {
-
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(UPDATE_CATEGORY)) {
-
+    public static void updateInvoiceCategory(Invoice invoice) throws SQLException {
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(UPDATE_CATEGORY)) {
             stmt.setString(1, invoice.getCategory().name());
             stmt.setString(2, invoice.getUserEmail());
-            stmt.setDate(3, java.sql.Date.valueOf(invoice.getDate()));
+            stmt.setDate(3, Date.valueOf(invoice.getDate()));
             stmt.executeUpdate();
-
-        } catch (SQLException e) {
-            System.err.println("Error updating invoice category: " + e.getMessage());
         }
     }
-   //change reimbursement
+
+    //change reimbursement
     public static void updateInvoiceReimbursement(Invoice invoice) {
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(UPDATE_REIMBURSEMENT)) {
