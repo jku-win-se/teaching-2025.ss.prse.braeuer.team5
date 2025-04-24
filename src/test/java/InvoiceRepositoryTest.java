@@ -36,10 +36,32 @@ public class InvoiceRepositoryTest {
         UserRepository.addUser(testuser1);
         User testuser2 = new User("testuser2", "testuser2@lunchify.com", "test123", false);
         UserRepository.addUser(testuser2);
-        // add test invoices to db
-        insertTestInvoice("testuser1@lunchify.com", LocalDate.of(2025, 3, 11), 23.99, Category.RESTAURANT, Status.PROCESSING, "https://example.com/file.pdf", LocalDateTime.now(), 3);
-        insertTestInvoice("testuser2@lunchify.com", LocalDate.of(2025, 4, 2), 30.00, Category.SUPERMARKET, Status.PROCESSING, "https://example.com/file.pdf2", LocalDateTime.now(), 2.5);
-        insertTestInvoice("testuser2@lunchify.com", LocalDate.of(2025, 4, 22), 2.50, Category.SUPERMARKET, Status.APPROVED, "https://example.com/file.pdf2", LocalDateTime.now(), 2.5);
+        // Create invoice instances to calculate refund amounts
+        Invoice firstInvoice = new Invoice("testuser1@lunchify.com", LocalDate.of(2025, 3, 11),
+                23.99, Category.RESTAURANT, Status.PROCESSING, "https://example.com/file.pdf",
+                LocalDateTime.now(), Category.RESTAURANT.getRefundAmount());
+
+        Invoice secondInvoice = new Invoice("testuser2@lunchify.com", LocalDate.of(2025, 4, 2),
+                30.00, Category.SUPERMARKET, Status.PROCESSING, "https://example.com/file.pdf2",
+                LocalDateTime.now(), Category.SUPERMARKET.getRefundAmount());
+
+        Invoice thirdInvoice = new Invoice("testuser2@lunchify.com", LocalDate.of(2025, 4, 22),
+                2.50, Category.SUPERMARKET, Status.APPROVED, "https://example.com/file.pdf2",
+                LocalDateTime.now(), Category.SUPERMARKET.getRefundAmount());
+
+        // Add test invoices to DB
+        insertTestInvoice(firstInvoice.getUserEmail(), firstInvoice.getDate(), firstInvoice.getAmount(),
+                firstInvoice.getCategory(), firstInvoice.getStatus(), firstInvoice.getFile_Url(),
+                firstInvoice.getCreatedAt(), firstInvoice.calculateRefund());
+
+        insertTestInvoice(secondInvoice.getUserEmail(), secondInvoice.getDate(), secondInvoice.getAmount(),
+                secondInvoice.getCategory(), secondInvoice.getStatus(), secondInvoice.getFile_Url(),
+                secondInvoice.getCreatedAt(), secondInvoice.calculateRefund());
+
+        insertTestInvoice(thirdInvoice.getUserEmail(), thirdInvoice.getDate(), thirdInvoice.getAmount(),
+                thirdInvoice.getCategory(), thirdInvoice.getStatus(), thirdInvoice.getFile_Url(),
+                thirdInvoice.getCreatedAt(), thirdInvoice.calculateRefund());
+
     }
 
     @AfterEach
@@ -70,7 +92,7 @@ public class InvoiceRepositoryTest {
     void testGetAllInvoicesAdmin() {
 
 
-        List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
+        List<Invoice> invoices = invoiceRepository.getAllInvoicesAdmin();
 
         assertNotNull(invoices, "Invoices list should not be null");
         assertTrue(invoices.size() >= 3, "There should be at least three invoices in total.");
@@ -88,7 +110,7 @@ public class InvoiceRepositoryTest {
 
         Invoice thirdInvoice = invoices.stream()
                 .filter(i -> i.getUserEmail().equals("testuser2@lunchify.com"))
-                .skip(1)  // Zweite Rechnung für testuser2
+                .skip(1)
                 .findFirst()
                 .orElse(null);
 
@@ -99,7 +121,7 @@ public class InvoiceRepositoryTest {
         assertEquals(Category.RESTAURANT, firstInvoice.getCategory());
         assertEquals(Status.PROCESSING.name(), firstInvoice.getStatusString());
         assertEquals("https://example.com/file.pdf", firstInvoice.getFile_Url());
-        assertEquals(3, firstInvoice.getCategory().getRefundAmount());
+        assertEquals(firstInvoice.getCategory().getRefundAmount(), firstInvoice.getReimbursement(), 0.01);
 
         assertNotNull(secondInvoice, "The second invoice should exist.");
         assertEquals(LocalDate.of(2025, 4, 2), secondInvoice.getDate());
@@ -107,7 +129,7 @@ public class InvoiceRepositoryTest {
         assertEquals(Category.SUPERMARKET, secondInvoice.getCategory());
         assertEquals(Status.PROCESSING.name(), secondInvoice.getStatusString());
         assertEquals("https://example.com/file.pdf2", secondInvoice.getFile_Url());
-        assertEquals(2.5, secondInvoice.getCategory().getRefundAmount());
+        assertEquals(secondInvoice.getCategory().getRefundAmount(), secondInvoice.getReimbursement(), 0.01);
 
         assertNotNull(thirdInvoice, "The third invoice should exist.");
         assertEquals(LocalDate.of(2025, 4, 22), thirdInvoice.getDate());
@@ -115,7 +137,7 @@ public class InvoiceRepositoryTest {
         assertEquals(Category.SUPERMARKET, thirdInvoice.getCategory());
         assertEquals(Status.APPROVED.name(), thirdInvoice.getStatusString());
         assertEquals("https://example.com/file.pdf2", thirdInvoice.getFile_Url());
-        assertEquals(2.50, thirdInvoice.getCategory().getRefundAmount());
+        assertEquals(thirdInvoice.getCategory().getRefundAmount(), thirdInvoice.getReimbursement(), 0.01);
     }
 
     //ai

@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
@@ -20,56 +14,38 @@
                 <Font name="System Bold" size="18.0" />
             </font>
         </TextField>
-        <SplitPane dividerPositions="0.29797979797979796" layoutX="-4.0" layoutY="78.0" prefHeight="271.0" prefWidth="600.0">
-            <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="269.0" prefWidth="192.0">
-                    <children>
-                        <Text layoutX="14.0" layoutY="19.0" text="Select statistic:" />
-
-                        <RadioButton fx:id="InvoicesRadioButton" layoutX="16.0" layoutY="29.0" mnemonicParsing="false" onAction="#statisticNumberInvoicesPerMonth" prefHeight="40.0" prefWidth="153.0" text="Number of invoices per month" wrapText="true">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="statisticsToggleGroup" />
-                     </toggleGroup></RadioButton>
-
-                        <RadioButton fx:id="distributionRadioButton" layoutX="16.0" layoutY="69.0" mnemonicParsing="false" onAction="#statisticDistributionRestaurantSupermarket" prefHeight="40.0" prefWidth="153.0" text="Distribution restaurant or supermarket" toggleGroup="$statisticsToggleGroup" wrapText="true" />
-
-                        <RadioButton fx:id="reimbursementRadioButton" layoutX="16.0" layoutY="109.0" mnemonicParsing="false" onAction="#statisticReimbursementPerMonth" prefHeight="34.0" prefWidth="153.0" text="Reimbursement per month" toggleGroup="$statisticsToggleGroup" wrapText="true" />
-
-                        <Text layoutX="12.0" layoutY="172.0" text="Average number of invoices per user per month:" wrappingWidth="164.529296875" />
-                        <Text fx:id="TextFieldAverageInvoices" layoutX="19.0" layoutY="206.0">
-                            <font>
-                                <Font name="System Bold" size="12.0" />
-                            </font>
-                        </Text>
-
-                        <Text layoutX="11.0" layoutY="232.0" text="Total refund (last 12 months):" />
-                        <Text fx:id="TextFieldTotalRefund" layoutX="19.0" layoutY="249.0">
-                            <font>
-                                <Font name="System Bold" size="12.0" />
-                            </font>
-                        </Text>
-                    </children>
-                </AnchorPane>
-
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                    <children>
-                        <BarChart fx:id="barChart" layoutY="-3.0" prefHeight="271.0" prefWidth="401.0">
-                            <xAxis>
-                                <CategoryAxis side="BOTTOM" />
-                            </xAxis>
-                            <yAxis>
-                                <NumberAxis side="LEFT" />
-                            </yAxis>
-                        </BarChart>
-                    </children>
-                </AnchorPane>
-            </items>
-        </SplitPane>
 
         <ComboBox fx:id="saveFormatComboBox" layoutX="85.0" layoutY="361.0" prefWidth="143.0" />
         <Text layoutX="29.0" layoutY="378.0" text="Save as:" />
 
         <Button layoutX="246.0" layoutY="361.0" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Save" />
         <Button layoutX="496.0" layoutY="361.0" onAction="#cancelStatistics" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Exit" />
+      <Text layoutX="401.0" layoutY="137.0" text="Average number of invoices per user per month:" wrappingWidth="164.529296875">
+         <font>
+            <Font size="13.0" />
+         </font></Text>
+      <Text fx:id="TextFieldAverageInvoices" layoutX="400.0" layoutY="193.0" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Text>
+      <Text layoutX="401.0" layoutY="255.0" text="Total refund (last 12 months):" />
+      <Text fx:id="TextFieldTotalRefund" layoutX="401.0" layoutY="293.0">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Text>
+
+        <!-- Selection Buttons -->
+        <Button layoutX="85.0" layoutY="146.0" mnemonicParsing="false" onAction="#statisticNumberInvoicesPerMonth" style="-fx-background-color: lightblue; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10px 20px; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0, 0, 2);" text="Number of invoices per month" />
+
+        <Button layoutX="85.0" layoutY="188.0" mnemonicParsing="false" onAction="#statisticDistributionRestaurantSupermarket" style="-fx-background-color: lightblue; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10px 20px; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0, 0, 2);" text="Distribution restaurant or supermarket" />
+
+        <Button layoutX="85.0" layoutY="230.0" mnemonicParsing="false" onAction="#statisticReimbursementPerMonth" style="-fx-background-color: lightblue; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10px 20px; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0, 0, 2);" text="Reimbursement per month" />
+
+        <Text layoutX="85.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Open statistic:">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Text>
     </children>
 </AnchorPane>
