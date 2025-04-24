@@ -164,12 +164,13 @@ public class InvoiceRepository {
     }
 
     //change invoice date
-    public static void updateInvoiceDate(Invoice invoice) {
+    public static void updateInvoiceDate(Invoice invoice, LocalDate oldDate) {
 
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(UPDATE_DATE)) {
             stmt.setDate(1, Date.valueOf(invoice.getDate()));
             stmt.setString(2, invoice.getUserEmail());
+            stmt.setDate(3, java.sql.Date.valueOf(oldDate));
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error updating invoice date: " + e.getMessage());

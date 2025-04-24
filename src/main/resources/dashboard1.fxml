@@ -36,6 +36,8 @@
         <VBox alignment="CENTER" spacing="10">
             <HBox alignment="CENTER_RIGHT" />
          <PieChart prefHeight="139.0" prefWidth="500.0" />
+         <PieChart fx:id="PieChartDistribution" prefHeight="200.0" prefWidth="300.0" />
+
             <TableView fx:id="invoiceTable" prefHeight="138.0" prefWidth="406.0" BorderPane.alignment="CENTER">
                 <columns>
                     <TableColumn fx:id="submissionDateColumn" prefWidth="120.0" text="Submission date" />

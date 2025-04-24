@@ -1,11 +1,16 @@
 package jku.se.Controller;
 
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -13,12 +18,14 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import jku.se.Category;
 import jku.se.Invoice;
+import jku.se.Statistics;
 import jku.se.Status;
 import jku.se.repository.InvoiceRepository;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class UserDashboardController {
     @FXML
@@ -47,10 +54,16 @@ public class UserDashboardController {
     private final double COLLAPSED_HEIGHT = 138.0;
     private final double EXPANDED_HEIGHT = 400.0;
 
+    @FXML
+    private PieChart PieChartDistribution;
+
+    private final Statistics statistics = new Statistics();
+
     // Setter-Methode
     public void setCurrentUserEmail(String email) {
         this.currentUserEmail = email;
         loadInvoices();
+        loadPieChart();
     }
     public static String getCurrentUserEmail() {
         return currentUserEmail;
@@ -60,13 +73,14 @@ public class UserDashboardController {
     @FXML
     private void initialize() {
         // Connect columns with the invoice attributes
-        submissionDateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+        submissionDateColumn.setCellValueFactory(new PropertyValueFactory<>("CreatedAtString"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("categoryString"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("statusString"));
         reimbursementColumn.setCellValueFactory(new PropertyValueFactory<>("reimbursement"));
 
         loadInvoices();
+        loadPieChart();
     }
 
     private void loadInvoices() {
@@ -78,7 +92,6 @@ public class UserDashboardController {
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser(currentUserEmail);
         invoiceTable.getItems().setAll(invoices);
     }
-
 
     @FXML
     private void toggleTableSize(ActionEvent event) {
@@ -100,6 +113,39 @@ public class UserDashboardController {
         } catch (Exception e) {
             System.err.println("Fehler beim Button-Update: " + e.getMessage());
         }
+    }
+
+    //load pie chart with distribution of invoices from restaurant or supermarket
+    private void loadPieChart(){
+
+        int supermarketCount = statistics.getInvoicesPerSupermaketUser(currentUserEmail);
+        int restaurantCount = statistics.getInvoicesPerRestaurantUser(currentUserEmail);
+
+        PieChart.Data supermarketData = new PieChart.Data("Supermarket (" + supermarketCount + ")", supermarketCount);
+        PieChart.Data restaurantData = new PieChart.Data("Restaurant (" + restaurantCount + ")", restaurantCount);
+
+        PieChartDistribution.setData(FXCollections.observableArrayList(
+                supermarketData,
+                restaurantData
+        ));
+
+
+        Platform.runLater(() -> {
+            supermarketData.getNode().setStyle("-fx-pie-color: lightblue;");
+            restaurantData.getNode().setStyle("-fx-pie-color: grey;");
+
+
+            for (Node node : PieChartDistribution.lookupAll(".chart-legend-item")) {
+                if (node instanceof Label label) {
+                    String text = label.getText();
+                    if (text.contains("Supermarket")) {
+                        label.getGraphic().setStyle("-fx-background-color: lightblue;");
+                    } else if (text.contains("Restaurant")) {
+                        label.getGraphic().setStyle("-fx-background-color: grey;");
+                    }
+                }
+            }
+        });
     }
 
     @FXML
