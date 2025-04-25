@@ -291,7 +291,7 @@ public class InvoiceRepositoryTest {
     }
 
     @Test
-    void testUpdateInvoiceDate() {
+    void testUpdateInvoiceDate() throws SQLException {
         Invoice invoice = InvoiceRepository.getAllInvoicesAdmin().stream()
                 .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
                 .findFirst()
@@ -307,7 +307,7 @@ public class InvoiceRepositoryTest {
         }
 
         invoice.setDate(newDate);
-        InvoiceRepository.updateInvoiceDate(invoice, oldDate); // ← Wichtig
+        InvoiceRepository.updateInvoiceDate(invoice); // ← Wichtig
 
         Invoice updated = InvoiceRepository.getAllInvoicesAdmin().stream()
                 .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))

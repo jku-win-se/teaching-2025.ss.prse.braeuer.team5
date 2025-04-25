@@ -29,7 +29,7 @@ import java.util.Map;
 public class UserDashboardController {
 
     @FXML
-    private  TableView<Invoice> invoiceTable;
+    private TableView<Invoice> invoiceTable;
 
     @FXML
     private TableColumn<Invoice, String> submissionDateColumn;
@@ -55,7 +55,7 @@ public class UserDashboardController {
 
     // Setter-Methode
     public  void setCurrentUserEmail(String email) {
-        currentUserEmail = email;
+        this.currentUserEmail = email;
         loadInvoices();
         loadPieChart();
     }

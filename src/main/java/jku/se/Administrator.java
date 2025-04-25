@@ -3,6 +3,7 @@ package jku.se;
 import jku.se.repository.InvoiceRepository;
 import jku.se.repository.UserRepository;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -48,12 +49,12 @@ public class Administrator extends User{
 
 
     // using these methods, the admins can approve the individual invoices, etc.
-    public void approveInvoice(Invoice invoice) {
+    public void approveInvoice(Invoice invoice) throws SQLException {
         invoice.setStatus(Status.APPROVED); // Status setzen
         InvoiceRepository.updateInvoiceStatus(invoice); // Status in der Datenbank aktualisieren
     }
 
-    public void declinedInvoice(Invoice invoice) {
+    public void declinedInvoice(Invoice invoice) throws SQLException {
         invoice.setStatus(Status.DECLINED); // Status setzen
         InvoiceRepository.updateInvoiceStatus(invoice); // Status in der Datenbank aktualisieren
     }
