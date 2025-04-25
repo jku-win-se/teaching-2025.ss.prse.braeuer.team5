@@ -55,7 +55,7 @@ public class UserDashboardController {
 
     // Setter-Methode
     public  void setCurrentUserEmail(String email) {
-        currentUserEmail = email;
+        this.currentUserEmail = email;
         loadInvoices();
         loadPieChart();
     }

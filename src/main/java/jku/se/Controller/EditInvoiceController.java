@@ -26,98 +26,47 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EditInvoiceController {
-    private Invoice selectedInvoice;
+    private Invoice invoice;
 
     @FXML private ComboBox<Invoice> invoiceComboBox;
     @FXML private TextField amountField;
     @FXML private DatePicker datePicker;
     @FXML private ComboBox<String> categoryComboBox;
+    @FXML private Button changeButton;
 
     private static final String SELECT_REJECTED_CURRENT_MONTH =
             "SELECT * FROM invoice WHERE user_email = ? " +
                     "AND status = 'DECLINED' ";
 
     @FXML
-    public void initialize() {
-        System.out.println("Initializing EditInvoiceController...");
+    private void initialize() {
+        String userEmail = UserDashboardController.getCurrentUserEmail();
+        List<Invoice> declinedInvoices = InvoiceRepository.getDeclinedInvoicesCurrentMonth(userEmail);
 
-        try (Connection con = DatabaseConnection.getConnection()) {
-            System.out.println("Database connection established");
+        // ComboBox konfigurieren
+        configureComboBox(declinedInvoices);
 
-            String userEmail = UserDashboardController.getCurrentUserEmail();
-            System.out.println("Current user: " + userEmail);
-
-            if (userEmail == null || userEmail.isEmpty()) {
-                showAlert("Error", "No user logged in");
-                return;
-            }
-
-            // Test: Manuelle Datumsberechnung zur Überprüfung
-            LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
-            LocalDate firstDayNextMonth = firstDayOfMonth.plusMonths(1);
-            System.out.println("Date range for query: " + firstDayOfMonth + " to " + firstDayNextMonth);
-
-            try (PreparedStatement stmt = con.prepareStatement(SELECT_REJECTED_CURRENT_MONTH)) {
-                stmt.setString(1, userEmail);
-
-                // Debug: Ausgabe der tatsächlich ausgeführten Query
-                System.out.println("Executing query: " + stmt.toString());
-
-                ResultSet rs = stmt.executeQuery();
-                List<Invoice> rejectedInvoices = new ArrayList<>();
-
-                while (rs.next()) {
-                    LocalDate invoiceDate = rs.getDate("date").toLocalDate();
-                    System.out.println("Found invoice: " + invoiceDate + " | " + rs.getString("status"));
-
-                    rejectedInvoices.add(new Invoice(
-                            rs.getString("user_email"),
-                            invoiceDate,
-                            rs.getDouble("amount"),
-                            Category.valueOf(rs.getString("category")),
-                            Status.valueOf(rs.getString("status")),
-                            rs.getString("file_url"),
-                            rs.getTimestamp("created_at").toLocalDateTime(),
-                            rs.getDouble("reimbursement")
-                    ));
-                }
-
-                if (rejectedInvoices.isEmpty()) {
-                    System.out.println("No matching invoices found");
-                    showAlert("Info", "No rejected invoices found for current month");
-                    return;
-                }
-
-                // ComboBox befüllen
-                Platform.runLater(() -> {
-                    invoiceComboBox.setItems(FXCollections.observableArrayList(rejectedInvoices));
-                    invoiceComboBox.setConverter(new StringConverter<Invoice>() {
-                        @Override
-                        public String toString(Invoice invoice) {
-                            return invoice != null ?
-                                    String.format("%s | %.2f€ | %s",
-                                            invoice.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
-                                            invoice.getAmount(),
-                                            invoice.getCategory()) : "";
-                        }
-
-                        @Override
-                        public Invoice fromString(String string) {
-                            return null;
-                        }
-                    });
-                    System.out.println("ComboBox populated with " + rejectedInvoices.size() + " items");
-                });
-
-            } catch (SQLException e) {
-                System.err.println("Database error: " + e.getMessage());
-                e.printStackTrace();
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Connection failed: " + e.getMessage());
-            e.printStackTrace();
+        // Button-Text basierend auf der Anzahl der Rechnungen setzen
+        if (declinedInvoices.isEmpty()) {
+            invoiceComboBox.setPromptText("No declined invoices");
+        } else {
+            invoiceComboBox.setPromptText(declinedInvoices.size() + " declined invoice(s)");
         }
+
+        // Listener für Auswahl
+        invoiceComboBox.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldVal, newVal) -> {
+                    if (newVal != null) {
+                        fillFields(newVal);
+                    }
+                });
+    }
+
+    private void fillFields(Invoice invoice) {
+        this.invoice = invoice;
+        amountField.setText(String.valueOf(invoice.getAmount()));
+        datePicker.setValue(invoice.getDate());
+        categoryComboBox.setValue(invoice.getCategory().name());
     }
 
     private List<Invoice> loadInvoicesFromResultSet(ResultSet rs) throws SQLException {
@@ -141,11 +90,13 @@ public class EditInvoiceController {
         ObservableList<Invoice> observableList = FXCollections.observableArrayList(invoices);
         invoiceComboBox.setItems(observableList);
 
-        // Anzeigeformat für ComboBox
+        // Anzeigeformat für die Dropdown-Liste
         invoiceComboBox.setConverter(new StringConverter<Invoice>() {
             @Override
             public String toString(Invoice invoice) {
-                if (invoice == null) return "";
+                if (invoice == null) {
+                    return invoices.isEmpty() ? "No declined invoices" : invoices.size() + " declined invoice(s)";
+                }
                 return String.format("%s | %.2f€ | %s",
                         invoice.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
                         invoice.getAmount(),
@@ -162,7 +113,7 @@ public class EditInvoiceController {
         invoiceComboBox.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldVal, newVal) -> {
                     if (newVal != null) {
-                        selectedInvoice = newVal;
+                        invoice = newVal;
                         amountField.setText(String.format("%.2f", newVal.getAmount()));
                         datePicker.setValue(newVal.getDate());
                         categoryComboBox.setValue(newVal.getCategory().name());
@@ -172,8 +123,8 @@ public class EditInvoiceController {
 
     @FXML
     private void handleSaveChanges(ActionEvent event) {
-        if (selectedInvoice == null) {
-            showAlert("Error", "No invoice selected");
+        if (invoice == null) {
+            showAlert("Error", String.valueOf(Alert.AlertType.valueOf("No invoice selected")));
             return;
         }
 
@@ -181,20 +132,20 @@ public class EditInvoiceController {
             con.setAutoCommit(false);
 
             // Werte aktualisieren
-            selectedInvoice.setAmount(Double.parseDouble(amountField.getText()));
-            selectedInvoice.setDate(datePicker.getValue());
-            selectedInvoice.setCategory(Category.valueOf(categoryComboBox.getValue()));
-            selectedInvoice.setStatus(Status.PROCESSING); // Status ändern
+            invoice.setAmount(Double.parseDouble(amountField.getText()));
+            invoice.setDate(datePicker.getValue());
+            invoice.setCategory(Category.valueOf(categoryComboBox.getValue()));
+            invoice.setStatus(Status.PROCESSING); // Status ändern
 
             // Datenbank aktualisieren
-            updateInvoiceInDatabase(con, selectedInvoice);
+            updateInvoiceInDatabase(con, invoice);
 
             con.commit();
-            showAlert("Success", "Invoice updated successfully");
-            returnToDashboard(event);
+            showAlert("Success", String.valueOf(Alert.AlertType.valueOf("Invoice updated successfully")));
+            cancelEdit(event);
 
         } catch (Exception e) {
-            showAlert("Error", "Failed to update invoice: " + e.getMessage());
+            showAlert("Error", String.valueOf(Alert.AlertType.valueOf("Failed to update invoice: " + e.getMessage())));
             e.printStackTrace();
         }
     }
@@ -215,11 +166,7 @@ public class EditInvoiceController {
     }
 
     @FXML
-    private void cancelEdit(ActionEvent event) {
-        returnToDashboard(event);
-    }
-
-    private void returnToDashboard(ActionEvent event) {
+    private void cancelEdit(ActionEvent event) throws IOException {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard1.fxml"));
             Scene scene = new Scene(loader.load());
@@ -228,7 +175,7 @@ public class EditInvoiceController {
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
-            showAlert("Error", "Failed to return to dashboard: " + e.getMessage());
+            showAlert("Error", String.valueOf(Alert.AlertType.valueOf("Failed to return to dashboard: " + e.getMessage())));
         }
     }
 
@@ -238,5 +185,53 @@ public class EditInvoiceController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
+        Scene scene = new Scene(loader.load());
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    @FXML
+    private void handleResubmit(ActionEvent event) {
+        if (invoice == null) {
+            showAlert("Error", "No invoice selected");
+            return;
+        }
+
+        try {
+            // Update invoice with new values
+            invoice.setAmount(Double.parseDouble(amountField.getText()));
+            invoice.setDate(datePicker.getValue());
+            invoice.setCategory(Category.valueOf(categoryComboBox.getValue().toUpperCase()));
+            invoice.setStatus(Status.PROCESSING);
+
+            // Update in database
+            InvoiceRepository.updateInvoice(invoice);
+
+            // Show success message
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Resubmission successful");
+            alert.setHeaderText(null);
+            alert.setContentText("Your invoice has been resubmitted and will be reviewed again.");
+            alert.showAndWait();
+
+            // Return to dashboard
+            loadPage("dashboard1.fxml", event);
+
+        } catch (NumberFormatException e) {
+            showAlert("Error", "Invalid amount. Please enter a valid number.");
+        } catch (IllegalArgumentException e) {
+            showAlert("Error", "Invalid category selected.");
+        } catch (SQLException e) {
+            showAlert("Error", "Failed to update invoice in database.");
+            e.printStackTrace();
+        } catch (Exception e) {
+            showAlert("Error", "An unexpected error occurred.");
+            e.printStackTrace();
+        }
     }
 }

@@ -147,7 +147,7 @@ public class AdminInvoiceManagementController {
 
                 InvoiceRepository.updateInvoiceAmount(selectedInvoice);
                 InvoiceRepository.updateInvoiceCategory(selectedInvoice);
-                InvoiceRepository.updateInvoiceDate(selectedInvoice, oldDate);
+                InvoiceRepository.updateInvoiceDate(selectedInvoice);
                 InvoiceRepository.updateInvoiceStatus(selectedInvoice);
                 InvoiceRepository.updateInvoiceReimbursement(selectedInvoice);
                 statusLabel.setText("Invoice updated successfully.");
