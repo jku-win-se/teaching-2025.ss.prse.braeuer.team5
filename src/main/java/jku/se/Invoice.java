@@ -16,6 +16,10 @@ public class Invoice {
     private LocalDateTime createdAt;
     private double reimbursement; // The refund amount
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in Bytes
+    String ocrDate;
+    String ocrAmount;
+    String ocrCategory;
+    private boolean anomalyDetected;
 
     //Constructor
     public Invoice(String userEmail, LocalDate date, double amount, Category category, Status status, String file_Url, LocalDateTime createdAt, double reimbursement) {
@@ -188,6 +192,21 @@ public class Invoice {
     public boolean isValidAmount(double amount) {
         return amount >= 0 && amount <= 1000.0;
     }
+
+    public void setOcrData(String date, String amount, String category) {
+        this.ocrDate = date;
+        this.ocrAmount = amount;
+        this.ocrCategory = category;
+    }
+
+    public boolean isAnomalyDetected() {
+        return anomalyDetected;
+    }
+
+    public void setAnomalyDetected(boolean anomalyDetected) {
+        this.anomalyDetected = anomalyDetected;
+    }
+
 
 }
 
