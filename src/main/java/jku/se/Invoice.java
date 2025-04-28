@@ -207,7 +207,11 @@ public class Invoice {
         this.anomalyDetected = anomalyDetected;
     }
 
-
+    //for AdminInvoiceManagementController to get all invoices per date
+    @Override
+    public String toString() {
+        return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " | " + String.format("%.2f", amount) + "€" + " | " + getStatusString();
+    }
 }
 
 
