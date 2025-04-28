@@ -16,7 +16,7 @@ public class Statistics {
     //method für statistic invoices per month
     public Map<String, Integer> getInvoicesPerMonth() {
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
-        Map<Integer, Integer> countPerMonth = new TreeMap<>(); // 1=Januar, 2=Februar, usw.
+        Map<Integer, Integer> countPerMonth = new TreeMap<>();
 
         for (Invoice invoice : invoices) {
             int monthNumber = invoice.getDate().getMonthValue(); // 1–12
@@ -123,11 +123,9 @@ public class Statistics {
         int countSupermarket = 0;
 
         for(Invoice invoice : invoices){
-            System.out.println("Rechnung Kategorie: " + invoice.getCategory());
             if(invoice.getCategory().equals(Category.SUPERMARKET)){
                 countSupermarket++;
             }
-            System.out.println("Anzahl der abgerufenen Rechnungen: " + invoices.size());
         }
         return countSupermarket;
     }
@@ -137,11 +135,9 @@ public class Statistics {
         int countRestaurant = 0;
 
         for(Invoice invoice : invoices){
-            System.out.println("Rechnung Kategorie: " + invoice.getCategory());
             if(invoice.getCategory().equals(Category.RESTAURANT)){
                 countRestaurant++;
             }
-            System.out.println("Anzahl der abgerufenen Rechnungen: " + invoices.size());
         }
         return countRestaurant;
     }
