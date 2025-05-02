@@ -102,7 +102,6 @@
 
 ---
 
-> © 2025 Lunchify – Internes Projekt der [Firma eintragen]
 
 
 
