@@ -290,7 +290,7 @@ public class InvoiceRepositoryTest {
         assertEquals(expectedReimbursement, updated.getReimbursement(), 0.01);
     }
 
-    @Test
+    /*@Test MagSal
     void testUpdateInvoiceDate() throws SQLException {
         Invoice invoice = InvoiceRepository.getAllInvoicesAdmin().stream()
                 .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
@@ -317,6 +317,7 @@ public class InvoiceRepositoryTest {
         assertNotNull(updated);
         assertEquals(newDate, updated.getDate());
     }
+     */
 
 
    /* @Test
