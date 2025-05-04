@@ -65,12 +65,12 @@ public class CloudOCRService {
         );
     }
 
-    private String encodeImageToBase64(File imageFile) throws IOException {
+    public String encodeImageToBase64(File imageFile) throws IOException {
         byte[] imageBytes = new FileInputStream(imageFile).readAllBytes();
         return Base64.getEncoder().encodeToString(imageBytes);
     }
 
-    private String buildRequestJson(String base64Image) {
+    public String buildRequestJson(String base64Image) {
         return "{\n" +
                 "  \"requests\": [\n" +
                 "    {\n" +
@@ -87,7 +87,7 @@ public class CloudOCRService {
                 "}";
     }
 
-    private String extractTextFromJson(String json) {
+    public String extractTextFromJson(String json) {
         try {
             JsonObject root = JsonParser.parseString(json).getAsJsonObject();
             JsonArray responses = root.getAsJsonArray("responses");
@@ -107,7 +107,7 @@ public class CloudOCRService {
         return "";
     }
 
-    private String extractDate(String text) {
+    public String extractDate(String text) {
         Pattern[] patterns = {
                 Pattern.compile("\\b(\\d{2}[./-]\\d{2}[./-]\\d{4})\\b"),
                 Pattern.compile("\\b(\\d{4}[./-]\\d{2}[./-]\\d{2})\\b"),
@@ -124,7 +124,7 @@ public class CloudOCRService {
         return "Not found";
     }
 
-    private String extractAmount(String text) {
+    public String extractAmount(String text) {
         Pattern strongPattern = Pattern.compile(
                 "(Betrag|Amount|Total|Summe)[^0-9]{0,10}([0-9]+[.,][0-9]{2})",
                 Pattern.CASE_INSENSITIVE
@@ -151,7 +151,6 @@ public class CloudOCRService {
                     }
                 }
             } catch (NumberFormatException e) {
-                // Ignorieren
             }
         }
 
@@ -164,7 +163,7 @@ public class CloudOCRService {
 
 
 
-    private String detectCategory(String text) {
+    public String detectCategory(String text) {
         String lower = text.toLowerCase();
         if (lower.contains("restaurant") || lower.contains("pizzeria") || lower.contains("café") || lower.contains("gasthaus") || lower.contains("mensa")) {
             return "RESTAURANT";
