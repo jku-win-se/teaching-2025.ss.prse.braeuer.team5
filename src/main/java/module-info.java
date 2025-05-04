@@ -4,6 +4,7 @@ module Lunchify {
     requires java.sql;
     requires java.desktop;
     requires org.jfree.jfreechart;
+    requires com.google.gson;
 
 
     opens jku.se.Controller to javafx.fxml;

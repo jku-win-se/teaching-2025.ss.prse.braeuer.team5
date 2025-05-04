@@ -8,10 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import jku.se.Category;
-import jku.se.Invoice;
-import jku.se.Status;
-import jku.se.DatabaseConnection; // Importiere die DatabaseConnection-Klasse
+import jku.se.*;
 import jku.se.repository.InvoiceRepository;
 
 import java.io.File;
@@ -20,6 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,22 +64,43 @@ public class AddInvoiceController {
         if (selectedFile != null) {
             try {
                 Invoice.validateFile(selectedFile);
+
+                CloudOCRService ocrService = new CloudOCRService();
+                CloudOCRService.OCRResult ocrResult = ocrService.analyzeImage(selectedFile);
+
+                if (!"Not found".equals(ocrResult.date)) {
+                    try {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[dd.MM.yyyy][yyyy-MM-dd][dd/MM/yyyy]");
+                        LocalDate parsedDate = LocalDate.parse(ocrResult.date, formatter);
+                        datePicker.setValue(parsedDate);
+                    } catch (Exception ex) {
+                        System.out.println("Could not parse date: " + ocrResult.date);
+                    }
+                }
+
+                if (!"Not found".equals(ocrResult.amount)) {
+                    amountField.setText(ocrResult.amount.replace(",", ".").replace("€", "").trim());
+                }
+
+                if (!"OTHER".equals(ocrResult.category)) {
+                    categoryCombo.setValue(ocrResult.category);
+                }
+
                 statusLabel.setStyle("-fx-text-fill: green;");
-                statusLabel.setText(String.format(
-                        "✓ Selected: %s (%.2f MB)",
-                        selectedFile.getName(),
-                        selectedFile.length() / (1024.0 * 1024)
-                ));
-            } catch (IllegalArgumentException e) {
+                statusLabel.setText("OCR erfolgreich ausgefüllt! Bitte kontrollieren.");
+
+            } catch (Exception e) {
+                e.printStackTrace();
                 statusLabel.setStyle("-fx-text-fill: red;");
-                statusLabel.setText(e.getMessage());
-                selectedFile = null;
+                statusLabel.setText("Fehler beim Verarbeiten: " + e.getMessage());
             }
         }
     }
 
+
+
     @FXML
-    public void handleUpload(ActionEvent event) {
+    public void handleUpload(ActionEvent event) throws IOException {
         // Get user data (e-mail of the current user)
         String userEmail = UserDashboardController.getCurrentUserEmail();  // Fetches the e-mail of the logged-in user
 
@@ -211,6 +230,10 @@ public class AddInvoiceController {
             statusLabel.setStyle("-fx-text-fill: red;");
             statusLabel.setText("Error saving invoice to database: " + e.getMessage());
         }
+        AnomalyDetection anomalyDetection = new AnomalyDetection();
+        boolean anomaly = AnomalyDetection.detectMismatch(invoice);
+        invoice.setAnomalyDetected(anomaly);
+
     }
 
     // Zurücksetzen des Formulars
@@ -243,5 +266,19 @@ public class AddInvoiceController {
 
     public void setStatusLabel(Label label) {
         this.statusLabel = label;
+    }
+
+    private LocalDate parseDate(String dateString) {
+        try {
+            if (dateString.matches("\\d{2}-\\d{2}-\\d{4}")) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                return LocalDate.parse(dateString, formatter);
+            } else if (dateString.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                return LocalDate.parse(dateString);
+            }
+        } catch (Exception e) {
+            System.out.println("Fehler beim Parsen des Datums: " + dateString);
+        }
+        return null;
     }
 }

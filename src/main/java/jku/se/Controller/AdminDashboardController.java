@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -38,6 +39,9 @@ public class AdminDashboardController {
 
     @FXML
     private TableColumn<Invoice, Double> reimbursementColumn;
+    @FXML
+    private Button notificationButton;
+
 
     //fill table with invoices -ai
     @FXML
@@ -127,4 +131,15 @@ public class AdminDashboardController {
         stage.setScene(scene);
         stage.show();
     }
+
+    @FXML
+    private void handleNotifications(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/notifications.fxml"));
+        Scene scene = new Scene(loader.load());
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
 }

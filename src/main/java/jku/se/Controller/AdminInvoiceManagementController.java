@@ -147,7 +147,7 @@ public class AdminInvoiceManagementController {
 
                 InvoiceRepository.updateInvoiceAmount(selectedInvoice);
                 InvoiceRepository.updateInvoiceCategory(selectedInvoice);
-                InvoiceRepository.updateInvoiceDate(selectedInvoice, oldDate);
+                InvoiceRepository.updateInvoiceDate(selectedInvoice);
                 InvoiceRepository.updateInvoiceStatus(selectedInvoice);
                 InvoiceRepository.updateInvoiceReimbursement(selectedInvoice);
                 statusLabel.setText("Invoice updated successfully.");
@@ -167,7 +167,7 @@ public class AdminInvoiceManagementController {
     }
     //accept invoice update db
     @FXML
-    private void handleAcceptInvoice(ActionEvent event) {
+    private void handleAcceptInvoice(ActionEvent event) throws SQLException {
         Invoice selectedInvoice = selectInvoice.getValue();
 
         if (selectedInvoice != null) {
@@ -180,7 +180,7 @@ public class AdminInvoiceManagementController {
 
     //declined invoice update db
     @FXML
-    private void handleDeclinedInvoice(ActionEvent event) {
+    private void handleDeclinedInvoice(ActionEvent event) throws SQLException {
         Invoice selectedInvoice = selectInvoice.getValue();
 
         if (selectedInvoice != null) {

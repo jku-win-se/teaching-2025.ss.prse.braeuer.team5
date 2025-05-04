@@ -8,37 +8,48 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Statistics {
-    //überarbeiten
+
+    //ai
+    //method für statistic invoices per month
     public Map<String, Integer> getInvoicesPerMonth() {
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
-        Map<String, Integer> countPerMonth = new TreeMap<>();
+        Map<Integer, Integer> countPerMonth = new TreeMap<>();
 
         for (Invoice invoice : invoices) {
-            Month month = invoice.getDate().getMonth();
-            String monthName = month.toString(); // z.B. "JANUARY"
-            countPerMonth.put(monthName, countPerMonth.getOrDefault(monthName, 0) + 1);
+            int monthNumber = invoice.getDate().getMonthValue(); // 1–12
+            countPerMonth.put(monthNumber, countPerMonth.getOrDefault(monthNumber, 0) + 1);
+        }
+        Map<String, Integer> result = new LinkedHashMap<>();
+        for (Map.Entry<Integer, Integer> entry : countPerMonth.entrySet()) {
+            String monthName = getMonthName(entry.getKey());
+            result.put(monthName, entry.getValue());
         }
 
-        return countPerMonth;
+        return result;
     }
-    //überarbeiten
+
+
+    //method für statistic reimbursement per month
     public Map<String, Double> getReimbursementPerMonth() {
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
-        Map<String, Double> sumPerMonth = new TreeMap<>();
+        Map<Integer, Double> sumPerMonth = new TreeMap<>(); // automatisch nach Monat sortiert
 
         for (Invoice invoice : invoices) {
-            String month = invoice.getDate().getMonth().toString();
-            double amount = invoice.getAmount(); // oder getReimbursedAmount()
-            sumPerMonth.put(month, sumPerMonth.getOrDefault(month, 0.0) + amount);
+            int monthNumber = invoice.getDate().getMonthValue(); // 1–12
+            double reimbursement = invoice.getReimbursement();
+            sumPerMonth.put(monthNumber, sumPerMonth.getOrDefault(monthNumber, 0.0) + reimbursement);
         }
 
-        return sumPerMonth;
+        Map<String, Double> result = new LinkedHashMap<>();
+        for (Map.Entry<Integer, Double> entry : sumPerMonth.entrySet()) {
+            String monthName = getMonthName(entry.getKey());
+            result.put(monthName, entry.getValue());
+        }
+
+        return result;
     }
 
     //refund for the last 12 months
@@ -79,5 +90,60 @@ public class Statistics {
         ) + 1;
 
         return countInvoices / monthsBetween / countUsers;
+    }
+
+    //for statistic overview invoices from supermarket, restaurant
+    public int getInvoicesPerSupermaket(){
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
+        int countSupermarket = 0;
+
+        for(Invoice invoice : invoices){
+            if(invoice.getCategory().equals(Category.SUPERMARKET)){
+                countSupermarket++;
+            }
+        }
+        return countSupermarket;
+    }
+
+    public int getInvoicesPerRestaurant(){
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
+        int countRestaurant = 0;
+
+        for(Invoice invoice : invoices){
+            if(invoice.getCategory().equals(Category.RESTAURANT)){
+                countRestaurant++;
+            }
+        }
+        return countRestaurant;
+    }
+
+    //for statistic overview invoices from supermarket, restaurant - UserDashboard
+    public int getInvoicesPerSupermaketUser(String currentUser){
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser(currentUser);
+        int countSupermarket = 0;
+
+        for(Invoice invoice : invoices){
+            if(invoice.getCategory().equals(Category.SUPERMARKET)){
+                countSupermarket++;
+            }
+        }
+        return countSupermarket;
+    }
+
+    public int getInvoicesPerRestaurantUser(String currentUser){
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser(currentUser);
+        int countRestaurant = 0;
+
+        for(Invoice invoice : invoices){
+            if(invoice.getCategory().equals(Category.RESTAURANT)){
+                countRestaurant++;
+            }
+        }
+        return countRestaurant;
+    }
+    //switch number of months to names
+    private String getMonthName(int monthNumber) {
+        return Month.of(monthNumber)
+                .getDisplayName(java.time.format.TextStyle.FULL, Locale.ENGLISH);
     }
 }

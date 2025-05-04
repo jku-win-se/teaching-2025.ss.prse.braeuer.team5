@@ -16,6 +16,10 @@ public class Invoice {
     private LocalDateTime createdAt;
     private double reimbursement; // The refund amount
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in Bytes
+    String ocrDate;
+    String ocrAmount;
+    String ocrCategory;
+    private boolean anomalyDetected;
 
     //Constructor
     public Invoice(String userEmail, LocalDate date, double amount, Category category, Status status, String file_Url, LocalDateTime createdAt, double reimbursement) {
@@ -148,11 +152,6 @@ public class Invoice {
         return createdAt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
-    //we need if the admin wants to select the invoice, he can then select the invoice by date using the email
-    public String toString() {
-        return date.toString();
-    }
-
     //using these methods, the admins can approve the individual invoices, etc.
     public void approve() {
         this.status = Status.APPROVED;
@@ -194,6 +193,25 @@ public class Invoice {
         return amount >= 0 && amount <= 1000.0;
     }
 
+    public void setOcrData(String date, String amount, String category) {
+        this.ocrDate = date;
+        this.ocrAmount = amount;
+        this.ocrCategory = category;
+    }
+
+    public boolean isAnomalyDetected() {
+        return anomalyDetected;
+    }
+
+    public void setAnomalyDetected(boolean anomalyDetected) {
+        this.anomalyDetected = anomalyDetected;
+    }
+
+    //for AdminInvoiceManagementController to get all invoices per date
+    @Override
+    public String toString() {
+        return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " | " + String.format("%.2f", amount) + "€" + " | " + getStatusString();
+    }
 }
 
 
