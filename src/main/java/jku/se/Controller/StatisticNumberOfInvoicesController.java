@@ -16,6 +16,8 @@ import jku.se.Statistics;
 import jku.se.Utilities.ExportUtils;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class StatisticNumberOfInvoicesController extends BaseStatisticController{
@@ -45,7 +47,7 @@ public class StatisticNumberOfInvoicesController extends BaseStatisticController
         barChartInvoicesPerMonth.getData().add(series);
 
         // Export-Einstellungen
-        saveFormatComboBox.getItems().addAll("JSON", "PDF", "CSV");
+        saveFormatComboBox.getItems().addAll("PDF", "CSV");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
         // Status-Timer initialisieren
@@ -55,19 +57,14 @@ public class StatisticNumberOfInvoicesController extends BaseStatisticController
 
     @FXML
     private void handleExport() {
-        exportData(
+        String format = saveFormatComboBox.getValue(); // Ausgewähltes Format (PDF/CSV)
+        exportSingleFormat(
+                statusText,
+                "invoices_per_month_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")),
                 statistics.getInvoicesPerMonth(),
-                "invoices_monthly",
-                saveFormatComboBox.getValue(),
-                statusText
+                "Anzahl Rechnungen pro Monat",
+                format
         );
-    }
-
-    private void showStatus(String message, boolean isSuccess) {
-        statusText.setStyle("-fx-fill: " + (isSuccess ? "green" : "red") + "; -fx-font-size: 14;");
-        statusText.setText(message);
-        statusTimer.stop();
-        statusTimer.play();
     }
 
     @FXML

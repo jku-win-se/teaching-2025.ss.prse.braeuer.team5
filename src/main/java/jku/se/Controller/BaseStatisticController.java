@@ -2,51 +2,83 @@ package jku.se.Controller;
 
 import javafx.scene.control.Alert;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import jku.se.Utilities.ExportUtils;
-import javafx.animation.PauseTransition;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class BaseStatisticController {
-    protected PauseTransition statusTimer;
 
-    // Gemeinsame Export-Methode
+    // Für PDF/CSV-Exporte
+    protected void exportSingleFormat(Text statusText, String fileName,
+                                      Map<String, ?> data, String title,
+                                      String format) {
+        try {
+            switch (format) {
+                case "PDF":
+                    ExportUtils.exportToPdf(data, title, fileName);
+                    break;
+                case "CSV":
+                    ExportUtils.exportToCsv(data, fileName);
+                    break;
+            }
+            showSuccess(statusText, fileName + "." + format.toLowerCase() + " exportiert!");
+        } catch (Exception e) {
+            showError(statusText, "Export fehlgeschlagen: " + e.getMessage());
+        }
+    }
+
+    // Nur für JSON-Export (Reimbursement)
+    protected void exportReimbursementJson(Text statusText, String fileName,
+                                           Map<String, Object> userDetails, double total) {
+        try {
+            Map<String, Object> exportData = new LinkedHashMap<>();
+            exportData.put("month", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
+            exportData.put("users", userDetails);
+            exportData.put("total_reimbursement", total);
+
+            ExportUtils.exportToJson(exportData, fileName);
+            showSuccess(statusText, fileName + ".json exportiert!");
+        } catch (Exception e) {
+            showError(statusText, "JSON-Export fehlgeschlagen: " + e.getMessage());
+        }
+    }
+
     protected void exportData(Map<String, ?> data, String fileNamePrefix, String format, Text statusText) {
         try {
             String fileName = fileNamePrefix + "_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
+
             switch (format) {
-                case "JSON" -> ExportUtils.exportToJson(data, fileName);
-                case "PDF" -> ExportUtils.exportToPdf(data, fileNamePrefix + " Report", fileName);
-                case "CSV" -> ExportUtils.exportToCsv(data, fileName);
+                case "JSON":
+                    ExportUtils.exportToJson(data, fileName);
+                    break;
+                case "PDF":
+                    ExportUtils.exportToPdf(data, fileNamePrefix + " Report", fileName);
+                    break;
+                case "CSV":
+                    ExportUtils.exportToCsv(data, fileName);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported format: " + format);
             }
-            showStatus(statusText, "Export erfolgreich: " + fileName, true);
+
+            showSuccess(statusText, fileName + "." + format.toLowerCase() + " erfolgreich exportiert!");
         } catch (Exception e) {
-            showStatus(statusText, "Export fehlgeschlagen: " + e.getMessage(), false);
+            showError(statusText, "Export fehlgeschlagen: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // Status-Anzeige
-    protected void showStatus(Text statusText, String message, boolean isSuccess) {
-        if (statusText != null) {
-            statusText.setStyle("-fx-fill: " + (isSuccess ? "green" : "red") + ";");
-            statusText.setText(message);
-            if (statusTimer == null) {
-                statusTimer = new PauseTransition(Duration.seconds(3));
-                statusTimer.setOnFinished(e -> statusText.setText(""));
-            }
-            statusTimer.playFromStart();
-        }
+    // Hilfsmethoden
+    protected void showSuccess(Text statusText, String message) {
+        statusText.setStyle("-fx-fill: green;");
+        statusText.setText(message);
     }
 
-    // Alert-Hilfsmethode
-    protected void showAlert(String title, String message, Alert.AlertType type) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    protected void showError(Text statusText, String message) {
+        statusText.setStyle("-fx-fill: red;");
+        statusText.setText(message);
     }
 }

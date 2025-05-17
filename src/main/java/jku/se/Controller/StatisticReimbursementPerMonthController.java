@@ -13,7 +13,15 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import jku.se.Statistics;
+import jku.se.repository.InvoiceRepository;
+
 import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StatisticReimbursementPerMonthController extends BaseStatisticController{
@@ -52,9 +60,28 @@ public class StatisticReimbursementPerMonthController extends BaseStatisticContr
     }
 
     @FXML
-    private void handleExport() {
-        Map<String, Double> data = statistics.getReimbursementPerMonth();
-        exportData(data, "reimbursement_monthly", saveFormatComboBox.getValue(), statusText);
+    private void handleExport() throws SQLException {
+        String selectedFormat = saveFormatComboBox.getValue();
+
+        if (selectedFormat.equals("PDF") || selectedFormat.equals("CSV")) {
+            // Einfacher PDF/CSV-Export der Chart-Daten
+            exportSingleFormat(
+                    statusText,
+                    "reimbursement_per_month",
+                    statistics.getReimbursementPerMonth(),
+                    "Erstattungen pro Monat",
+                    selectedFormat
+            );
+        } else if (selectedFormat.equals("JSON")) {
+            // Komplexer JSON-Export mit User-Details
+            Map<String, Object> userDetails = statistics.getUserReimbursementDetails();
+            exportReimbursementJson(
+                    statusText,
+                    "reimbursement_details",
+                    userDetails,
+                    InvoiceRepository.getTotalReimbursementThisMonth()
+            );
+        }
     }
 
     @FXML

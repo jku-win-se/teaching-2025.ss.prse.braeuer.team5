@@ -323,35 +323,57 @@ public class InvoiceRepository {
         }
     }
 
-    // In InvoiceRepository.java
-    public static List<Invoice> getInvoicesForMonth(int year, int month) {
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM invoices WHERE EXTRACT(YEAR FROM date) = ? AND EXTRACT(MONTH FROM date) = ?";
+    // Hilfsmethode für Monatsfilter
+    private static String getCurrentMonthCondition() {
+        return "EXTRACT(MONTH FROM date) = EXTRACT(MONTH FROM CURRENT_DATE) " +
+                "AND EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE)";
+    }
+
+    public static List<String> getActiveUsersThisMonth() throws SQLException {
+        String sql = "SELECT DISTINCT user_email FROM invoices WHERE " + getCurrentMonthCondition();
+        List<String> users = new ArrayList<>();
+
+        try (Connection con = DatabaseConnection.getConnection();
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                users.add(rs.getString("user_email"));
+            }
+        }
+        return users;
+    }
+
+    public static int getInvoiceCountForUserThisMonth(String userEmail) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM invoices WHERE user_email = ? AND " + getCurrentMonthCondition();
 
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
-            stmt.setInt(1, year);
-            stmt.setInt(2, month);
-
+            stmt.setString(1, userEmail);
             ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                // Invoice-Objekte aus ResultSet erstellen (analog zu deiner bestehenden Logik)
-                Invoice invoice = new Invoice(
-                        rs.getString("user_email"),
-                        rs.getDate("date").toLocalDate(),
-                        rs.getDouble("amount"),
-                        Category.valueOf(rs.getString("category")),
-                        Status.valueOf(rs.getString("status")),
-                        rs.getString("file_url"),
-                        rs.getTimestamp("created_at").toLocalDateTime(),
-                        rs.getDouble("reimbursement")
-                );
-                invoices.add(invoice);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return rs.next() ? rs.getInt(1) : 0;
         }
-        return invoices;
+    }
+
+    public static double getTotalReimbursementForUserThisMonth(String userEmail) throws SQLException {
+        String sql = "SELECT SUM(reimbursement) FROM invoices WHERE user_email = ? AND " + getCurrentMonthCondition();
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setString(1, userEmail);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? rs.getDouble(1) : 0.0;
+        }
+    }
+
+    // Gesamtsumme aller Erstattungen dieses Monats
+    public static double getTotalReimbursementThisMonth() throws SQLException {
+        String sql = "SELECT SUM(reimbursement) FROM invoices WHERE " + getCurrentMonthCondition();
+
+        try (Connection con = DatabaseConnection.getConnection();
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            return rs.next() ? rs.getDouble(1) : 0.0;
+        }
     }
 
 }
