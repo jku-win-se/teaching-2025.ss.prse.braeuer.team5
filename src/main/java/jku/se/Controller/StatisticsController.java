@@ -11,10 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import jku.se.Category;
@@ -35,8 +32,7 @@ public class StatisticsController {
     @FXML private RadioButton InvoicesRadioButton;
     @FXML private RadioButton reimbursementRadioButton;
     @FXML private BarChart<String, Number> barChart;
-    @FXML
-    private ToggleGroup statisticsToggleGroup;
+    @FXML private ToggleGroup statisticsToggleGroup;
 
     private final Statistics statistics = new Statistics();
 
@@ -67,8 +63,6 @@ public class StatisticsController {
         loadPage("StatisticReimbursementPerMonth.fxml", event);
 
     }
-
-
 
     @FXML
     private void cancelStatistics(ActionEvent event) throws IOException {

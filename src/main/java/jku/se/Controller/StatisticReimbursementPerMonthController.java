@@ -13,12 +13,18 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import jku.se.Statistics;
-import jku.se.Utilities.ExportUtils;
+import jku.se.repository.InvoiceRepository;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-public class StatisticReimbursementPerMonthController {
+public class StatisticReimbursementPerMonthController extends BaseStatisticController{
     @FXML private BarChart<String, Number> BarChartReimbursementPerMonth;
     @FXML private ComboBox<String> saveFormatComboBox;
     @FXML private Text statusText;
@@ -54,43 +60,28 @@ public class StatisticReimbursementPerMonthController {
     }
 
     @FXML
-    private void handleExport(ActionEvent event) {
-        try {
-            boolean success = false;
-            switch (saveFormatComboBox.getValue()) {
-                case "JSON":
-                    success = ExportUtils.exportToJson(
-                            statistics.getReimbursementPerMonth(),
-                            "reimbursement_per_month"
-                    );
-                    break;
-                case "PDF":
-                    success = ExportUtils.exportToPdf(
-                            statistics.getReimbursementPerMonth(),
-                            "Reimbursement per Month",
-                            "reimbursement_per_month"
-                    );
-                    break;
-                case "CSV":
-                    success = ExportUtils.exportToCsv(
-                            statistics.getReimbursementPerMonth(),
-                            "reimbursement_per_month"
-                    );
-                    break;
-            }
+    private void handleExport() throws SQLException {
+        String selectedFormat = saveFormatComboBox.getValue();
 
-            showStatus(success ? "Export erfolgreich!" : "Export fehlgeschlagen", success);
-        } catch (IOException e) {
-            showStatus("Fehler: " + e.getMessage(), false);
-            e.printStackTrace();
+        if (selectedFormat.equals("PDF") || selectedFormat.equals("CSV")) {
+            // Einfacher PDF/CSV-Export der Chart-Daten
+            exportSingleFormat(
+                    statusText,
+                    "reimbursement_per_month",
+                    statistics.getReimbursementPerMonth(),
+                    "Erstattungen pro Monat",
+                    selectedFormat
+            );
+        } else if (selectedFormat.equals("JSON")) {
+            // Komplexer JSON-Export mit User-Details
+            Map<String, Object> userDetails = statistics.getUserReimbursementDetails();
+            exportReimbursementJson(
+                    statusText,
+                    "reimbursement_details",
+                    userDetails,
+                    InvoiceRepository.getTotalReimbursementThisMonth()
+            );
         }
-    }
-
-    private void showStatus(String message, boolean isSuccess) {
-        statusText.setStyle("-fx-fill: " + (isSuccess ? "green" : "red") + "; -fx-font-size: 14;");
-        statusText.setText(message);
-        statusTimer.stop();
-        statusTimer.play();
     }
 
     @FXML

@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StatisticSupermarketRestaurantController {
+public class StatisticSupermarketRestaurantController extends BaseStatisticController {
     @FXML private PieChart pieChartDistribution;
     @FXML private ComboBox<String> saveFormatComboBox;
     @FXML private Text statusText;
@@ -38,8 +38,8 @@ public class StatisticSupermarketRestaurantController {
                 new PieChart.Data("Restaurant (" + restaurantCount + ")", restaurantCount)
         ));
 
-        // Export-Einstellungen
-        saveFormatComboBox.getItems().addAll("JSON", "PDF", "CSV");
+        // Export-Einstellungen (nur PDF/CSV, da JSON nicht benötigt)
+        saveFormatComboBox.getItems().addAll("PDF", "CSV");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
         // Status-Timer
@@ -49,38 +49,18 @@ public class StatisticSupermarketRestaurantController {
 
     @FXML
     private void handleExport(ActionEvent event) {
-        try {
-            Map<String, Integer> data = new HashMap<>();
-            data.put("Supermarket", statistics.getInvoicesPerSupermaket());
-            data.put("Restaurant", statistics.getInvoicesPerRestaurant());
+        Map<String, Integer> data = new HashMap<>();
+        data.put("Supermarket", statistics.getInvoicesPerSupermaket());
+        data.put("Restaurant", statistics.getInvoicesPerRestaurant());
 
-            boolean success = false;
-            switch (saveFormatComboBox.getValue()) {
-                case "JSON":
-                    success = ExportUtils.exportToJson(data, "supermarket_restaurant_distribution");
-                    break;
-                case "PDF":
-                    success = ExportUtils.exportToPdf(data,
-                            "Supermarket vs Restaurant",
-                            "supermarket_restaurant_distribution");
-                    break;
-                case "CSV":
-                    success = ExportUtils.exportToCsv(data, "supermarket_restaurant_distribution");
-                    break;
-            }
-
-            showStatus(success ? "Export erfolgreich!" : "Export fehlgeschlagen", success);
-        } catch (IOException e) {
-            showStatus("Fehler: " + e.getMessage(), false);
-            e.printStackTrace();
-        }
-    }
-
-    private void showStatus(String message, boolean isSuccess) {
-        statusText.setStyle("-fx-fill: " + (isSuccess ? "green" : "red") + "; -fx-font-size: 14;");
-        statusText.setText(message);
-        statusTimer.stop();
-        statusTimer.play();
+        // Nutzung der Basis-Controller-Methode
+        exportSingleFormat(
+                statusText,
+                "supermarket_restaurant_distribution",
+                data,
+                "Supermarket vs Restaurant",
+                saveFormatComboBox.getValue()
+        );
     }
 
     @FXML

@@ -16,9 +16,11 @@ import jku.se.Statistics;
 import jku.se.Utilities.ExportUtils;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-public class StatisticNumberOfInvoicesController {
+public class StatisticNumberOfInvoicesController extends BaseStatisticController{
     @FXML private BarChart<String, Number> barChartInvoicesPerMonth;
     @FXML private ComboBox<String> saveFormatComboBox;
     @FXML private Text statusText;
@@ -45,7 +47,7 @@ public class StatisticNumberOfInvoicesController {
         barChartInvoicesPerMonth.getData().add(series);
 
         // Export-Einstellungen
-        saveFormatComboBox.getItems().addAll("JSON", "PDF", "CSV");
+        saveFormatComboBox.getItems().addAll("PDF", "CSV");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
         // Status-Timer initialisieren
@@ -54,45 +56,15 @@ public class StatisticNumberOfInvoicesController {
     }
 
     @FXML
-    private void handleExport(ActionEvent event) {
-        try {
-            boolean success = false;
-            switch (saveFormatComboBox.getValue()) {
-                case "JSON":
-                    success = ExportUtils.exportToJson(
-                            statistics.getInvoicesPerMonth(),
-                            "invoices_per_month"
-                    );
-                    break;
-                case "PDF":
-                    success = ExportUtils.exportToPdf(
-                            statistics.getInvoicesPerMonth(),
-                            "Invoices per Month",
-                            "invoices_per_month"
-                    );
-                    break;
-                case "CSV":
-                    success = ExportUtils.exportToCsv(
-                            statistics.getInvoicesPerMonth(),
-                            "invoices_per_month"
-                    );
-                    break;
-            }
-
-            if (success) {
-                showStatus("Export erfolgreich im Downloads-Ordner!", true);
-            }
-        } catch (IOException e) {
-            showStatus("Export fehlgeschlagen: " + e.getMessage(), false);
-            e.printStackTrace();
-        }
-    }
-
-    private void showStatus(String message, boolean isSuccess) {
-        statusText.setStyle("-fx-fill: " + (isSuccess ? "green" : "red") + "; -fx-font-size: 14;");
-        statusText.setText(message);
-        statusTimer.stop();
-        statusTimer.play();
+    private void handleExport() {
+        String format = saveFormatComboBox.getValue(); // Ausgewähltes Format (PDF/CSV)
+        exportSingleFormat(
+                statusText,
+                "invoices_per_month_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")),
+                statistics.getInvoicesPerMonth(),
+                "Anzahl Rechnungen pro Monat",
+                format
+        );
     }
 
     @FXML

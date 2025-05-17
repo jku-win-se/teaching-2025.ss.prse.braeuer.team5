@@ -27,14 +27,18 @@ public class ExportUtils {
     private static final int PDF_MARGIN = 50;
     private static final int PDF_LINE_SPACING = 20;
 
+    private static String generatePath(String baseName, String extension) {
+        return Paths.get(System.getProperty("user.home"), "Downloads", baseName + "." + extension).toString();
+    }
+
     /**
      * Export data to JSON file
      */
-    public static boolean exportToJson(Map<String, ?> data, String baseFileName) throws IOException {
-        String fileName = generateFileName(baseFileName, "json");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(data);
-        return writeToFile(fileName, json);
+    public static boolean exportToJson(Map<String, ?> data, String fileName) throws IOException {
+        try (FileWriter writer = new FileWriter(generatePath(fileName, "json"))) {
+            new GsonBuilder().setPrettyPrinting().create().toJson(data, writer);
+            return true;
+        }
     }
 
     /**

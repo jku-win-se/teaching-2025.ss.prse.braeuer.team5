@@ -2,11 +2,11 @@ package jku.se;
 
 import jku.se.repository.InvoiceRepository;
 import jku.se.repository.UserRepository;
-import org.jfree.data.time.Day;
-
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -145,5 +145,26 @@ public class Statistics {
     private String getMonthName(int monthNumber) {
         return Month.of(monthNumber)
                 .getDisplayName(java.time.format.TextStyle.FULL, Locale.ENGLISH);
+    }
+
+    // User-Details für Reimbursement-Export
+    public Map<String, Object> getUserReimbursementDetails() throws SQLException {
+        Map<String, Object> result = new LinkedHashMap<>();
+        double total = 0.0;
+
+        for (String userEmail : InvoiceRepository.getActiveUsersThisMonth()) {
+            int count = InvoiceRepository.getInvoiceCountForUserThisMonth(userEmail);
+            double sum = InvoiceRepository.getTotalReimbursementForUserThisMonth(userEmail);
+
+            result.put(userEmail, Map.of(
+                    "invoice_count", count,
+                    "total_reimbursement", sum
+            ));
+            total += sum;
+        }
+
+        result.put("total_all_users", total);
+        result.put("month", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
+        return result;
     }
 }
