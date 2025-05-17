@@ -11,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import jku.se.*;
+import jku.se.Utilities.ExportUtils;
 import jku.se.repository.InvoiceRepository;
 import jku.se.repository.UserRepository;
 
@@ -18,7 +19,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AdminInvoiceManagementController {
 
@@ -202,5 +206,7 @@ public class AdminInvoiceManagementController {
 
             stage.setScene(scene);
             stage.show();
-        }
     }
+}
+
+

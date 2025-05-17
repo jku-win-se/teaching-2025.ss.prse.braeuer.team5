@@ -323,4 +323,35 @@ public class InvoiceRepository {
         }
     }
 
+    // In InvoiceRepository.java
+    public static List<Invoice> getInvoicesForMonth(int year, int month) {
+        List<Invoice> invoices = new ArrayList<>();
+        String sql = "SELECT * FROM invoices WHERE EXTRACT(YEAR FROM date) = ? AND EXTRACT(MONTH FROM date) = ?";
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, year);
+            stmt.setInt(2, month);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                // Invoice-Objekte aus ResultSet erstellen (analog zu deiner bestehenden Logik)
+                Invoice invoice = new Invoice(
+                        rs.getString("user_email"),
+                        rs.getDate("date").toLocalDate(),
+                        rs.getDouble("amount"),
+                        Category.valueOf(rs.getString("category")),
+                        Status.valueOf(rs.getString("status")),
+                        rs.getString("file_url"),
+                        rs.getTimestamp("created_at").toLocalDateTime(),
+                        rs.getDouble("reimbursement")
+                );
+                invoices.add(invoice);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return invoices;
+    }
+
 }

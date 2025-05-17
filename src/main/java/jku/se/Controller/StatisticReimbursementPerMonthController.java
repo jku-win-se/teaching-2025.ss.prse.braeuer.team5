@@ -13,12 +13,10 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import jku.se.Statistics;
-import jku.se.Utilities.ExportUtils;
-
 import java.io.IOException;
 import java.util.Map;
 
-public class StatisticReimbursementPerMonthController {
+public class StatisticReimbursementPerMonthController extends BaseStatisticController{
     @FXML private BarChart<String, Number> BarChartReimbursementPerMonth;
     @FXML private ComboBox<String> saveFormatComboBox;
     @FXML private Text statusText;
@@ -54,43 +52,9 @@ public class StatisticReimbursementPerMonthController {
     }
 
     @FXML
-    private void handleExport(ActionEvent event) {
-        try {
-            boolean success = false;
-            switch (saveFormatComboBox.getValue()) {
-                case "JSON":
-                    success = ExportUtils.exportToJson(
-                            statistics.getReimbursementPerMonth(),
-                            "reimbursement_per_month"
-                    );
-                    break;
-                case "PDF":
-                    success = ExportUtils.exportToPdf(
-                            statistics.getReimbursementPerMonth(),
-                            "Reimbursement per Month",
-                            "reimbursement_per_month"
-                    );
-                    break;
-                case "CSV":
-                    success = ExportUtils.exportToCsv(
-                            statistics.getReimbursementPerMonth(),
-                            "reimbursement_per_month"
-                    );
-                    break;
-            }
-
-            showStatus(success ? "Export erfolgreich!" : "Export fehlgeschlagen", success);
-        } catch (IOException e) {
-            showStatus("Fehler: " + e.getMessage(), false);
-            e.printStackTrace();
-        }
-    }
-
-    private void showStatus(String message, boolean isSuccess) {
-        statusText.setStyle("-fx-fill: " + (isSuccess ? "green" : "red") + "; -fx-font-size: 14;");
-        statusText.setText(message);
-        statusTimer.stop();
-        statusTimer.play();
+    private void handleExport() {
+        Map<String, Double> data = statistics.getReimbursementPerMonth();
+        exportData(data, "reimbursement_monthly", saveFormatComboBox.getValue(), statusText);
     }
 
     @FXML
