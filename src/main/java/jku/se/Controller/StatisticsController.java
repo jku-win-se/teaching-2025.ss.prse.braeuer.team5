@@ -26,10 +26,10 @@ import java.util.TreeMap;
 public class StatisticsController {
 
     @FXML private Label cancelButton;
-    @FXML private Text TextFieldTotalRefund;
-    @FXML private Text TextFieldAverageInvoices;
+    @FXML private Text textFieldTotalRefund;
+    @FXML private Text textFieldAverageInvoices;
     @FXML private RadioButton distributionRadioButton;
-    @FXML private RadioButton InvoicesRadioButton;
+    @FXML private RadioButton invoicesRadioButton;
     @FXML private RadioButton reimbursementRadioButton;
     @FXML private BarChart<String, Number> barChart;
     @FXML private ToggleGroup statisticsToggleGroup;
@@ -40,9 +40,9 @@ public class StatisticsController {
     public void initialize() {
         //calculate totalRefund and averageInvoices
         double totalRefund = statistics.getReimbursementForAYear();
-        TextFieldTotalRefund.setText(String.format("%.2f €", totalRefund));
+        textFieldTotalRefund.setText(String.format("%.2f €", totalRefund));
         double averageInvoicesPerson = statistics.getAverageOfInvoicesPerUserPerMonth();
-        TextFieldAverageInvoices.setText(String.format("%.2f ", averageInvoicesPerson));
+        textFieldAverageInvoices.setText(String.format("%.2f ", averageInvoicesPerson));
 
     }
 
@@ -67,17 +67,17 @@ public class StatisticsController {
     @FXML
     private void cancelStatistics(ActionEvent event) throws IOException {
     loadPage("dashboard2.fxml", event);
-}
+    }
 
-        @FXML
-        private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
-            Scene scene = new Scene(loader.load());
+    @FXML
+    private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
+        Scene scene = new Scene(loader.load());
 
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-            stage.setScene(scene);
-            stage.show();
-        }
+        stage.setScene(scene);
+        stage.show();
+    }
 }
 

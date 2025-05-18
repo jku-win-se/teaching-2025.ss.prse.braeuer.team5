@@ -8,49 +8,31 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-
 import javafx.scene.chart.PieChart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import jku.se.Category;
-import jku.se.Invoice;
-import jku.se.Statistics;
-import jku.se.Status;
+import jku.se.*;
 import jku.se.repository.InvoiceRepository;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
+import java.util.logging.Logger;
 
 public class UserDashboardController {
 
-    @FXML
-    private TableView<Invoice> invoiceTable;
+    private static final Logger LOGGER = Logger.getLogger(UserDashboardController.class.getName());
 
-    @FXML
-    private TableColumn<Invoice, String> submissionDateColumn;
 
-    @FXML
-    private TableColumn<Invoice, Double> amountColumn;
-
-    @FXML
-    private TableColumn<Invoice, Category> categoryColumn;
-
-    @FXML
-    private TableColumn<Invoice, Status> statusColumn;
-
-    @FXML
-    private TableColumn<Invoice, Double> reimbursementColumn;
-
+    @FXML private TableView<Invoice> invoiceTable;
+    @FXML private TableColumn<Invoice, String> submissionDateColumn;
+    @FXML private TableColumn<Invoice, Double> amountColumn;
+    @FXML private TableColumn<Invoice, Category> categoryColumn;
+    @FXML private TableColumn<Invoice, Status> statusColumn;
+    @FXML private TableColumn<Invoice, Double> reimbursementColumn;
     private static String currentUserEmail;
-
-    @FXML
-    private PieChart PieChartDistribution;
-
+    @FXML private PieChart pieChartDistribution;
     private final Statistics statistics = new Statistics();
 
     // Setter-Methode
@@ -62,7 +44,6 @@ public class UserDashboardController {
     public static String getCurrentUserEmail() {
         return currentUserEmail;
     }
-
     //fill table with invoices
     @FXML
     private void initialize() {
@@ -76,17 +57,15 @@ public class UserDashboardController {
         loadInvoices();
         loadPieChart();
     }
-
     private void loadInvoices() {
         if (invoiceTable == null) {
-            System.err.println("invoiceTable is null! Check whether the fx:id is set correctly in the FXML file.");
+            LOGGER.log(java.util.logging.Level.SEVERE, () -> "invoiceTable is null! Check whether the fx:id is set correctly in the FXML file.");
             return;  // Prevent the method from being executed further if the TableView is null
         }
         // load invoices
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser(currentUserEmail);
         invoiceTable.getItems().setAll(invoices);
     }
-
     //load pie chart with distribution of invoices from restaurant or supermarket
     private void loadPieChart(){
 
@@ -96,7 +75,7 @@ public class UserDashboardController {
         PieChart.Data supermarketData = new PieChart.Data("Supermarket (" + supermarketCount + ")", supermarketCount);
         PieChart.Data restaurantData = new PieChart.Data("Restaurant (" + restaurantCount + ")", restaurantCount);
 
-        PieChartDistribution.setData(FXCollections.observableArrayList(
+        pieChartDistribution.setData(FXCollections.observableArrayList(
                 supermarketData,
                 restaurantData
         ));
@@ -107,7 +86,7 @@ public class UserDashboardController {
             restaurantData.getNode().setStyle("-fx-pie-color: grey;");
 
 
-            for (Node node : PieChartDistribution.lookupAll(".chart-legend-item")) {
+            for (Node node : pieChartDistribution.lookupAll(".chart-legend-item")) {
                 if (node instanceof Label label) {
                     String text = label.getText();
                     if (text.contains("Supermarket")) {
@@ -128,7 +107,6 @@ public class UserDashboardController {
         stage.setScene(scene);
         stage.show();
     }
-
     @FXML
     private void handleUploadInvoice(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddInvoice.fxml"));
@@ -138,7 +116,6 @@ public class UserDashboardController {
         stage.setScene(scene);
         stage.show();
     }
-
     @FXML
     private void handleLogoutUser(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/start.fxml"));
@@ -148,7 +125,4 @@ public class UserDashboardController {
         stage.setScene(scene);
         stage.show();
     }
-
-
-
 }
