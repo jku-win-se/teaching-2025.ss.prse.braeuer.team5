@@ -10,8 +10,12 @@ import java.net.URL;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.logging.Logger;
+
 
 public class CloudOCRService {
+
+    private static final Logger logger = Logger.getLogger(CloudOCRService.class.getName());
 
     private static final String API_KEY = "AIzaSyBjoG6cn0pXDb9OlZliX4oDmwbMLnKrfUE";
     private static final String ENDPOINT = "https://vision.googleapis.com/v1/images:annotate?key=" + API_KEY;
@@ -54,9 +58,9 @@ public class CloudOCRService {
         String response = new String(connection.getInputStream().readAllBytes());
 
         String extractedText = extractTextFromJson(response);
-        System.out.println("-------- EXTRACTED OCR TEXT --------");
-        System.out.println(extractedText);
-        System.out.println("------------------------------------");
+        logger.info("-------- EXTRACTED OCR TEXT --------");
+        logger.info(extractedText);
+        logger.info("------------------------------------");
 
         return new OCRResult(
                 extractDate(extractedText),
@@ -102,7 +106,7 @@ public class CloudOCRService {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error parsing OCR response: " + e.getMessage());
+            logger.severe("Error parsing OCR response: " + e.getMessage());
         }
         return "";
     }
