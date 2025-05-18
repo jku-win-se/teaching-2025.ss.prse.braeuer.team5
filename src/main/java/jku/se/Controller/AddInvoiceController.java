@@ -10,6 +10,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import jku.se.*;
 import jku.se.repository.InvoiceRepository;
+
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AddInvoiceController {
-    private static final Logger logger = Logger.getLogger(AddInvoiceController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AddInvoiceController.class.getName());
 
     @FXML public DatePicker datePicker;
     @FXML public TextField amountField;
@@ -72,7 +74,9 @@ public class AddInvoiceController {
                         LocalDate parsedDate = LocalDate.parse(ocrResult.date, formatter);
                         datePicker.setValue(parsedDate);
                     } catch (Exception ex) {
-                        logger.info("Could not parse date: " + ocrResult.date);
+                        if (LOGGER.isLoggable(Level.INFO)) {
+                            LOGGER.info("Could not parse date: " + ocrResult.date);
+                        }
                     }
                 }
 
