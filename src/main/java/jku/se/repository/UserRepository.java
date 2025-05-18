@@ -53,7 +53,7 @@ public class UserRepository {
     }
 
     //function to output all users without the logged in admin, as he is not allowed to edit his own invoices
-    public static List<String> getAllUsersWithoutLoggedAdmin(String e_mail) {
+    public static List<String> getAllUsersWithoutLoggedAdmin(String eMail) {
         return getEmails(GET_ALL_USERS_WITHOUT_LOGGED_ADMIN);
     }
 

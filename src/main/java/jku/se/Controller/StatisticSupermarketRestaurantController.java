@@ -29,7 +29,7 @@ public class StatisticSupermarketRestaurantController extends BaseStatisticContr
 
     @FXML
     public void initialize() {
-        // Chart initialisieren
+        // Initialize pie chart with counts of invoices per supermarket and restaurant
         int supermarketCount = statistics.getInvoicesPerSupermaket();
         int restaurantCount = statistics.getInvoicesPerRestaurant();
 
@@ -38,22 +38,22 @@ public class StatisticSupermarketRestaurantController extends BaseStatisticContr
                 new PieChart.Data("Restaurant (" + restaurantCount + ")", restaurantCount)
         ));
 
-        // Export-Einstellungen (nur PDF/CSV, da JSON nicht benötigt)
+        // Setup export format options (PDF and CSV only)
         saveFormatComboBox.getItems().addAll("PDF", "CSV");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
-        // Status-Timer
+        // Setup status message timer to clear messages after 3 seconds
         statusTimer = new PauseTransition(Duration.seconds(3));
         statusTimer.setOnFinished(e -> statusText.setText(""));
     }
 
+    // Handle export of distribution data in selected format
     @FXML
     private void handleExport(ActionEvent event) {
         Map<String, Integer> data = new HashMap<>();
         data.put("Supermarket", statistics.getInvoicesPerSupermaket());
         data.put("Restaurant", statistics.getInvoicesPerRestaurant());
 
-        // Nutzung der Basis-Controller-Methode
         exportSingleFormat(
                 statusText,
                 "supermarket_restaurant_distribution",
@@ -63,11 +63,13 @@ public class StatisticSupermarketRestaurantController extends BaseStatisticContr
         );
     }
 
+    // Cancel and return to statistics page
     @FXML
     private void cancelDistribution(ActionEvent event) throws IOException {
         loadPage("Statistics.fxml", event);
     }
 
+    // Load specified FXML page
     private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

@@ -13,7 +13,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import jku.se.Statistics;
-import jku.se.Utilities.ExportUtils;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -30,7 +29,7 @@ public class StatisticNumberOfInvoicesController extends BaseStatisticController
 
     @FXML
     public void initialize() {
-        // Chart initialisieren
+        // Initialize bar chart with invoices per month data
         Map<String, Integer> invoicesPerMonth = statistics.getInvoicesPerMonth();
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Invoices per Month");
@@ -46,32 +45,34 @@ public class StatisticNumberOfInvoicesController extends BaseStatisticController
         barChartInvoicesPerMonth.getData().clear();
         barChartInvoicesPerMonth.getData().add(series);
 
-        // Export-Einstellungen
+        // Setup export format options and status timer
         saveFormatComboBox.getItems().addAll("PDF", "CSV");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
-        // Status-Timer initialisieren
         statusTimer = new PauseTransition(Duration.seconds(3));
         statusTimer.setOnFinished(e -> statusText.setText(""));
     }
 
+    // Export invoices per month in selected format
     @FXML
     private void handleExport() {
-        String format = saveFormatComboBox.getValue(); // Ausgewähltes Format (PDF/CSV)
+        String format = saveFormatComboBox.getValue();
         exportSingleFormat(
                 statusText,
                 "invoices_per_month_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")),
                 statistics.getInvoicesPerMonth(),
-                "Anzahl Rechnungen pro Monat",
+                "Invoices per Month",
                 format
         );
     }
 
+    // Cancel and return to statistics page
     @FXML
     private void cancelNumberOfInvoices(ActionEvent event) throws IOException {
         loadPage("Statistics.fxml", event);
     }
 
+    // Load specified FXML page
     @FXML
     private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));

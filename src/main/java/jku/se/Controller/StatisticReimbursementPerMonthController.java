@@ -19,9 +19,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 public class StatisticReimbursementPerMonthController extends BaseStatisticController{
@@ -34,7 +31,7 @@ public class StatisticReimbursementPerMonthController extends BaseStatisticContr
 
     @FXML
     public void initialize() {
-        // Chart initialisieren
+        // Initialize bar chart with reimbursement per month data
         Map<String, Double> reimbursementPerMonth = statistics.getReimbursementPerMonth();
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Reimbursement per Month");
@@ -50,30 +47,28 @@ public class StatisticReimbursementPerMonthController extends BaseStatisticContr
         barChartReimbursementPerMonth.getData().clear();
         barChartReimbursementPerMonth.getData().add(series);
 
-        // Export-Einstellungen
+        // Setup export formats and status timer
         saveFormatComboBox.getItems().addAll("JSON", "PDF", "CSV");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
-        // Status-Timer
         statusTimer = new PauseTransition(Duration.seconds(3));
         statusTimer.setOnFinished(e -> statusText.setText(""));
     }
 
+    // Handle export based on selected format
     @FXML
     private void handleExport() throws SQLException {
         String selectedFormat = saveFormatComboBox.getValue();
 
         if (selectedFormat.equals("PDF") || selectedFormat.equals("CSV")) {
-            // Einfacher PDF/CSV-Export der Chart-Daten
             exportSingleFormat(
                     statusText,
                     "reimbursement_per_month",
                     statistics.getReimbursementPerMonth(),
-                    "Erstattungen pro Monat",
+                    "Reimbursement per Month",
                     selectedFormat
             );
         } else if (selectedFormat.equals("JSON")) {
-            // Komplexer JSON-Export mit User-Details
             Map<String, Object> userDetails = statistics.getUserReimbursementDetails();
             exportReimbursementJson(
                     statusText,
@@ -84,11 +79,13 @@ public class StatisticReimbursementPerMonthController extends BaseStatisticContr
         }
     }
 
+    // Cancel and return to statistics page
     @FXML
     private void cancelReimbursement(ActionEvent event) throws IOException {
         loadPage("Statistics.fxml", event);
     }
 
+    // Load specified FXML page
     private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

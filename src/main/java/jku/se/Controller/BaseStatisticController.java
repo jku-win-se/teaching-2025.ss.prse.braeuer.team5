@@ -11,7 +11,7 @@ import java.util.Map;
 
 public abstract class BaseStatisticController {
 
-    // Für PDF/CSV-Exporte
+    // Export data to PDF or CSV formats, update statusText with success/error message
     protected void exportSingleFormat(Text statusText, String fileName,
                                       Map<String, ?> data, String title,
                                       String format) {
@@ -24,13 +24,13 @@ public abstract class BaseStatisticController {
                     ExportUtils.exportToCsv(data, fileName);
                     break;
             }
-            showSuccess(statusText, fileName + "." + format.toLowerCase() + " exportiert!");
+            showSuccess(statusText, fileName + "." + format.toLowerCase() + " exported!");
         } catch (Exception e) {
-            showError(statusText, "Export fehlgeschlagen: " + e.getMessage());
+            showError(statusText, "Export failed: " + e.getMessage());
         }
     }
 
-    // Nur für JSON-Export (Reimbursement)
+    // Export reimbursement data to JSON format with month and total reimbursement
     protected void exportReimbursementJson(Text statusText, String fileName,
                                            Map<String, Object> userDetails, double total) {
         try {
@@ -40,12 +40,13 @@ public abstract class BaseStatisticController {
             exportData.put("total_reimbursement", total);
 
             ExportUtils.exportToJson(exportData, fileName);
-            showSuccess(statusText, fileName + ".json exportiert!");
+            showSuccess(statusText, fileName + ".json exported!");
         } catch (Exception e) {
-            showError(statusText, "JSON-Export fehlgeschlagen: " + e.getMessage());
+            showError(statusText, "JSON export failed: " + e.getMessage());
         }
     }
 
+    // Export data to JSON, PDF, or CSV based on format parameter
     protected void exportData(Map<String, ?> data, String fileNamePrefix, String format, Text statusText) {
         try {
             String fileName = fileNamePrefix + "_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
@@ -64,19 +65,20 @@ public abstract class BaseStatisticController {
                     throw new IllegalArgumentException("Unsupported format: " + format);
             }
 
-            showSuccess(statusText, fileName + "." + format.toLowerCase() + " erfolgreich exportiert!");
+            showSuccess(statusText, fileName + "." + format.toLowerCase() + " successfully exported!");
         } catch (Exception e) {
-            showError(statusText, "Export fehlgeschlagen: " + e.getMessage());
+            showError(statusText, "Export failed: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // Hilfsmethoden
+    // Show success message in green text
     protected void showSuccess(Text statusText, String message) {
         statusText.setStyle("-fx-fill: green;");
         statusText.setText(message);
     }
 
+    // Show error message in red text
     protected void showError(Text statusText, String message) {
         statusText.setStyle("-fx-fill: red;");
         statusText.setText(message);
