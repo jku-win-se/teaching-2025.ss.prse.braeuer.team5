@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
-//
 public class StatisticsController {
 
     @FXML private Label cancelButton;
@@ -38,37 +37,38 @@ public class StatisticsController {
 
     @FXML
     public void initialize() {
-        //calculate totalRefund and averageInvoices
+        // Calculate and display total refund and average invoices per user per month
         double totalRefund = statistics.getReimbursementForAYear();
         textFieldTotalRefund.setText(String.format("%.2f €", totalRefund));
         double averageInvoicesPerson = statistics.getAverageOfInvoicesPerUserPerMonth();
-        textFieldAverageInvoices.setText(String.format("%.2f ", averageInvoicesPerson));
-
+        textFieldAverageInvoices.setText(String.format("%.2f", averageInvoicesPerson));
     }
 
+    // Navigate to Supermarket vs Restaurant distribution chart
     @FXML
     private void statisticDistributionRestaurantSupermarket(ActionEvent event) throws IOException {
         loadPage("StatisticSupermarketRestaurant.fxml", event);
     }
 
-
+    // Navigate to number of invoices per month chart
     @FXML
     private void statisticNumberInvoicesPerMonth(ActionEvent event) throws IOException{
         loadPage("StatisticNumberOfInvoices.fxml", event);
     }
 
-
+    // Navigate to reimbursement per month chart
     @FXML
     private void statisticReimbursementPerMonth(ActionEvent event) throws IOException{
         loadPage("StatisticReimbursementPerMonth.fxml", event);
-
     }
 
+    // Cancel and return to dashboard
     @FXML
     private void cancelStatistics(ActionEvent event) throws IOException {
-    loadPage("dashboard2.fxml", event);
+        loadPage("dashboard2.fxml", event);
     }
 
+    // Load specified FXML page
     @FXML
     private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
@@ -80,4 +80,3 @@ public class StatisticsController {
         stage.show();
     }
 }
-

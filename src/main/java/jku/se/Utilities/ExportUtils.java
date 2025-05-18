@@ -27,12 +27,13 @@ public class ExportUtils {
     private static final int PDF_MARGIN = 50;
     private static final int PDF_LINE_SPACING = 20;
 
+    // Generate file path in user's Downloads folder with given basename and extension
     private static String generatePath(String baseName, String extension) {
         return Paths.get(System.getProperty("user.home"), "Downloads", baseName + "." + extension).toString();
     }
 
     /**
-     * Export data to JSON file
+     * Export data map to a JSON file with pretty printing
      */
     public static boolean exportToJson(Map<String, ?> data, String fileName) throws IOException {
         try (FileWriter writer = new FileWriter(generatePath(fileName, "json"))) {
@@ -42,7 +43,7 @@ public class ExportUtils {
     }
 
     /**
-     * Export data to CSV file
+     * Export data map to a CSV file with escaped values
      */
     public static boolean exportToCsv(Map<String, ?> data, String baseFileName) throws IOException {
         String fileName = generateFileName(baseFileName, "csv");
@@ -58,7 +59,7 @@ public class ExportUtils {
     }
 
     /**
-     * Export data to PDF file
+     * Export data map to a formatted PDF file with title and multiple pages if needed
      */
     public static boolean exportToPdf(Map<String, ?> data, String title, String baseFileName) throws IOException {
         String fileName = generateFileName(baseFileName, "pdf");
@@ -69,14 +70,14 @@ public class ExportUtils {
 
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
             try {
-                // Header
+                // Draw header title
                 contentStream.setFont(PDType1Font.HELVETICA_BOLD, PDF_TITLE_SIZE);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(PDF_MARGIN, 800);
                 contentStream.showText(title);
                 contentStream.endText();
 
-                // Content
+                // Draw content lines
                 contentStream.setFont(PDType1Font.HELVETICA, PDF_FONT_SIZE);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(PDF_MARGIN, 750);
@@ -84,15 +85,14 @@ public class ExportUtils {
                 int yPosition = 750;
                 for (Map.Entry<String, ?> entry : data.entrySet()) {
                     if (yPosition < PDF_MARGIN) {
+                        // Start a new page when margin is reached
                         contentStream.endText();
                         contentStream.close();
 
-                        // Neue Seite erstellen
                         PDPage newPage = new PDPage(PDRectangle.A4);
                         document.addPage(newPage);
                         contentStream = new PDPageContentStream(document, newPage);
 
-                        // Neue Seite initialisieren
                         contentStream.setFont(PDType1Font.HELVETICA, PDF_FONT_SIZE);
                         contentStream.beginText();
                         yPosition = 750;
@@ -119,7 +119,7 @@ public class ExportUtils {
         }
     }
 
-    // Helper methods
+    // Generate filename with timestamp suffix
     private static String generateFileName(String baseName, String extension) {
         String timestamp = DATE_FORMAT.format(new Date());
         Path path = Paths.get(System.getProperty("user.home"), "Downloads",
@@ -127,6 +127,7 @@ public class ExportUtils {
         return path.toString();
     }
 
+    // Write given content string into file with given filename
     private static boolean writeToFile(String fileName, String content) throws IOException {
         try (FileWriter writer = new FileWriter(fileName)) {
             writer.write(content);
@@ -134,6 +135,7 @@ public class ExportUtils {
         }
     }
 
+    // Escape CSV values that contain commas, quotes or newlines
     private static String escapeCsv(String value) {
         if (value == null) return "";
         if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
