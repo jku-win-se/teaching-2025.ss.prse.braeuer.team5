@@ -22,9 +22,10 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.logging.Logger;
 
 public class AdminInvoiceManagementController {
+    private static final Logger logger = Logger.getLogger(AdminInvoiceManagementController.class.getName());
 
     @FXML private ComboBox<Invoice> selectInvoice;
     @FXML private ComboBox<String> selectUser;
@@ -72,7 +73,7 @@ public class AdminInvoiceManagementController {
     //choice invoice from user
     private void searchInvoice(ActionEvent event) {
         String selectedUserEmail = selectUser.getValue();
-        System.out.println("Selected user email: " + selectedUserEmail); // Debug
+        logger.info("Selected user email: " + selectedUserEmail); // Debug
 
         if (selectedUserEmail == null || selectedUserEmail.isEmpty()) {
             statusLabel.setText("Please select an user first.");
@@ -200,7 +201,6 @@ public class AdminInvoiceManagementController {
     private void cancelEditAdmin(ActionEvent event) throws IOException {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard2.fxml"));
             Scene scene = new Scene(loader.load());
-
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 

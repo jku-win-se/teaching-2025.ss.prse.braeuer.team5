@@ -2,12 +2,13 @@ package jku.se;
 
 import jku.se.repository.InvoiceRepository;
 import jku.se.repository.UserRepository;
-
+import java.util.logging.Logger;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
 public class Administrator extends User{
+    private static final Logger logger = Logger.getLogger(Administrator.class.getName());
 
     public Administrator (String name, String email, String password){
         super(name, email, password, true);
@@ -32,14 +33,14 @@ public class Administrator extends User{
     public void addUser(String name, String email, String password, boolean isAdministrator) { //#18 Magdalena
         User newUser = new User(name, email, password, isAdministrator);
         UserRepository.addUser(newUser);  //add user in database
-        System.out.println("Add new User: " + email);
+        logger.info("Add new User: " + email);
     }
 
     //new admin isAdministrator = true
     public void addAdministrator(String name, String email, String password, boolean isAdministrator) { //#18 Magdalena
         User newUser = new User(name, email, password, isAdministrator);
         UserRepository.addUser(newUser);  //add user in database
-        System.out.println("Add new Admin: " + email );
+        logger.info("Add new Admin: " + email);
     }
 
     //delete admin/user

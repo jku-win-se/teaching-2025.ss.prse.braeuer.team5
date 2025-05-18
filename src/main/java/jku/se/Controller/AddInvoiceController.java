@@ -10,7 +10,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import jku.se.*;
 import jku.se.repository.InvoiceRepository;
-
+import java.util.logging.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -22,16 +22,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AddInvoiceController {
+    private static final Logger logger = Logger.getLogger(AddInvoiceController.class.getName());
+
     @FXML public DatePicker datePicker;
     @FXML public TextField amountField;
     @FXML public Label statusLabel;
-    @FXML public Button removeImageBtn;
-    @FXML
-    public ComboBox<String> categoryCombo;
-    private Label cancelAdd;
+    @FXML public ComboBox<String> categoryCombo;
     @FXML public Button uploadButton;
     public File selectedFile;
-    private double reimbursement;
 
     private Set<LocalDate> uploadedDates = new HashSet<>(); // Set, um bereits hochgeladene Tage zu speichern
 
@@ -74,7 +72,7 @@ public class AddInvoiceController {
                         LocalDate parsedDate = LocalDate.parse(ocrResult.date, formatter);
                         datePicker.setValue(parsedDate);
                     } catch (Exception ex) {
-                        System.out.println("Could not parse date: " + ocrResult.date);
+                        logger.info("Could not parse date: " + ocrResult.date);
                     }
                 }
 
@@ -242,43 +240,5 @@ public class AddInvoiceController {
         amountField.clear();        // delete the image
         categoryCombo.getSelectionModel().clearSelection();  // Reset the category
         selectedFile = null;        // reset the image
-    }
-
-    public void setDatePicker(DatePicker datePicker) {
-        this.datePicker = datePicker;
-    }
-
-    public void setAmountField(TextField amountField) {
-        this.amountField = amountField;
-    }
-
-    public void setCategoryCombo(ComboBox<String> categoryCombo) {
-        this.categoryCombo = categoryCombo;
-    }
-
-    public void setSelectedFile(File file) {
-        this.selectedFile = file;
-    }
-
-    public Label getStatusLabel() {
-        return statusLabel;
-    }
-
-    public void setStatusLabel(Label label) {
-        this.statusLabel = label;
-    }
-
-    private LocalDate parseDate(String dateString) {
-        try {
-            if (dateString.matches("\\d{2}-\\d{2}-\\d{4}")) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                return LocalDate.parse(dateString, formatter);
-            } else if (dateString.matches("\\d{4}-\\d{2}-\\d{2}")) {
-                return LocalDate.parse(dateString);
-            }
-        } catch (Exception e) {
-            System.out.println("Fehler beim Parsen des Datums: " + dateString);
-        }
-        return null;
     }
 }

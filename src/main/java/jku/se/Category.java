@@ -5,7 +5,7 @@ public enum Category {
     SUPERMARKET("Supermarkt");
 
     private final String displayName;
-    public volatile double customRefundAmount = -1; // -1 bedeutet, dass kein benutzerdefinierter Wert gesetzt wurde
+    public double customRefundAmount = -1; // -1 bedeutet, dass kein benutzerdefinierter Wert gesetzt wurde
 
     // Konstruktor, der den Anzeigenamen der Kategorie festlegt
     Category(String displayName) {
