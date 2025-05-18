@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 public class CloudOCRService {
 
-    private static final Logger logger = Logger.getLogger(CloudOCRService.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CloudOCRService.class.getName());
 
     private static final String API_KEY = "AIzaSyBjoG6cn0pXDb9OlZliX4oDmwbMLnKrfUE";
     private static final String ENDPOINT = "https://vision.googleapis.com/v1/images:annotate?key=" + API_KEY;
@@ -58,9 +58,12 @@ public class CloudOCRService {
         String response = new String(connection.getInputStream().readAllBytes());
 
         String extractedText = extractTextFromJson(response);
-        logger.info("-------- EXTRACTED OCR TEXT --------");
-        logger.info(extractedText);
-        logger.info("------------------------------------");
+        if (LOGGER.isLoggable(java.util.logging.Level.INFO)) {
+            LOGGER.info("-------- EXTRACTED OCR TEXT --------");
+            LOGGER.info(extractedText);
+            LOGGER.info("------------------------------------");
+        }
+
 
         return new OCRResult(
                 extractDate(extractedText),
@@ -106,7 +109,7 @@ public class CloudOCRService {
                 }
             }
         } catch (Exception e) {
-            logger.severe("Error parsing OCR response: " + e.getMessage());
+            LOGGER.log(java.util.logging.Level.SEVERE, () -> "Error parsing OCR response: " + e.getMessage());
         }
         return "";
     }

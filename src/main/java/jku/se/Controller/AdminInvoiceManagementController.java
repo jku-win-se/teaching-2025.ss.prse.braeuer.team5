@@ -22,10 +22,11 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AdminInvoiceManagementController {
-    private static final Logger logger = Logger.getLogger(AdminInvoiceManagementController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AdminInvoiceManagementController.class.getName());
 
     @FXML private ComboBox<Invoice> selectInvoice;
     @FXML private ComboBox<String> selectUser;
@@ -73,7 +74,9 @@ public class AdminInvoiceManagementController {
     //choice invoice from user
     private void searchInvoice(ActionEvent event) {
         String selectedUserEmail = selectUser.getValue();
-        logger.info("Selected user email: " + selectedUserEmail); // Debug
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info("Selected user email: " + selectedUserEmail); // Debug
+        }
 
         if (selectedUserEmail == null || selectedUserEmail.isEmpty()) {
             statusLabel.setText("Please select an user first.");

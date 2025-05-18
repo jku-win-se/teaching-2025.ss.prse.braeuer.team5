@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 public class StatisticReimbursementPerMonthController extends BaseStatisticController{
-    @FXML private BarChart<String, Number> BarChartReimbursementPerMonth;
+    @FXML private BarChart<String, Number> barChartReimbursementPerMonth;
     @FXML private ComboBox<String> saveFormatComboBox;
     @FXML private Text statusText;
 
@@ -47,8 +47,8 @@ public class StatisticReimbursementPerMonthController extends BaseStatisticContr
             });
         }
 
-        BarChartReimbursementPerMonth.getData().clear();
-        BarChartReimbursementPerMonth.getData().add(series);
+        barChartReimbursementPerMonth.getData().clear();
+        barChartReimbursementPerMonth.getData().add(series);
 
         // Export-Einstellungen
         saveFormatComboBox.getItems().addAll("JSON", "PDF", "CSV");
