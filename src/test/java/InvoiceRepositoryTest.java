@@ -8,7 +8,6 @@ import jku.se.repository.InvoiceRepository;
 import jku.se.repository.UserRepository;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -51,15 +50,15 @@ public class InvoiceRepositoryTest {
 
         // Add test invoices to DB
         insertTestInvoice(firstInvoice.getUserEmail(), firstInvoice.getDate(), firstInvoice.getAmount(),
-                firstInvoice.getCategory(), firstInvoice.getStatus(), firstInvoice.getFile_Url(),
+                firstInvoice.getCategory(), firstInvoice.getStatus(), firstInvoice.getFileUrl(),
                 firstInvoice.getCreatedAt(), firstInvoice.calculateRefund());
 
         insertTestInvoice(secondInvoice.getUserEmail(), secondInvoice.getDate(), secondInvoice.getAmount(),
-                secondInvoice.getCategory(), secondInvoice.getStatus(), secondInvoice.getFile_Url(),
+                secondInvoice.getCategory(), secondInvoice.getStatus(), secondInvoice.getFileUrl(),
                 secondInvoice.getCreatedAt(), secondInvoice.calculateRefund());
 
         insertTestInvoice(thirdInvoice.getUserEmail(), thirdInvoice.getDate(), thirdInvoice.getAmount(),
-                thirdInvoice.getCategory(), thirdInvoice.getStatus(), thirdInvoice.getFile_Url(),
+                thirdInvoice.getCategory(), thirdInvoice.getStatus(), thirdInvoice.getFileUrl(),
                 thirdInvoice.getCreatedAt(), thirdInvoice.calculateRefund());
 
     }
@@ -120,7 +119,7 @@ public class InvoiceRepositoryTest {
         assertEquals(23.99, firstInvoice.getAmount());
         assertEquals(Category.RESTAURANT, firstInvoice.getCategory());
         assertEquals(Status.PROCESSING.name(), firstInvoice.getStatusString());
-        assertEquals("https://example.com/file.pdf", firstInvoice.getFile_Url());
+        assertEquals("https://example.com/file.pdf", firstInvoice.getFileUrl());
         assertEquals(firstInvoice.getCategory().getRefundAmount(), firstInvoice.getReimbursement(), 0.01);
 
         assertNotNull(secondInvoice, "The second invoice should exist.");
@@ -128,7 +127,7 @@ public class InvoiceRepositoryTest {
         assertEquals(30.00, secondInvoice.getAmount());
         assertEquals(Category.SUPERMARKET, secondInvoice.getCategory());
         assertEquals(Status.PROCESSING.name(), secondInvoice.getStatusString());
-        assertEquals("https://example.com/file.pdf2", secondInvoice.getFile_Url());
+        assertEquals("https://example.com/file.pdf2", secondInvoice.getFileUrl());
         assertEquals(secondInvoice.getCategory().getRefundAmount(), secondInvoice.getReimbursement(), 0.01);
 
         assertNotNull(thirdInvoice, "The third invoice should exist.");
@@ -136,7 +135,7 @@ public class InvoiceRepositoryTest {
         assertEquals(2.50, thirdInvoice.getAmount());
         assertEquals(Category.SUPERMARKET, thirdInvoice.getCategory());
         assertEquals(Status.APPROVED.name(), thirdInvoice.getStatusString());
-        assertEquals("https://example.com/file.pdf2", thirdInvoice.getFile_Url());
+        assertEquals("https://example.com/file.pdf2", thirdInvoice.getFileUrl());
         assertEquals(thirdInvoice.getCategory().getRefundAmount(), thirdInvoice.getReimbursement(), 0.01);
     }
 
@@ -160,7 +159,7 @@ public class InvoiceRepositoryTest {
         assertEquals(30.00, firstInvoice.getAmount());
         assertEquals(Category.SUPERMARKET, firstInvoice.getCategory());
         assertEquals(Status.PROCESSING.name(), firstInvoice.getStatusString());
-        assertEquals("https://example.com/file.pdf2", firstInvoice.getFile_Url());
+        assertEquals("https://example.com/file.pdf2", firstInvoice.getFileUrl());
         assertEquals(2.5, firstInvoice.getCategory().getRefundAmount());
 
         // Check the second invoice
@@ -170,7 +169,7 @@ public class InvoiceRepositoryTest {
         assertEquals(2.50, secondInvoice.getAmount());
         assertEquals(Category.SUPERMARKET, secondInvoice.getCategory());
         assertEquals(Status.APPROVED.name(), secondInvoice.getStatusString());
-        assertEquals("https://example.com/file.pdf2", secondInvoice.getFile_Url());
+        assertEquals("https://example.com/file.pdf2", secondInvoice.getFileUrl());
         assertEquals(2.5, secondInvoice.getCategory().getRefundAmount());
     }
 

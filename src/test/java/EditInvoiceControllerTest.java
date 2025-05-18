@@ -51,7 +51,7 @@ public class EditInvoiceControllerTest {
             stmt.setDouble(3, testInvoice.getAmount());
             stmt.setString(4, testInvoice.getCategory().name());
             stmt.setString(5, testInvoice.getStatus().name());
-            stmt.setString(6, testInvoice.getFile_Url());
+            stmt.setString(6, testInvoice.getFileUrl());
             stmt.setObject(7, testInvoice.getCreatedAt());
             stmt.setDouble(8, testInvoice.getReimbursement());
             stmt.executeUpdate();

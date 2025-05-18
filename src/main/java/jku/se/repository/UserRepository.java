@@ -8,8 +8,12 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserRepository {
+
+    private static final Logger LOGGER = Logger.getLogger(UserRepository.class.getName());
 
     //new user insert
     private static final String INSERT_USER_SQL = "INSERT INTO userlunchify (email, name, password, isadministrator) VALUES (?, ?, ?, ?)";
@@ -26,9 +30,11 @@ public class UserRepository {
             stmt.setBoolean(4, user.isAdministrator());
 
             stmt.executeUpdate();
-            System.out.println("User successfully added: " + user.getEmail());
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.info("User successfully added: " + user.getEmail());
+            }
         } catch (SQLException e) {
-            System.err.println("Error when saving the user: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error when saving the user: ", e);
         }
     }
 
@@ -60,7 +66,7 @@ public class UserRepository {
                 emails.add(rs.getString("email"));
             }
         } catch (Exception e) {
-            System.err.println("Error when retrieving emails: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error when retrieving emails: ", e);
         }
         return emails;
     }
@@ -78,7 +84,7 @@ public class UserRepository {
 
             return affectedRows > 0; //delete one row so successfull
         } catch (SQLException e) {
-            System.err.println("Error when deleting the user: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error when deleting the user: ", e);
             return false;
         }
     }
@@ -101,7 +107,7 @@ public class UserRepository {
                 );
             }
         } catch (SQLException e) {
-            System.err.println("Login error: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Login error: ", e);
         }
         return null;
     }
