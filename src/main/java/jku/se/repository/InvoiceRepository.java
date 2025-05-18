@@ -26,9 +26,6 @@ public class InvoiceRepository {
     private static final String UPDATE_STATUS = "UPDATE invoice SET status = ? WHERE user_email = ? AND date = ?";
     private static final String UPDATE_DATE = "UPDATE invoice SET date = ? WHERE user_email = ? AND date = ?";
     private static final String UPDATE_CATEGORY = "UPDATE invoice SET category = ? WHERE user_email = ? AND date=?";
-    public static boolean TEST_MODE = false;
-
-
 
     //admin view includes all invoices also for Statistics
     public static List<Invoice> getAllInvoicesAdmin() { //#15-Magda
@@ -200,7 +197,6 @@ public class InvoiceRepository {
         }
     }
 
-
     //change invoice category
     public static void updateInvoiceCategory(Invoice invoice) {
         try (Connection conn = DatabaseConnection.getConnection();
@@ -225,54 +221,6 @@ public class InvoiceRepository {
         } catch (SQLException e) {
             System.err.println("Error updating invoice amount: " + e.getMessage());
         }
-    }
-
-    public static boolean deleteInvoiceIfEditable(int invoiceId) {
-        try (Connection con = DatabaseConnection.getConnection();
-             PreparedStatement stmt = con.prepareStatement("SELECT * FROM invoice WHERE id = ?")) {
-
-            stmt.setInt(1, invoiceId);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
-                LocalDate date = createdAt.toLocalDate();
-                LocalDateTime endOfMonth = date.withDayOfMonth(date.lengthOfMonth()).atTime(23, 59);
-
-                // Wenn wir uns noch im selben Monat befinden (also vor Monatsende)
-                if (LocalDateTime.now().isBefore(endOfMonth)) {
-                    try (PreparedStatement deleteStmt = con.prepareStatement("DELETE FROM invoice WHERE id = ?")) {
-                        deleteStmt.setInt(1, invoiceId);
-                        int rowsAffected = deleteStmt.executeUpdate();
-                        return rowsAffected > 0;
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public static void saveInvoiceWithDuplicationCheck(Connection connection, Invoice invoice) {
-        if (invoiceExists(connection, invoice.getUserEmail(), java.sql.Date.valueOf(invoice.getDate()))) {
-            throw new RuntimeException("Invoice already submitted for this date");
-        }
-
-        // Wenn kein Duplikat, dann normal speichern
-        saveInvoiceInfo(
-                connection,
-                invoice.getUserEmail(),
-                java.sql.Date.valueOf(invoice.getDate()),
-                invoice.getAmount(),
-                invoice.getCategory(),
-                invoice.getStatus(),
-                invoice.getFile_Url(),
-                invoice.getCreatedAt(),
-                invoice.getReimbursement(),
-                new File(invoice.getFile_Url())
-        );
     }
 
     public static List<Invoice> getDeclinedInvoicesCurrentMonth(String userEmail) {

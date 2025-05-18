@@ -197,7 +197,7 @@ class InvoiceTest {
                         invoiceOnWeekend.getAmount(),
                         invoiceOnWeekend.getCategory(),
                         invoiceOnWeekend.getStatus(),
-                        invoiceOnWeekend.getFile_Url(),
+                        invoiceOnWeekend.getFileUrl(),
                         invoiceOnWeekend.getCreatedAt(),
                         invoiceOnWeekend.getReimbursement(),
                         tempFile // <- wichtig: echte Datei übergeben
@@ -238,7 +238,7 @@ class InvoiceTest {
                         invoice.getAmount(),
                         invoice.getCategory(),
                         invoice.getStatus(),
-                        invoice.getFile_Url(),
+                        invoice.getFileUrl(),
                         invoice.getCreatedAt(),
                         invoice.getReimbursement(),
                         dummyFile)

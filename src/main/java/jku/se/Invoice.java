@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class Invoice {
     private String userEmail;
@@ -22,10 +23,8 @@ public class Invoice {
     private boolean anomalyDetected;
 
     //Constructor
-    public Invoice(String userEmail, LocalDate date, double amount, Category category, Status status, String file_Url, LocalDateTime createdAt, double reimbursement) {
-        if (category == null) {
-            throw new NullPointerException("Category cannot be null");
-        }
+    public Invoice(String userEmail, LocalDate date, double amount, Category category, Status status, String fileUrl, LocalDateTime createdAt, double reimbursement) {
+        this.category = Objects.requireNonNull(category, "Category cannot be null");
 
         if (amount <= 0) {
             throw new IllegalArgumentException("Amount has to be positive");
@@ -44,7 +43,7 @@ public class Invoice {
         this.amount = amount;
         this.category = category;
         this.status = status;
-        this.fileUrl = file_Url;
+        this.fileUrl = fileUrl;
         this.createdAt = createdAt;
         this.reimbursement = reimbursement;
     }
@@ -109,13 +108,11 @@ public class Invoice {
     public LocalDate getDate() {
         return date;
     }
-    public String getFile_Url() {
-        return fileUrl;
-    }
+    public String getFileUrl() {return fileUrl;}
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-        public double getReimbursement() {
+    public double getReimbursement() {
         return reimbursement;
     }
     public void setReimbursement(double reimbursement) {

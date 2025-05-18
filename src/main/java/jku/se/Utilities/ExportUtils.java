@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ExportUtils {
-    private static final Logger logger = Logger.getLogger(ExportUtils.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ExportUtils.class.getName());
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd_HHmmss");
     private static final int PDF_FONT_SIZE = 12;
     private static final int PDF_TITLE_SIZE = 16;
@@ -114,7 +114,7 @@ public class ExportUtils {
             document.save(new File(fileName));
             return true;
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "PDF export failed", e);
+            LOGGER.log(Level.SEVERE, "PDF export failed", e);
             throw e;
         }
     }

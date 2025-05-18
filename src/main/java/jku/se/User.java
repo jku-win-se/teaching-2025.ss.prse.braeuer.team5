@@ -4,8 +4,12 @@ import jku.se.repository.InvoiceRepository;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class User {
+    private static final Logger LOGGER = Logger.getLogger(User.class.getName());
+
     private String name;
     private String email;
     private String password;
@@ -33,7 +37,9 @@ public class User {
     public String getPreferredNotificationMethod(){return preferredNotificationMethod;}
 
     public void login() { //frida #3
-        System.out.println(name + " hat sich eingeloggt.");
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info(name + " hat sich eingeloggt.");
+        }
     }
 
     public void uploadInvoice(Invoice invoice) { //jovana #4
@@ -75,9 +81,13 @@ public class User {
     public void changeNotificationSettings(String newPreference) { //jovana - #22
         if(newPreference.equals("Email") || newPreference.equals("In-App")|| newPreference.equals("Both")){
             this.preferredNotificationMethod = newPreference;
-            System.out.println("Benachrichtigungspräferenz geändert zu: " + newPreference);
-        }else{
-            System.out.println("Ungültige Eingabe. Mögliche Optionen: Email, In-App, Both");
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.info("Benachrichtigungspräferenz geändert zu: " + newPreference);
+            }
+        } else {
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.info("Ungültige Eingabe. Mögliche Optionen: Email, In-App, Both");
+            }
         }
     }
 
@@ -86,4 +96,3 @@ public class User {
     }
 
 }
-
