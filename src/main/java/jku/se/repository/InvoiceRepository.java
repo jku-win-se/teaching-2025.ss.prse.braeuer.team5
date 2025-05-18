@@ -330,7 +330,7 @@ public class InvoiceRepository {
     }
 
     public static List<String> getActiveUsersThisMonth() throws SQLException {
-        String sql = "SELECT DISTINCT user_email FROM invoices WHERE " + getCurrentMonthCondition();
+        String sql = "SELECT DISTINCT user_email FROM invoice WHERE " + getCurrentMonthCondition();
         List<String> users = new ArrayList<>();
 
         try (Connection con = DatabaseConnection.getConnection();
@@ -344,7 +344,7 @@ public class InvoiceRepository {
     }
 
     public static int getInvoiceCountForUserThisMonth(String userEmail) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM invoices WHERE user_email = ? AND " + getCurrentMonthCondition();
+        String sql = "SELECT COUNT(*) FROM invoice WHERE user_email = ? AND " + getCurrentMonthCondition();
 
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -355,7 +355,7 @@ public class InvoiceRepository {
     }
 
     public static double getTotalReimbursementForUserThisMonth(String userEmail) throws SQLException {
-        String sql = "SELECT SUM(reimbursement) FROM invoices WHERE user_email = ? AND " + getCurrentMonthCondition();
+        String sql = "SELECT SUM(reimbursement) FROM invoice WHERE user_email = ? AND " + getCurrentMonthCondition();
 
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -367,7 +367,7 @@ public class InvoiceRepository {
 
     // Gesamtsumme aller Erstattungen dieses Monats
     public static double getTotalReimbursementThisMonth() throws SQLException {
-        String sql = "SELECT SUM(reimbursement) FROM invoices WHERE " + getCurrentMonthCondition();
+        String sql = "SELECT SUM(reimbursement) FROM invoice WHERE " + getCurrentMonthCondition();
 
         try (Connection con = DatabaseConnection.getConnection();
              Statement stmt = con.createStatement();
