@@ -12,7 +12,7 @@ public class Invoice {
     private double amount;
     private Category category;
     private Status status;
-    private String file_Url;
+    private String fileUrl;
     private LocalDateTime createdAt;
     private double reimbursement; // The refund amount
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in Bytes
@@ -44,7 +44,7 @@ public class Invoice {
         this.amount = amount;
         this.category = category;
         this.status = status;
-        this.file_Url = file_Url;
+        this.fileUrl = file_Url;
         this.createdAt = createdAt;
         this.reimbursement = reimbursement;
     }
@@ -103,14 +103,14 @@ public class Invoice {
         this.category = category;
     }
     public void setFileUrl(String fileUrl) {
-        this.file_Url = fileUrl;
+        this.fileUrl = fileUrl;
     }
     public void setDate(LocalDate date){this.date = date;}
     public LocalDate getDate() {
         return date;
     }
     public String getFile_Url() {
-        return file_Url;
+        return fileUrl;
     }
     public LocalDateTime getCreatedAt() {
         return createdAt;

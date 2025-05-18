@@ -10,8 +10,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DatabaseConnection {
+    private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getName());
+
     private static final String USER = "postgres.dljjtuynbgxgmhkcdypu";
     private static final String PWD = "LunchifyTeam5!";
     private static final String URL_JDBC = "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres";
@@ -52,18 +56,22 @@ public class DatabaseConnection {
             if (responseCode == 200 || responseCode == 201) {
                 return getPublicFileUrl(uniqueFileName);
             } else {
-                System.out.println("Upload fehlgeschlagen: HTTP " + responseCode);
+                if (LOGGER.isLoggable(Level.INFO)) {
+                    LOGGER.info("Upload fehlgeschlagen: HTTP " + responseCode);
+                }
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getErrorStream()))) {
                     String inputLine;
                     StringBuilder response = new StringBuilder();
                     while ((inputLine = in.readLine()) != null) {
                         response.append(inputLine);
                     }
-                    System.out.println("Fehlerdetails: " + response);
+                    if (LOGGER.isLoggable(Level.INFO)) {
+                        LOGGER.info("Fehlerdetails: " + response);
+                    }
                 }
             }
-        }catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception e) {
+            LOGGER.log(Level.SEVERE, "Fehler beim Upload der Datei: ", e);
         }
         return null;
     }
@@ -76,9 +84,11 @@ public class DatabaseConnection {
     // Check database connection (test connection)
     public static void main(String[] args) {
         try (Connection con = getConnection()) {
-            System.out.println("Verbindung zu Supabase erfolgreich!");
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.info("Verbindung zu Supabase erfolgreich!");
+            }
         } catch (SQLException e) {
-            System.err.println("Fehler bei der Verbindung: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Fehler bei der Verbindung: ", e);
         }
     }
 }
