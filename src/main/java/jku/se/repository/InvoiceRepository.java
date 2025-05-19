@@ -26,7 +26,7 @@ public class InvoiceRepository {
     private static final String UPDATE_STATUS = "UPDATE invoice SET status = ? WHERE user_email = ? AND date = ?";
     private static final String UPDATE_DATE = "UPDATE invoice SET date = ? WHERE user_email = ? AND date = ?";
     private static final String UPDATE_CATEGORY = "UPDATE invoice SET category = ? WHERE user_email = ? AND date = ?";
-
+    private static final String DELETE_INVOICE = "DELETE FROM invoice WHERE  user_email = ? AND date = ?";
     public static List<Invoice> getAllInvoicesAdmin() {
         List<Invoice> invoices = new ArrayList<>();
 
@@ -294,6 +294,26 @@ public class InvoiceRepository {
              Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             return rs.next() ? rs.getDouble(1) : 0.0;
+        }
+    }
+
+    //delete an invoice from an user as admin
+    public static void deleteInvoice(Invoice invoice) {
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(DELETE_INVOICE)) {
+
+            stmt.setString(1, invoice.getUserEmail());
+            stmt.setDate(2, java.sql.Date.valueOf(invoice.getDate()));
+
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                LOGGER.info("Invoice deleted successfully.");
+            } else {
+                LOGGER.warning("No invoice found to delete.");
+            }
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error deleting invoice: ", e);
         }
     }
 }
