@@ -21,7 +21,7 @@
    <left>
       <VBox prefHeight="155.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <Button accessibleRole="IMAGE_VIEW" mnemonicParsing="false" onAction="#handleEditInvoice" prefHeight="46.0" prefWidth="100.0" text="Edit invoice" textAlignment="CENTER" wrapText="true" />
+            <Button accessibleRole="IMAGE_VIEW" mnemonicParsing="false" onAction="#handleEditInvoice" prefHeight="46.0" prefWidth="100.0" text="Manage invoice" textAlignment="CENTER" wrapText="true" />
             <Button accessibleRole="IMAGE_VIEW" mnemonicParsing="false" onAction="#handleStatistics" prefHeight="46.0" prefWidth="100.0" text="Statistics" textAlignment="CENTER" wrapText="true" />
             <Button accessibleRole="IMAGE_VIEW" layoutX="10.0" layoutY="56.0" mnemonicParsing="false" onAction="#handleAddAdminUser" prefHeight="46.0" prefWidth="100.0" text="Add Admin/User" textAlignment="CENTER" wrapText="true" />
             <Button accessibleRole="IMAGE_VIEW" layoutX="10.0" layoutY="194.0" mnemonicParsing="false" onAction="#handleDeleteAdminUser" prefHeight="46.0" prefWidth="100.0" text="Delete Admin/User" textAlignment="CENTER" wrapText="true" />
