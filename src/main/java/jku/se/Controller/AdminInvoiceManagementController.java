@@ -37,6 +37,7 @@ public class AdminInvoiceManagementController {
     @FXML private Button changeButton;
     @FXML private Button invoiceAcceptButton;
     @FXML private Button declinedButton;
+    @FXML private Button deleteButton1;
     @FXML private Label statusLabel;
 
     @FXML
@@ -195,6 +196,18 @@ public class AdminInvoiceManagementController {
             selectedInvoice.setStatus(Status.DECLINED);
             InvoiceRepository.updateInvoiceStatus(selectedInvoice);
             statusLabel.setText("Invoice declined.");
+            statusLabel.setStyle("-fx-text-fill: red;");
+        }
+    }
+
+    //Admin can delete a invoice from a user
+    @FXML
+    private void handleDeleteInvoice(ActionEvent event) throws SQLException{
+        Invoice selectedInvoice = selectInvoice.getValue();
+
+        if (selectedInvoice != null) {
+            InvoiceRepository.deleteInvoice(selectedInvoice);
+            statusLabel.setText("Invoice delete.");
             statusLabel.setStyle("-fx-text-fill: red;");
         }
     }
