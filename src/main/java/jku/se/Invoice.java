@@ -144,11 +144,6 @@ public class Invoice {
         return category.name();
     }
 
-    //need a string for user dashboard table
-    public String getCreatedAtString() {
-        return createdAt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-    }
-
     //using these methods, the admins can approve the individual invoices, etc.
     public void approve() {
         this.status = Status.APPROVED;
