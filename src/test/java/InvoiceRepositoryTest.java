@@ -1,12 +1,10 @@
 
 
-import jku.se.Invoice;
-import jku.se.Category;
-import jku.se.Status;
-import jku.se.User;
+import jku.se.*;
 import jku.se.repository.InvoiceRepository;
 import jku.se.repository.UserRepository;
 import org.junit.jupiter.api.*;
+
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -153,7 +151,7 @@ public class InvoiceRepositoryTest {
         invoices.sort(Comparator.comparing(Invoice::getDate));
 
         // Check the first invoice
-        Invoice firstInvoice = invoices.get(0);
+        Invoice firstInvoice = invoices.getFirst();
         assertNotNull(firstInvoice, "The first invoice should exist.");
         assertEquals(LocalDate.of(2025, 4, 2), firstInvoice.getDate());
         assertEquals(30.00, firstInvoice.getAmount());
@@ -289,86 +287,24 @@ public class InvoiceRepositoryTest {
         assertEquals(expectedReimbursement, updated.getReimbursement(), 0.01);
     }
 
-    /*@Test MagSal
-    void testUpdateInvoiceDate() throws SQLException {
-        Invoice invoice = InvoiceRepository.getAllInvoicesAdmin().stream()
+    @Test
+    void testDeleteInvoice() {
+        // Setup
+        Invoice toDelete = InvoiceRepository.getAllInvoicesAdmin().stream()
                 .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new AssertionError("Test invoice not found"));
 
-        assertNotNull(invoice);
+        // Execute
+        InvoiceRepository.deleteInvoice(toDelete);
 
-        LocalDate oldDate = invoice.getDate();
-        LocalDate newDate = LocalDate.now().withDayOfMonth(15);
+        // Verify
+        boolean stillExists = InvoiceRepository.getAllInvoicesAdmin().stream()
+                .anyMatch(i -> i.getUserEmail().equals(toDelete.getUserEmail())
+                        && i.getDate().equals(toDelete.getDate()));
 
-        while (newDate.getDayOfWeek().getValue() >= 6) {
-            newDate = newDate.plusDays(1);
-        }
-
-        invoice.setDate(newDate);
-        InvoiceRepository.updateInvoiceDate(invoice); // ← Wichtig
-
-        Invoice updated = InvoiceRepository.getAllInvoicesAdmin().stream()
-                .filter(i -> i.getUserEmail().equals("testuser1@lunchify.com"))
-                .findFirst()
-                .orElse(null);
-
-        assertNotNull(updated);
-        assertEquals(newDate, updated.getDate());
+        assertFalse(stillExists, "Invoice should no longer exist in database");
     }
-     */
-
-
-   /* @Test
-    void testUserCannotSubmitMultipleInvoicesOnSameDay() throws Exception {
-        String userEmail = "testuser1@lunchify.com";
-        LocalDate sameDate = LocalDate.now();
-
-        File dummyFile = File.createTempFile("dummy", ".pdf");
-        dummyFile.deleteOnExit();
-        String dummyPath = dummyFile.getAbsolutePath();
-
-        Invoice invoice1 = new Invoice(
-                userEmail,
-                sameDate,
-                20.00,
-                Category.RESTAURANT,
-                Status.PROCESSING,
-                dummyPath,
-                LocalDateTime.now(),
-                3.0
-        );
-
-        Invoice invoice2 = new Invoice(
-                userEmail,
-                sameDate,
-                25.00,
-                Category.SUPERMARKET,
-                Status.PROCESSING,
-                dummyPath,
-                LocalDateTime.now(),
-                2.5
-        );
-
-        // Erste Verbindung: Erste Rechnung einfügen
-        try (Connection connection1 = DriverManager.getConnection(URL, USER, PWD)) {
-            assertDoesNotThrow(() ->
-                            InvoiceRepository.saveInvoiceWithDuplicationCheck(connection1, invoice1),
-                    "First invoice should be inserted successfully"
-            );
-        }
-
-        // Zweite Verbindung: Zweite Rechnung – sollte fehlschlagen
-        try (Connection connection2 = DriverManager.getConnection(URL, USER, PWD)) {
-            RuntimeException exception = assertThrows(RuntimeException.class, () ->
-                            InvoiceRepository.saveInvoiceWithDuplicationCheck(connection2, invoice2),
-                    "Submitting second invoice on same day should throw an exception"
-            );
-            assertTrue(exception.getMessage().contains("already submitted"), "Expected duplication error message");
-        }
-    }
-    */
-
     private void insertTestInvoice(String userEmail, LocalDate date, double amount, Category category, Status status, String fileUrl, LocalDateTime createdAt, double reimbursement) {
         try (Connection connection = DriverManager.getConnection(URL, USER, PWD)) {
             String sql = "INSERT INTO invoice (user_email, date, amount, category, status, file_url, created_at, reimbursement) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -388,4 +324,29 @@ public class InvoiceRepositoryTest {
             fail("Error when inserting the test invoice into the database.");
         }
     }
+    // Test with non-existent user
+    @Test
+    void testGetAllInvoicesUserWithNoInvoices() {
+
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser("nonexistent@test.com");
+
+        assertTrue(invoices.isEmpty(), "Should return empty list for user with no invoices");
+    }
+
+    //test if invoice exists
+    @Test
+    void testInvoiceExists() {
+        LocalDate knownDate = LocalDate.of(2025, 3, 11); // date von testuser1
+        boolean exists = false;
+
+        try (Connection con = DriverManager.getConnection(URL, USER, PWD)) {
+            exists = InvoiceRepository.invoiceExists(con, "testuser1@lunchify.com", Date.valueOf(knownDate));
+        } catch (SQLException e) {
+            fail("Database error: " + e.getMessage());
+        }
+
+        assertTrue(exists, "Expected invoice to exist for testuser1 on known date");
+    }
+
+
 }
