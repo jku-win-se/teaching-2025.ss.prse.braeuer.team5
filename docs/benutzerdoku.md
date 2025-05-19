@@ -6,18 +6,18 @@ Lunchify dient zur Weitergabe von Rechnungen an die Personalabteilung. In weiter
 Das Programm ist grundsätzlich in zwei Teile geteilt. Der erste Teil ist ausschließlich für Administratoren zugänglich, dieser umgreift das Management der User, der Rechnungen und die Übersicht der erforderlichen Statistiken. Der zweite Teil ist für Administratoren und User bestimmt, welcher auch zur Einreichung und Bearbeitung der eigenen Rechnungen dient. 
 
 ### 1.1. Installationsanleitung
-Schritt 1: Java installieren
+#### Schritt 1: Java installieren
 Um Lunchify verwenden zu können ist es erforderlich Zugriff auf eine Entwicklungsumgebung zu haben. Falls diese nocht nicht installiert wurde bitte herunterladen: 
 https://www.oracle.com/at/java/technologies/downloads/#java21
 
-Schritt 2: JavaFX SDK installieren
+#### Schritt 2: JavaFX SDK installieren
 Anschließend sollte auch überprüft werden, ob ein Zugriff auf JavaFX SDK besteht. Ansonsten muss dieses Tool auch heruntergeladen werden (Bitte die passende Version zu der Entwicklungsumgebung wählen):
 https://gluonhq.com/products/javafx/
 
-Schritt 3: Lunchify-Installationspaket vorbereiten
-Sie haben eine Zip-Datei mit der Lunchify erhalten. Bitte herunterladen und entpacken. Bitte öffnen sie die Datei mit der Endung "Lunchify-0.0.1.beta" mit Doppelklick. 
+#### Schritt 3: Lunchify-Installationspaket vorbereiten
+Sie haben eine Zip-Datei mit der Lunchify erhalten. Bitte herunterladen und entpacken. Bitte öffnen sie die Datei "Lunchify-0.0.1.beta" mit Doppelklick. 
 
-Falls dieser Vorgang nicht durchgeführt werden kann, öffnen Sie den Ordner, in dem sie die JavaFX SDK entpackt haben. Kopieren Sie den Pfad zum Ordner lib. Öffnen sie die Datei start-lunchify.bat per Rechtsklick und klicken sie auf "bearbeiten". Ersetzen sie in der Datei den Pfad PATH_TO_FX mit ihrem Link. Speichern und schließen sie die Datei.
+Falls dieser Vorgang nicht durchgeführt werden kann, öffnen Sie den Ordner, in dem sie die JavaFX SDK entpackt haben. Kopieren Sie den Pfad zum Ordner "lib". Öffnen sie die Datei "start-lunchify.bat" per Rechtsklick und klicken sie auf "bearbeiten". Ersetzen sie in der Datei den Pfad "PATH_TO_FX" mit ihrem Link. Speichern und schließen sie die Datei.
 Danach können sie die Datei mit Doppelklick öffnen und Lunchify starten.
 
 ## 2. USER
