@@ -25,6 +25,7 @@
             <children>
                 <Button accessibleRole="IMAGE_VIEW" mnemonicParsing="false" onAction="#handleEditInvoiceUser" prefHeight="46.0" prefWidth="100.0" text="Edit invoice" textAlignment="CENTER" wrapText="true" />
                 <Button accessibleRole="IMAGE_VIEW" mnemonicParsing="false" onAction="#handleUploadInvoice" prefHeight="46.0" prefWidth="100.0" text="Upload invoice" textAlignment="CENTER" wrapText="true" />
+            <Button mnemonicParsing="false" onAction="#openNotifications" prefHeight="51.0" prefWidth="100.0" text="Notifications" />
                 <Button fx:id="logoutUser" accessibleRole="IMAGE_VIEW" mnemonicParsing="false" onAction="#handleLogoutUser" prefHeight="46.0" prefWidth="100.0" text="Logout" textAlignment="CENTER" wrapText="true" />
             </children>
         </VBox>

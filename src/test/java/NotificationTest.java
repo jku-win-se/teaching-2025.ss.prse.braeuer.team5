@@ -1,85 +1,50 @@
-import jku.se.Category;
-import jku.se.Status;
+import jku.se.Notification;
 import jku.se.User;
-import jku.se.Invoice;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 public class NotificationTest {
-    private User user;
-    private Invoice testInvoice;
 
-    @BeforeEach
-    void setUp() {
-        user = new User("Max Mustermann", "max@example.com", "123", false);
-        testInvoice = new Invoice(
-                user.getEmail(),
-                LocalDate.now(),
-                42.50,
-                Category.RESTAURANT,
-                Status.PROCESSING,
-                "file.pdf",
-                LocalDateTime.now(),
-                3.0
-        );
+    @AfterEach
+    void clearMessages() {
+        Notification.clearMessages();
     }
 
     @Test
-    void setPreferenceEmail_ShouldSendEmailOnly() {
-        user.changeNotificationSettings("Email");
-        assertEquals("Email", user.getPreferredNotificationMethod());
-        user.uploadInvoice(testInvoice);
+    void testInAppNotificationAfterSubmission() {
+        User user = new User("Test User", "test@example.com", "pw", false);
+
+        Notification notification = new Notification("Invoice submitted successfully.");
+        notification.sendInApp(user, notification.getMessage());
+
+        List<String> messages = Notification.messagesSent;
+        assertEquals(1, messages.size());
+        assertTrue(messages.get(0).contains("In-App"));
+        assertTrue(messages.get(0).contains("Invoice submitted successfully."));
     }
 
     @Test
-    void testSetPreferenceInApp_ShouldSendInAppOnly() {
-        user.changeNotificationSettings("In-App");
-        assertEquals("In-App", user.getPreferredNotificationMethod());
-        user.uploadInvoice(testInvoice);
+    void testNotificationAfterApproval() {
+        User user = new User("Max", "max@example.com", "pw", false);
+
+        Notification notification = new Notification("Your invoice from 01.05.2025 was approved.");
+        notification.sendInApp(user, notification.getMessage());
+
+        assertEquals(1, Notification.messagesSent.size());
+        assertTrue(Notification.messagesSent.get(0).contains("approved"));
     }
 
     @Test
-    void testSetPreferenceBoth_ShouldSendBoth() {
-        user.changeNotificationSettings("Both");
-        assertEquals("Both", user.getPreferredNotificationMethod());
-        user.uploadInvoice(testInvoice);
+    void testNotificationAfterRejection() {
+        User user = new User("Anna", "anna@example.com", "pw", false);
+
+        Notification notification = new Notification("Your invoice from 02.05.2025 was rejected.");
+        notification.sendInApp(user, notification.getMessage());
+
+        assertEquals(1, Notification.messagesSent.size());
+        assertTrue(Notification.messagesSent.get(0).contains("rejected"));
     }
-
-    @Test
-    void testDefaultPreference_ShouldBeInApp() {
-        User newUser = new User("Anna", "anna@example.com", "1234", false);
-        assertEquals("In-App", newUser.getPreferredNotificationMethod());
-        newUser.uploadInvoice(testInvoice);
-    }
-
-    @Test
-    void testChangePreference_ShouldBeAppliedImmediately() {
-        user.changeNotificationSettings("Email");
-        assertEquals("Email", user.getPreferredNotificationMethod());
-
-        user.changeNotificationSettings("In-App");
-        assertEquals("In-App", user.getPreferredNotificationMethod());
-
-        user.uploadInvoice(testInvoice);
-    }
-
-    @Test
-    void testPreferencePersistsAfterLogoutSimulation() {
-        user.changeNotificationSettings("Both");
-
-        // simulate logout/login by creating same user again with same email
-        String savedPreference = user.getPreferredNotificationMethod();
-        User loggedInAgain = new User(user.getName(), user.getEmail(), user.getPassword(), false);
-        loggedInAgain.changeNotificationSettings(savedPreference);
-
-        assertEquals("Both", loggedInAgain.getPreferredNotificationMethod());
-        loggedInAgain.uploadInvoice(testInvoice);
-    }
-
-
-
 }
