@@ -41,7 +41,7 @@
     </ComboBox>
 
     <!-- Buttons für Speichern und Abbrechen -->
-    <Button fx:id="changeButton" layoutX="468.0" layoutY="181.0" onAction="#changeInvoiceDetails" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Change" />
+    <Button fx:id="changeButton" layoutX="469.0" layoutY="131.0" onAction="#changeInvoiceDetails" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Change" />
     <Button layoutX="468.0" layoutY="231.0" onAction="#cancelEditAdmin" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Exit" />
    <Label layoutX="111.0" layoutY="82.0" text="Select User:" AnchorPane.leftAnchor="111.0" />
    <ComboBox fx:id="selectUser" layoutX="240.0" layoutY="78.0" onAction="#searchUser" prefHeight="25.0" prefWidth="204.0" AnchorPane.leftAnchor="240.0" />
@@ -56,4 +56,5 @@
          <Font name="System Italic" size="10.0" />
       </font>
    </Label>
+   <Button fx:id="deleteButton1" layoutX="468.0" layoutY="181.0" onAction="#handleDeleteInvoice" prefWidth="100.0" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-font-weight: bold;" text="Delete" />
 </AnchorPane>
