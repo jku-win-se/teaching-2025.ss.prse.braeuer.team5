@@ -22,15 +22,6 @@ public class Administrator extends User{
     }
 
 
-    public void checkInovices(){}
-
-    public void flagAnomalies(){}
-
-
-    public void sendNotification(String message){}
-
-    public void configureRefundAmounts(double restaurant, double supermarket){}
-
     //new user isAdministrator = false
     public void addUser(String name, String email, String password, boolean isAdministrator) { //#18 Magdalena
         User newUser = new User(name, email, password, isAdministrator);
