@@ -1,0 +1,66 @@
+# 🧪 Lunchify – Testplan: Sonderfallbehandlungen
+
+---
+
+## 🔐 Authentifizierung & Autorisierung
+
+| Test-ID | Beschreibung                                         | Eingabe                                | Erwartetes Ergebnis                               |
+|---------|------------------------------------------------------|----------------------------------------|---------------------------------------------------|
+| A01     | Anmeldung mit ungültiger E-Mail                      | `user@invalid`                         | Fehlermeldung: „Ungültige E-Mail-Adresse“         |
+| A02     | Anmeldung mit falschem Passwort                      | `valid@firma.at / falschesPasswort`    | Fehlermeldung: „Anmeldedaten ungültig“            |
+| A03     | Zugriff auf Adminbereich ohne Adminrechte            | Einloggen als normaler Benutzer        | Zugriff verweigert, Weiterleitung zur Startseite  |
+
+---
+
+## 🧾 Rechnungseinreichung & Klassifizierung
+
+| Test-ID | Beschreibung                                         | Eingabe                                | Erwartetes Ergebnis                                        |
+|---------|------------------------------------------------------|----------------------------------------|------------------------------------------------------------|
+| R01     | Mehrere Rechnungen am selben Tag                     | Zwei Uploads am selben Kalendertag     | Fehlermeldung: „Nur eine Rechnung pro Tag erlaubt“         |
+| R02     | Nicht unterstütztes Dateiformat                      | `.tiff`                                | Fehlermeldung: „Dateiformat nicht unterstützt“             |
+| R03     | Betrag auf Rechnung fehlt                            | Leeres oder undeutliches Belegbild     | Fehlermeldung: „Betrag konnte nicht erkannt werden“        |
+| R04     | OCR erkennt anderen Betrag als eingegeben            | OCR: 7,20 €, Eingabe: 7,50 €           | Warnung + Markierung als Anomalie                          |
+| R05     | Zukünftiges Rechnungsdatum                           | 31.12.2099                             | Fehlermeldung: „Ungültiges Rechnungsdatum“                 |
+
+---
+
+## 💶 Rückerstattungslogik
+
+| Test-ID | Beschreibung                                         | Eingabe                                | Erwartetes Ergebnis                                        |
+|---------|------------------------------------------------------|----------------------------------------|------------------------------------------------------------|
+| B01     | Restaurant-Rechnung unter 3 €                        | 2,90 €                                 | Rückerstattung: 2,90 €                                     |
+| B02     | Supermarkt-Rechnung über 2,5 €                       | 2,60 €                                 | Rückerstattung: 2,50 €                                     |
+| B03     | 0 € Restaurantrechnung                               | 0,00 €                                 | Rückerstattung: 0 € + Hinweis zur Prüfung                  |
+| B04     | Falsch klassifizierte Restaurantrechnung             | Manuell als Supermarkt markiert        | Nach Korrektur: Erstattung wie Restaurant (max. 3 €)       |
+
+---
+
+## 📜 Verlauf & Korrektur
+
+| Test-ID | Beschreibung                                         | Eingabe                                | Erwartetes Ergebnis                                        |
+|---------|------------------------------------------------------|----------------------------------------|------------------------------------------------------------|
+| V01     | Änderung nach Monatsende                             | Rechnung vom Vormonat                  | Änderung nicht möglich, Hinweis wird angezeigt             |
+| V02     | Rechnung kurz vor Mitternacht löschen                | 23:59 Uhr am Monatsletzten             | Löschen möglich (vor 00:00 Uhr)                            |
+| V03     | Mehrfache Änderungen in kurzer Zeit                  | 5 Änderungen in 10 Minuten             | Anomalie wird im System gemeldet                           |
+
+---
+
+## 📊 Admin & Export
+
+| Test-ID | Beschreibung                                         | Eingabe                                | Erwartetes Ergebnis                                        |
+|---------|------------------------------------------------------|----------------------------------------|------------------------------------------------------------|
+| AD01    | Monats-Export ohne Einträge                          | Keine Rechnungen im März               | Leerer JSON-Export mit gültiger Struktur                   |
+| AD02    | Suche nach nicht existierendem Benutzer              | `email@nichtda.at`                     | Meldung: „Benutzer nicht gefunden“                         |
+| AD03    | Korrektur nach Gehaltsabrechnung                     | Rechnung vom Vorjahr                   | Keine Änderung möglich, entsprechende Meldung              |
+
+---
+
+## ⚙️ Konfiguration & Anomalien
+
+| Test-ID | Beschreibung                                         | Eingabe                                | Erwartetes Ergebnis                                        |
+|---------|------------------------------------------------------|----------------------------------------|------------------------------------------------------------|
+| K01     | Erstattungsbetrag auf 0 € setzen                     | Neuer Wert: 0 €                        | Fehlermeldung: „Betrag muss größer als 0 sein“             |
+| K02     | Bestehende E-Mail erneut verwenden                   | `bestehend@firma.at`                   | Fehlermeldung: „E-Mail bereits vorhanden“                  |
+| AN01    | Zwei identische Rechnungsbilder hochladen            | Gleiches Bild zweimal                  | Warnung oder automatische Markierung als Duplikat          |
+
+---
