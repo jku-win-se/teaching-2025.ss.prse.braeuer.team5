@@ -48,6 +48,13 @@ class CloudOCRServiceTest {
     }
 
     @Test
+    void testExtractAmount_fallbackToLargest() {
+        String input = "1.00\n3.00\n999.99\n1001.00\n0.20";
+        String result = service.extractAmount(input);
+        assertEquals("999.99", result); // Largest valid amount under limit
+    }
+
+    @Test
     void testExtractAmount_notFound() {
         String input = "No amounts here.";
         assertEquals("Not found", service.extractAmount(input));
