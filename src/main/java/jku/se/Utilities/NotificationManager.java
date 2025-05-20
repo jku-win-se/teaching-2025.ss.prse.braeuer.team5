@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NotificationManager {
+public final class NotificationManager {
     private static final Logger LOGGER = Logger.getLogger(NotificationManager.class.getName());
     private static NotificationManager instance;
 
@@ -40,7 +40,7 @@ public class NotificationManager {
     public void sendInApp(User user, String message) {
         String formatted = "User " + user.getEmail() + ": " + message;
         this.addNotification(new Notification(formatted));
-        Notification.messagesSent.add(formatted);
+        Notification.MESSAGES_SENT.add(formatted);
         if (LOGGER.isLoggable(Level.INFO)) {
             LOGGER.info("In-App-Benachrichtigung für " + user.getName() + ": " + message);
         }
