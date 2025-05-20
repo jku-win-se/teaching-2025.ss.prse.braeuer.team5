@@ -31,6 +31,30 @@ public class Statistics {
         return result;
     }
 
+    public Map<String, Map<String, UserInvoiceData>> getInvoicesPerUserAndMonth() {
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
+        Map<String, Map<String, UserInvoiceData>> result = new LinkedHashMap<>(); // Monat -> (UserEmail -> Daten)
+
+        for (Invoice invoice : invoices) {
+            String monthName = getMonthName(invoice.getDate().getMonthValue());
+            String userEmail = invoice.getUserEmail();
+
+            result.putIfAbsent(monthName, new LinkedHashMap<>());
+            Map<String, UserInvoiceData> userMap = result.get(monthName);
+
+            if (!userMap.containsKey(userEmail)) {
+                User user = UserRepository.getByEmail(userEmail);
+                String userName = user != null ? user.getName() : "Unknown";
+                userMap.put(userEmail, new UserInvoiceData(userName, userEmail, 1));
+            } else {
+                UserInvoiceData data = userMap.get(userEmail);
+                data.setInvoiceCount(data.getInvoiceCount() + 1);
+            }
+        }
+        return result;
+    }
+
+
 
     //method für statistic reimbursement per month
     public Map<String, Double> getReimbursementPerMonth() {

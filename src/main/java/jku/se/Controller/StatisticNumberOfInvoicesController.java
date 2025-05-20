@@ -13,13 +13,23 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import jku.se.Statistics;
+import jku.se.UserInvoiceData;
+import jku.se.export.CsvExporter;
+import jku.se.export.PdfExporter;
 
+import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.WritableImage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
-public class StatisticNumberOfInvoicesController extends BaseStatisticController{
+public class StatisticNumberOfInvoicesController {
     @FXML private BarChart<String, Number> barChartInvoicesPerMonth;
     @FXML private ComboBox<String> saveFormatComboBox;
     @FXML private Text statusText;
@@ -29,7 +39,6 @@ public class StatisticNumberOfInvoicesController extends BaseStatisticController
 
     @FXML
     public void initialize() {
-        // Initialize bar chart with invoices per month data
         Map<String, Integer> invoicesPerMonth = statistics.getInvoicesPerMonth();
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Invoices per Month");
@@ -45,7 +54,6 @@ public class StatisticNumberOfInvoicesController extends BaseStatisticController
         barChartInvoicesPerMonth.getData().clear();
         barChartInvoicesPerMonth.getData().add(series);
 
-        // Setup export format options and status timer
         saveFormatComboBox.getItems().addAll("PDF", "CSV");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
@@ -53,29 +61,113 @@ public class StatisticNumberOfInvoicesController extends BaseStatisticController
         statusTimer.setOnFinished(e -> statusText.setText(""));
     }
 
-    // Export invoices per month in selected format
     @FXML
     private void handleExport() {
         String format = saveFormatComboBox.getValue();
-        exportSingleFormat(
-                statusText,
-                "invoices_per_month_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")),
-                statistics.getInvoicesPerMonth(),
-                "Invoices per Month",
-                format
-        );
+        try {
+            if ("PDF".equals(format)) {
+                exportPdf();
+            } else if ("CSV".equals(format)) {
+                exportCsv();
+            } else {
+                showStatus("Unsupported format: " + format, false);
+            }
+        } catch (IOException e) {
+            showStatus("Export failed: " + e.getMessage(), false);
+            e.printStackTrace();
+        }
     }
 
-    // Cancel and return to statistics page
+    private void exportPdf() throws IOException {
+        Map<String, Integer> invoicesPerMonth = statistics.getInvoicesPerMonth();
+        Map<String, Map<String, UserInvoiceData>> userInvoicesPerMonth = statistics.getInvoicesPerUserAndMonth();
+
+        PdfExporter exporter = new PdfExporter();
+        exporter.startPage();
+        exporter.addTitle("Invoices Per Month Report");
+
+        // 1. Bild vom Chart erstellen und einfügen
+        WritableImage snapshot = barChartInvoicesPerMonth.snapshot(null, null);
+        File tempImageFile = File.createTempFile("chart_snapshot", ".png");
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
+        ImageIO.write(bufferedImage, "png", tempImageFile);
+
+        // Bild in PDF laden und zeichnen
+        PDImageXObject pdImage = PDImageXObject.createFromFileByContent(tempImageFile, exporter.getDocument());
+        PDPageContentStream contentStream = exporter.getContentStream();
+
+        // Beispielposition und Skalierung (ggf. anpassen)
+        int imgWidth = 300;
+        int imgHeight = 225;
+        int imgX = 50;
+        int imgY = exporter.getYPosition() - imgHeight - 20;
+
+        contentStream.drawImage(pdImage, imgX, imgY, imgWidth, imgHeight);
+        exporter.setYPosition(imgY - 30);
+
+        // Tabelle 1: Gesamte Rechnungen pro Monat
+        List<String> headersMonth = List.of("Month", "Invoice Count");
+        List<List<String>> rowsMonth = new ArrayList<>();
+        for (var entry : invoicesPerMonth.entrySet()) {
+            rowsMonth.add(List.of(entry.getKey(), String.valueOf(entry.getValue())));
+        }
+        exporter.addTable(headersMonth, rowsMonth);
+
+        exporter.addParagraph(" ");
+
+        // Tabelle 2: Detaillierte User-Statistik pro Monat
+        for (var monthEntry : userInvoicesPerMonth.entrySet()) {
+            String month = monthEntry.getKey();
+            Map<String, UserInvoiceData> userMap = monthEntry.getValue();
+
+            exporter.addParagraph("Details for Month: " + month);
+
+            List<String> headersUser = List.of("User Name", "Email", "Invoice Count");
+            List<List<String>> rowsUser = new ArrayList<>();
+
+            for (UserInvoiceData userData : userMap.values()) {
+                rowsUser.add(List.of(
+                        userData.getName(),
+                        userData.getEmail(),
+                        String.valueOf(userData.getInvoiceCount())
+                ));
+            }
+            exporter.addTable(headersUser, rowsUser);
+
+            exporter.addParagraph(" ");
+        }
+
+        exporter.end();
+        exporter.saveToFile("invoices_per_month_detailed");
+
+        // Temporäre Bilddatei löschen
+        tempImageFile.delete();
+
+        showStatus("PDF export with chart successful!", true);
+    }
+
+    private void exportCsv() throws IOException {
+        Map<String, Integer> invoicesPerMonth = statistics.getInvoicesPerMonth();
+
+        List<Map<String, String>> rows = new ArrayList<>();
+        for (var entry : invoicesPerMonth.entrySet()) {
+            rows.add(Map.of("Month", entry.getKey(), "Invoice Count", String.valueOf(entry.getValue())));
+        }
+
+        CsvExporter exporter = new CsvExporter();
+        exporter.export(rows, "invoices_per_month");
+        showStatus("CSV export successful!", true);
+    }
+
+    private void showStatus(String message, boolean success) {
+        statusText.setStyle(success ? "-fx-fill: green;" : "-fx-fill: red;");
+        statusText.setText(message);
+        statusTimer.playFromStart();
+    }
+
     @FXML
     private void cancelNumberOfInvoices(ActionEvent event) throws IOException {
-        loadPage("Statistics.fxml", event);
-    }
-
-    // Load specified FXML page
-    @FXML
-    private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Statistics.fxml"));
         Scene scene = new Scene(loader.load());
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);

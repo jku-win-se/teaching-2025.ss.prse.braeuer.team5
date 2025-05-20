@@ -13,13 +13,16 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import jku.se.Statistics;
-import jku.se.Utilities.ExportUtils;
+import jku.se.export.CsvExporter;
+import jku.se.export.PdfExporter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class StatisticSupermarketRestaurantController extends BaseStatisticController {
+public class StatisticSupermarketRestaurantController {
     @FXML private PieChart pieChartDistribution;
     @FXML private ComboBox<String> saveFormatComboBox;
     @FXML private Text statusText;
@@ -29,7 +32,6 @@ public class StatisticSupermarketRestaurantController extends BaseStatisticContr
 
     @FXML
     public void initialize() {
-        // Initialize pie chart with counts of invoices per supermarket and restaurant
         int supermarketCount = statistics.getInvoicesPerSupermaket();
         int restaurantCount = statistics.getInvoicesPerRestaurant();
 
@@ -38,42 +40,78 @@ public class StatisticSupermarketRestaurantController extends BaseStatisticContr
                 new PieChart.Data("Restaurant (" + restaurantCount + ")", restaurantCount)
         ));
 
-        // Setup export format options (PDF and CSV only)
         saveFormatComboBox.getItems().addAll("PDF", "CSV");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
-        // Setup status message timer to clear messages after 3 seconds
         statusTimer = new PauseTransition(Duration.seconds(3));
         statusTimer.setOnFinished(e -> statusText.setText(""));
     }
 
-    // Handle export of distribution data in selected format
     @FXML
     private void handleExport(ActionEvent event) {
+        String format = saveFormatComboBox.getValue();
+
+        try {
+            if ("PDF".equals(format)) {
+                exportPdf();
+            } else if ("CSV".equals(format)) {
+                exportCsv();
+            } else {
+                showStatus("Unsupported format: " + format, false);
+            }
+        } catch (IOException e) {
+            showStatus("Export failed: " + e.getMessage(), false);
+            e.printStackTrace();
+        }
+    }
+
+    private void exportPdf() throws IOException {
         Map<String, Integer> data = new HashMap<>();
         data.put("Supermarket", statistics.getInvoicesPerSupermaket());
         data.put("Restaurant", statistics.getInvoicesPerRestaurant());
 
-        exportSingleFormat(
-                statusText,
-                "supermarket_restaurant_distribution",
-                data,
-                "Supermarket vs Restaurant",
-                saveFormatComboBox.getValue()
-        );
+        List<String> headers = List.of("Category", "Invoice Count");
+        List<List<String>> rows = new ArrayList<>();
+        for (var entry : data.entrySet()) {
+            rows.add(List.of(entry.getKey(), String.valueOf(entry.getValue())));
+        }
+
+        PdfExporter exporter = new PdfExporter();
+        exporter.startPage();
+        exporter.addTitle("Supermarket vs Restaurant Invoices");
+        exporter.addTable(headers, rows);
+        exporter.end();
+        exporter.saveToFile("supermarket_restaurant_distribution");
+        showStatus("PDF export successful!", true);
     }
 
-    // Cancel and return to statistics page
+    private void exportCsv() throws IOException {
+        Map<String, Integer> data = new HashMap<>();
+        data.put("Supermarket", statistics.getInvoicesPerSupermaket());
+        data.put("Restaurant", statistics.getInvoicesPerRestaurant());
+
+        List<Map<String, String>> rows = new ArrayList<>();
+        for (var entry : data.entrySet()) {
+            rows.add(Map.of("Category", entry.getKey(), "Invoice Count", String.valueOf(entry.getValue())));
+        }
+
+        CsvExporter exporter = new CsvExporter();
+        exporter.export(rows, "supermarket_restaurant_distribution");
+        showStatus("CSV export successful!", true);
+    }
+
+    private void showStatus(String message, boolean success) {
+        statusText.setStyle(success ? "-fx-fill: green;" : "-fx-fill: red;");
+        statusText.setText(message);
+        statusTimer.playFromStart();
+    }
+
     @FXML
     private void cancelDistribution(ActionEvent event) throws IOException {
-        loadPage("Statistics.fxml", event);
-    }
-
-    // Load specified FXML page
-    private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Statistics.fxml"));
+        Scene scene = new Scene(loader.load());
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(loader.load()));
+        stage.setScene(scene);
         stage.show();
     }
 }

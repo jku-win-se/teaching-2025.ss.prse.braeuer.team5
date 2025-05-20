@@ -13,15 +13,16 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import jku.se.Statistics;
-import jku.se.repository.InvoiceRepository;
-
+import jku.se.export.CsvExporter;
+import jku.se.export.JsonExporter;
+import jku.se.export.PdfExporter;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-public class StatisticReimbursementPerMonthController extends BaseStatisticController{
+public class StatisticReimbursementPerMonthController {
     @FXML private BarChart<String, Number> barChartReimbursementPerMonth;
     @FXML private ComboBox<String> saveFormatComboBox;
     @FXML private Text statusText;
@@ -31,7 +32,6 @@ public class StatisticReimbursementPerMonthController extends BaseStatisticContr
 
     @FXML
     public void initialize() {
-        // Initialize bar chart with reimbursement per month data
         Map<String, Double> reimbursementPerMonth = statistics.getReimbursementPerMonth();
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Reimbursement per Month");
@@ -47,7 +47,6 @@ public class StatisticReimbursementPerMonthController extends BaseStatisticContr
         barChartReimbursementPerMonth.getData().clear();
         barChartReimbursementPerMonth.getData().add(series);
 
-        // Setup export formats and status timer
         saveFormatComboBox.getItems().addAll("JSON", "PDF", "CSV");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
@@ -55,41 +54,77 @@ public class StatisticReimbursementPerMonthController extends BaseStatisticContr
         statusTimer.setOnFinished(e -> statusText.setText(""));
     }
 
-    // Handle export based on selected format
     @FXML
     private void handleExport() throws SQLException {
-        String selectedFormat = saveFormatComboBox.getValue();
+        String format = saveFormatComboBox.getValue();
 
-        if (selectedFormat.equals("PDF") || selectedFormat.equals("CSV")) {
-            exportSingleFormat(
-                    statusText,
-                    "reimbursement_per_month",
-                    statistics.getReimbursementPerMonth(),
-                    "Reimbursement per Month",
-                    selectedFormat
-            );
-        } else if (selectedFormat.equals("JSON")) {
-            Map<String, Object> userDetails = statistics.getUserReimbursementDetails();
-            exportReimbursementJson(
-                    statusText,
-                    "reimbursement_details",
-                    userDetails,
-                    InvoiceRepository.getTotalReimbursementThisMonth()
-            );
+        try {
+            if ("PDF".equals(format)) {
+                exportPdf();
+            } else if ("CSV".equals(format)) {
+                exportCsv();
+            } else if ("JSON".equals(format)) {
+                exportJson();
+            } else {
+                showStatus("Unsupported format: " + format, false);
+            }
+        } catch (IOException e) {
+            showStatus("Export failed: " + e.getMessage(), false);
+            e.printStackTrace();
         }
     }
 
-    // Cancel and return to statistics page
-    @FXML
-    private void cancelReimbursement(ActionEvent event) throws IOException {
-        loadPage("Statistics.fxml", event);
+    private void exportPdf() throws IOException {
+        Map<String, Double> reimbursementPerMonth = statistics.getReimbursementPerMonth();
+
+        List<String> headers = List.of("Month", "Reimbursement (€)");
+        List<List<String>> rows = new ArrayList<>();
+        for (var entry : reimbursementPerMonth.entrySet()) {
+            rows.add(List.of(entry.getKey(), String.format("%.2f", entry.getValue())));
+        }
+
+        PdfExporter exporter = new PdfExporter();
+        exporter.startPage();
+        exporter.addTitle("Reimbursement Per Month Report");
+        exporter.addTable(headers, rows);
+        exporter.end();
+        exporter.saveToFile("reimbursement_per_month");
+        showStatus("PDF export successful!", true);
     }
 
-    // Load specified FXML page
-    private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
+    private void exportCsv() throws IOException {
+        Map<String, Double> reimbursementPerMonth = statistics.getReimbursementPerMonth();
+
+        List<Map<String, String>> rows = new ArrayList<>();
+        for (var entry : reimbursementPerMonth.entrySet()) {
+            rows.add(Map.of("Month", entry.getKey(), "Reimbursement (€)", String.format("%.2f", entry.getValue())));
+        }
+
+        CsvExporter exporter = new CsvExporter();
+        exporter.export(rows, "reimbursement_per_month");
+        showStatus("CSV export successful!", true);
+    }
+
+    private void exportJson() throws IOException, SQLException {
+        Map<String, Object> userDetails = statistics.getUserReimbursementDetails();
+
+        JsonExporter exporter = new JsonExporter();
+        exporter.export(userDetails, "reimbursement_details");
+        showStatus("JSON export successful!", true);
+    }
+
+    private void showStatus(String message, boolean success) {
+        statusText.setStyle(success ? "-fx-fill: green;" : "-fx-fill: red;");
+        statusText.setText(message);
+        statusTimer.playFromStart();
+    }
+
+    @FXML
+    private void cancelReimbursement(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Statistics.fxml"));
+        Scene scene = new Scene(loader.load());
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(loader.load()));
+        stage.setScene(scene);
         stage.show();
     }
 }
