@@ -122,6 +122,9 @@ public class Invoice {
     public Status getStatus() {
         return status;
     }
+    public String getCreatedAtString() {
+        return createdAt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
 
     // Calculation of the refund amount based on the category and amount
     public double calculateRefund() {
