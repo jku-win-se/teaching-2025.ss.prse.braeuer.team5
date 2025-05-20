@@ -32,7 +32,7 @@ public class StatisticNumberOfInvoicesController {
     @FXML private ComboBox<String> saveFormatComboBox;
     @FXML private Text statusText;
 
-    private final Statistics statistics = new Statistics();
+    public Statistics statistics = new Statistics();
     private PauseTransition statusTimer;
 
     @FXML
@@ -82,7 +82,7 @@ public class StatisticNumberOfInvoicesController {
         }
     }
 
-    private void exportPdf() throws IOException {
+    public void exportPdf() throws IOException {
         Map<String, Integer> invoicesPerMonth = statistics.getInvoicesPerMonth();
         Map<String, Map<String, UserInvoiceData>> userInvoicesPerMonth = statistics.getInvoicesPerUserAndMonth();
 
@@ -135,7 +135,7 @@ public class StatisticNumberOfInvoicesController {
 
 
 
-    private void exportCsv() throws IOException {
+    public void exportCsv() throws IOException {
         Map<String, Map<String, UserInvoiceData>> invoicesPerUserAndMonth = statistics.getInvoicesPerUserAndMonth();
 
         List<Map<String, String>> rows = new ArrayList<>();
@@ -175,7 +175,7 @@ public class StatisticNumberOfInvoicesController {
     }
 
 
-    private void exportJson() throws IOException {
+    public void exportJson() throws IOException {
         Map<String, Integer> invoicesPerMonth = statistics.getInvoicesPerMonth();
         Map<String, Map<String, UserInvoiceData>> userInvoicesPerMonth = statistics.getInvoicesPerUserAndMonth();
 

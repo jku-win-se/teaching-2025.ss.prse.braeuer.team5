@@ -30,9 +30,10 @@ import java.util.*;
 public class StatisticReimbursementPerMonthController {
     @FXML private BarChart<String, Number> barChartReimbursementPerMonth;
     @FXML private ComboBox<String> saveFormatComboBox;
-    @FXML private Text statusText;
+    @FXML
+    public Text statusText;
 
-    private final Statistics statistics = new Statistics();
+    public Statistics statistics = new Statistics();
     private PauseTransition statusTimer;
 
     @FXML
@@ -78,7 +79,7 @@ public class StatisticReimbursementPerMonthController {
         }
     }
 
-    private void exportPdf() throws IOException, SQLException {
+    public void exportPdf() throws IOException, SQLException {
         Map<String, Double> reimbursementPerMonth = statistics.getReimbursementPerMonth();
         Map<String, Object> userDetails = statistics.getUserReimbursementDetails();
 
@@ -143,7 +144,7 @@ public class StatisticReimbursementPerMonthController {
         showStatus("PDF export with detailed user info successful!", true);
     }
 
-    private void exportCsv() throws IOException, SQLException {
+    public void exportCsv() throws IOException, SQLException {
         Map<String, Map<String, Map<String, Object>>> userReimbursementDetails = statistics.getUserReimbursementDetailsPerMonth();
 
         List<Map<String, String>> rows = new ArrayList<>();
@@ -183,7 +184,7 @@ public class StatisticReimbursementPerMonthController {
         showStatus("CSV export with detailed user info successful!", true);
     }
 
-    private void exportJson() throws SQLException, IOException {
+    public void exportJson() throws SQLException, IOException {
         Map<String, Object> jsonData = statistics.getUserReimbursementDetails();
         JsonExporter exporter = new JsonExporter();
         exporter.export(jsonData, "reimbursement_details");
