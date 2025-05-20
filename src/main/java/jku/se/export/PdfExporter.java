@@ -5,8 +5,10 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -124,12 +126,36 @@ public class PdfExporter {
         yPosition -= ROW_HEIGHT / 2;
     }
 
+    /**
+     * Fügt ein Bild in das PDF ein.
+     * @param image  Das BufferedImage, das eingefügt werden soll
+     * @param x      X-Position (von links unten)
+     * @param y      Y-Position (von links unten)
+     * @param width  Breite des Bildes in PDF-Punkten
+     * @param height Höhe des Bildes in PDF-Punkten
+     * @throws IOException falls Einfügen fehlschlägt
+     */
+    public void addImage(BufferedImage image, float x, float y, float width, float height) throws IOException {
+        if (contentStream == null || document == null) {
+            throw new IllegalStateException("ContentStream oder Dokument sind nicht initialisiert. Rufe startPage() zuerst auf.");
+        }
+        PDImageXObject pdImage = LosslessFactory.createFromImage(document, image);
+        contentStream.drawImage(pdImage, x, y, width, height);
+    }
 
-
-
-    public void drawImage(PDImageXObject image, float x, float y, float width, float height) throws IOException {
-        contentStream.drawImage(image, x, y, width, height);
-        // yPosition wird hier nicht automatisch geändert, setze ggf. manuell
+    /**
+     * Hilfsmethode: Bild einfügen und yPosition nach unten verschieben, sodass der folgende Text darunter ist.
+     * @param image  BufferedImage
+     * @param x      x-Position
+     * @param width  Breite des Bildes
+     * @param height Höhe des Bildes
+     * @param gap    Abstand nach unten zum nächsten Element
+     * @throws IOException
+     */
+    public void addImageAndMovePosition(BufferedImage image, float x, float width, float height, float gap) throws IOException {
+        float y = yPosition - height;
+        addImage(image, x, y, width, height);
+        yPosition = (int)(y - gap);
     }
 
     public void saveToFile(String baseFileName) throws IOException {

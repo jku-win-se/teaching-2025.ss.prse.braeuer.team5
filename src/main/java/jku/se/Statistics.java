@@ -191,4 +191,45 @@ public class Statistics {
         result.put("month", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
         return result;
     }
+
+    /**
+     * Liefert User-Reimbursement-Daten gruppiert nach Monat und User.
+     * Jede User-Map enthält z.B. "name", "email", "total_reimbursement".
+     */
+    public Map<String, Map<String, Map<String, Object>>> getUserReimbursementDetailsPerMonth() throws SQLException {
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
+
+        Map<String, Map<String, Map<String, Object>>> result = new LinkedHashMap<>();
+
+        for (Invoice invoice : invoices) {
+            String monthName = getMonthName(invoice.getDate().getMonthValue());
+            String userEmail = invoice.getUserEmail();
+
+            User user = UserRepository.getByEmail(userEmail);
+            String userName = user != null ? user.getName() : "Unknown";
+
+            result.putIfAbsent(monthName, new LinkedHashMap<>());
+            Map<String, Map<String, Object>> usersInMonth = result.get(monthName);
+
+            usersInMonth.putIfAbsent(userEmail, new LinkedHashMap<>());
+            Map<String, Object> userData = usersInMonth.get(userEmail);
+
+            Object prevObj = userData.get("total_reimbursement");
+            double prevSum;
+            if (prevObj instanceof Double) {
+                prevSum = (Double) prevObj;
+            } else if (prevObj instanceof Number) {
+                prevSum = ((Number) prevObj).doubleValue();
+            } else {
+                prevSum = 0.0;
+            }
+
+            userData.put("name", userName);
+            userData.put("email", userEmail);
+            userData.put("total_reimbursement", prevSum + invoice.getReimbursement());
+        }
+
+        return result;
+    }
+
 }

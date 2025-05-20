@@ -1,58 +1,71 @@
 package jku.se.export;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
 public class CsvExporter {
 
-    private static final String EXPORT_FOLDER = System.getProperty("user.home") + File.separator + "Downloads";
+    private final String delimiter;
 
-    /**
-     * Exportiert eine Liste von Datenzeilen (Karten von Spaltenname zu Wert) als CSV-Datei.
-     * Die Kopfzeile wird aus dem ersten Eintrag generiert.
-     */
+    public CsvExporter() {
+        this.delimiter = ";"; // Standard Semikolon für AT/DE Excel
+    }
+
+    public CsvExporter(String delimiter) {
+        this.delimiter = delimiter;
+    }
+
     public void export(List<Map<String, String>> rows, String baseFileName) throws IOException {
-        if (rows == null || rows.isEmpty()) {
-            throw new IllegalArgumentException("Keine Daten zum Exportieren");
-        }
-
         String fileName = generateFileName(baseFileName, "csv");
 
-        try (FileWriter writer = new FileWriter(fileName)) {
-            // Kopfzeile
-            Map<String, String> firstRow = rows.get(0);
-            String header = String.join(",", firstRow.keySet());
-            writer.write(header + "\n");
+        try (
+                FileOutputStream fos = new FileOutputStream(new File(fileName));
+                OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+                BufferedWriter writer = new BufferedWriter(osw)
+        ) {
+            // UTF-8 BOM schreiben für Excel
+            fos.write(new byte[]{(byte)0xEF, (byte)0xBB, (byte)0xBF});
 
-            // Datenzeilen
+            if (rows.isEmpty()) {
+                return;
+            }
+
+            Map<String, String> firstRow = rows.get(0);
+            String headerLine = String.join(delimiter, firstRow.keySet());
+            writer.write(headerLine);
+            writer.newLine();
+
             for (Map<String, String> row : rows) {
                 StringBuilder line = new StringBuilder();
                 for (String key : firstRow.keySet()) {
                     String value = row.getOrDefault(key, "");
-                    line.append(escapeCsv(value)).append(",");
+                    line.append(escapeCsv(value)).append(delimiter);
                 }
-                line.deleteCharAt(line.length() - 1); // letztes Komma entfernen
-                writer.write(line.toString() + "\n");
+                if (line.length() > 0) {
+                    line.deleteCharAt(line.length() - 1);
+                }
+                writer.write(line.toString());
+                writer.newLine();
             }
         }
     }
 
     private String escapeCsv(String value) {
         if (value == null) return "";
-        if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
-            return "\"" + value.replace("\"", "\"\"") + "\"";
+        boolean mustQuote = value.contains(delimiter) || value.contains("\"") || value.contains("\n") || value.contains("\r");
+        String escaped = value.replace("\"", "\"\"");
+        if (mustQuote) {
+            return "\"" + escaped + "\"";
+        } else {
+            return escaped;
         }
-        return value;
     }
 
     private String generateFileName(String baseName, String extension) {
-        String timestamp = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        Path path = Paths.get(EXPORT_FOLDER, baseName + "_" + timestamp + "." + extension);
-        return path.toString();
+        String timestamp = java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        return System.getProperty("user.home") + File.separator + "Downloads" + File.separator + baseName + "_" + timestamp + "." + extension;
     }
 }
