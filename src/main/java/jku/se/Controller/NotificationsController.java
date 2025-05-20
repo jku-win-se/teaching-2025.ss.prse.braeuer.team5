@@ -14,8 +14,6 @@ public class NotificationsController {
 
     @FXML
     public void initialize() {
-        System.out.println("DEBUG COUNT: " + NotificationManager.getInstance().getNotifications().size());
-
         notificationList.getItems().clear();
         for (jku.se.Notification notification : NotificationManager.getInstance().getNotifications()) {
             notificationList.getItems().add(notification.getMessage());

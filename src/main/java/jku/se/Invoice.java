@@ -53,14 +53,14 @@ public class Invoice {
         validateAmount(this.amount);
 
         if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
-            throw new IllegalArgumentException("Rechnungen nur an Werktagen erlaubt");
+            throw new IllegalArgumentException("Invoices only on weekdays allowed.");
         }
         return date;
     }
 
     private double validateAmount(double amount) {
         if (amount <= 0) {
-            throw new IllegalArgumentException("Betrag muss positiv sein");
+            throw new IllegalArgumentException("Amount must be positive");
         }
         return amount;
     }
@@ -69,19 +69,19 @@ public class Invoice {
     public static void validateFile(File file) {
         // Existenzprüfung
         if (file == null || !file.exists()) {
-            throw new IllegalArgumentException("Datei existiert nicht");
+            throw new IllegalArgumentException("File does not exist");
         }
 
         // Formatprüfung
         String fileName = file.getName().toLowerCase();
         if (!fileName.matches(".*\\.(jpg|jpeg|png|pdf)$")) {
-            throw new IllegalArgumentException("Nur JPG/PNG/PDF-Dateien sind erlaubt");
+            throw new IllegalArgumentException("Only JPG/PNG/PDF-Files allowed");
         }
 
         // Größenprüfung (max 10MB)
         if (file.length() > MAX_FILE_SIZE) {
             throw new IllegalArgumentException(String.format(
-                    "Datei zu groß (%.2f MB > 10 MB Limit)", file.length() / (1024.0 * 1024)
+                    "File too big (%.2f MB > 10 MB Limit)", file.length() / (1024.0 * 1024)
             ));
         }
     }
@@ -192,10 +192,6 @@ public class Invoice {
         this.ocrDate = date;
         this.ocrAmount = amount;
         this.ocrCategory = category;
-    }
-
-    public boolean isAnomalyDetected() {
-        return anomalyDetected;
     }
 
     public void setAnomalyDetected(boolean anomalyDetected) {

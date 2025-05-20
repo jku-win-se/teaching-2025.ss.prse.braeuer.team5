@@ -1,9 +1,6 @@
 package jku.se;
 
 public class AnomalyDetection {
-    boolean detectDuplicateUpload(User user, Invoice invoice){
-        return false;
-    }
 
     public static boolean detectMismatch(Invoice invoice) {
         boolean mismatch = false;

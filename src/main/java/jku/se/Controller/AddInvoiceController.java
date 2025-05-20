@@ -117,7 +117,6 @@ public class AddInvoiceController {
         User currentUser = UserRepository.getByEmail(userEmail);
 
 
-
         if (userEmail == null || userEmail.isEmpty()) {
             statusLabel.setStyle("-fx-text-fill: red;");
             statusLabel.setText("User is not logged in or email is missing.");

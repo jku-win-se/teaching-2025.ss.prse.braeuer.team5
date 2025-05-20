@@ -6,7 +6,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class NotificationTest {
+class NotificationTest {
 
     @AfterEach
     void clearMessages() {
@@ -22,8 +22,8 @@ public class NotificationTest {
 
         List<String> messages = Notification.messagesSent;
         assertEquals(1, messages.size());
-        assertTrue(messages.get(0).contains("In-App"));
-        assertTrue(messages.get(0).contains("Invoice submitted successfully."));
+        assertTrue(messages.getFirst().contains("In-App"));
+        assertTrue(messages.getFirst().contains("Invoice submitted successfully."));
     }
 
     @Test
@@ -34,7 +34,7 @@ public class NotificationTest {
         notification.sendInApp(user, notification.getMessage());
 
         assertEquals(1, Notification.messagesSent.size());
-        assertTrue(Notification.messagesSent.get(0).contains("approved"));
+        assertTrue(Notification.messagesSent.getFirst().contains("approved"));
     }
 
     @Test
@@ -45,6 +45,6 @@ public class NotificationTest {
         notification.sendInApp(user, notification.getMessage());
 
         assertEquals(1, Notification.messagesSent.size());
-        assertTrue(Notification.messagesSent.get(0).contains("rejected"));
+        assertTrue(Notification.messagesSent.getFirst().contains("rejected"));
     }
 }

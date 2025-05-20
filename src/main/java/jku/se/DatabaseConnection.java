@@ -57,7 +57,7 @@ public class DatabaseConnection {
                 return getPublicFileUrl(uniqueFileName);
             } else {
                 if (LOGGER.isLoggable(Level.INFO)) {
-                    LOGGER.info("Upload fehlgeschlagen: HTTP " + responseCode);
+                    LOGGER.info("Upload failed: HTTP " + responseCode);
                 }
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getErrorStream()))) {
                     String inputLine;

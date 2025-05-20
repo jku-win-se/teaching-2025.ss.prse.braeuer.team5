@@ -1,26 +1,17 @@
 import jku.se.Category;
 import jku.se.Invoice;
 import jku.se.Status;
-import jku.se.repository.InvoiceRepository;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class CategoryTest {
-
-    private static Connection connection;
 
     private static final String TEST_EMAIL = "test@example.com";
     private static final LocalDate TEST_DATE = LocalDate.now();
     private static final LocalDateTime TEST_DATETIME = LocalDateTime.now();
-    private static final Category TEST_CATEGORY = Category.RESTAURANT;
     private static final Status TEST_STATUS = Status.PROCESSING;
     private static final String TEST_URL = "http://example.com/invoice.pdf";
 

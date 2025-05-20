@@ -7,7 +7,6 @@ import jku.se.Invoice;
 import jku.se.User;
 import jku.se.UserSession;
 import jku.se.repository.InvoiceRepository;
-import jku.se.repository.UserRepository;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -26,9 +25,7 @@ public class NotificationsUserController {
             User currentUser = UserSession.getCurrentUser();
 
             String email = currentUser.getEmail();
-            LOGGER.info("Loading Notifications for User: " + email);
 
-            // Abgelehnte Rechnungen holen
             List<Invoice> declinedInvoices = InvoiceRepository.getDeclinedInvoicesCurrentMonth(email);
 
             if (declinedInvoices.isEmpty()) {

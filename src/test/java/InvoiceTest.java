@@ -36,13 +36,6 @@ class InvoiceTest {
     private static final Status TEST_STATUS = Status.PROCESSING;
     private static final String TEST_URL = "http://example.com/invoice.pdf";
 
-
-    /*@BeforeAll
-    static void initJFX() {
-        Platform.startup(() -> {});
-    }
-     */
-
     @Test
     void constructor_WithValidAmount_ShouldNotThrow() {
         assertDoesNotThrow(() ->
@@ -127,124 +120,6 @@ class InvoiceTest {
         assertDoesNotThrow(() -> Invoice.validateFile(validFile));
     }
 
-    /*@Test
-    void upload_MultipleInvoicesPerDay_ShouldReturnError() throws IOException {
-        // Arrange
-        InvoiceRepository repo = spy(new InvoiceRepository());
-        Connection mockConnection = mock(Connection.class);
-
-        // Erstelle echte temporäre Datei
-        File dummyFile = File.createTempFile("invoice", ".pdf");
-
-        Invoice invoice = new Invoice(
-                "test@example.com",
-                LocalDate.of(2025, 4, 2),
-                120.0,
-                Category.SUPERMARKET,
-                Status.PROCESSING,
-                dummyFile.getAbsolutePath(),
-                LocalDateTime.now(),
-                3.5
-        );
-
-        // Simuliere, dass eine Rechnung für diesen Tag bereits existiert
-        doReturn(true).when(repo).invoiceExists(eq(mockConnection), eq("test@example.com"), any());
-
-        // Act & Assert
-        IllegalStateException ex = assertThrows(IllegalStateException.class, () ->
-                repo.saveInvoiceWithDuplicationCheck(mockConnection, invoice)
-        );
-
-        assertEquals("Invoice already submitted for this date", ex.getMessage());
-    }*/
-
-
-
-    /*@Test
-    void uploadInvoiceOnWeekend_ShouldThrowError() throws IOException {
-        // Test-Modus aktivieren
-        InvoiceRepository.TEST_MODE = true;
-
-        // Temporäre Datei erstellen
-        File tempFile = File.createTempFile("invoice", ".pdf");
-        tempFile.deleteOnExit();
-
-        // Verbindung mocken
-        Connection mockConnection = mock(Connection.class);
-
-        // Samstag: 5. April 2025
-        LocalDate weekendDate = LocalDate.of(2025, 4, 5);
-
-        // Rechnung erzeugen
-        Invoice invoiceOnWeekend = new Invoice(
-                "test@example.com",
-                weekendDate,
-                100.0,
-                Category.RESTAURANT,
-                Status.PROCESSING,
-                tempFile.getAbsolutePath(),
-                LocalDateTime.now(),
-                3.0
-        );
-
-        // Assertion
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> InvoiceRepository.saveInvoiceInfo(
-                        mockConnection,
-                        invoiceOnWeekend.getUserEmail(),
-                        java.sql.Date.valueOf(invoiceOnWeekend.getDate()),
-                        invoiceOnWeekend.getAmount(),
-                        invoiceOnWeekend.getCategory(),
-                        invoiceOnWeekend.getStatus(),
-                        invoiceOnWeekend.getFileUrl(),
-                        invoiceOnWeekend.getCreatedAt(),
-                        invoiceOnWeekend.getReimbursement(),
-                        tempFile // <- wichtig: echte Datei übergeben
-                )
-        );
-
-        assertEquals("Upload only allowed on weekdays", exception.getMessage());
-
-        // Test-Modus aufräumen
-        InvoiceRepository.TEST_MODE = false;
-    }*/
-
-
-    /*@Test
-    void enterValidAmount_ShouldSaveCorrectly() throws Exception {
-        Connection mockConnection = mock(Connection.class);
-
-        File dummyFile = File.createTempFile("test_invoice", ".pdf");
-        dummyFile.deleteOnExit();
-
-        Invoice invoice = new Invoice(
-                TEST_EMAIL,
-                LocalDate.now(),
-                15.50,
-                TEST_CATEGORY,
-                TEST_STATUS,
-                dummyFile.getAbsolutePath(),
-                LocalDateTime.now(),
-                3.0
-        );
-
-        assertEquals(15.50, invoice.getAmount(), 0.001);
-
-        assertDoesNotThrow(() ->
-                InvoiceRepository.saveInvoiceInfo(mockConnection,
-                        invoice.getUserEmail(),
-                        java.sql.Date.valueOf(invoice.getDate()),
-                        invoice.getAmount(),
-                        invoice.getCategory(),
-                        invoice.getStatus(),
-                        invoice.getFileUrl(),
-                        invoice.getCreatedAt(),
-                        invoice.getReimbursement(),
-                        dummyFile)
-        );
-    }*/
-
     @Test
     void enterNegativeAmount_ShouldThrowError() {
         IllegalArgumentException ex = assertThrows(
@@ -290,39 +165,6 @@ class InvoiceTest {
         assertEquals("Amount cannot be greater than 1000 €", ex.getMessage());
     }
 
-    /*@Test
-    void submitCompleteInvoice_ShouldDisplayConfirmation() throws IOException {
-        AddInvoiceController controller = new AddInvoiceController();
-
-        // Set FXML components manually
-        DatePicker picker = new DatePicker(TEST_DATE);
-        TextField amount = new TextField("100.0");
-        ComboBox<String> categoryCombo = new ComboBox<>();
-        categoryCombo.getItems().add(TEST_CATEGORY.name());
-        categoryCombo.getSelectionModel().select(TEST_CATEGORY.name());
-
-        Label statusLabel = new Label();  // Wichtig für späteren Check
-
-        controller.setDatePicker(picker);
-        controller.setAmountField(amount);
-        controller.setCategoryCombo(categoryCombo);
-        controller.setSelectedFile(new File("validInvoice.pdf")); // Dummy-Datei
-        controller.setStatusLabel(statusLabel);
-
-        // Simuliere eingeloggte User
-        UserDashboardController.setCurrentUserEmail(TEST_EMAIL);
-
-        // Trigger Upload
-        ActionEvent dummyEvent = mock(ActionEvent.class);
-        controller.handleUpload(dummyEvent);
-
-        // Verify confirmation
-        assertEquals("Invoice and file uploaded successfully.", controller.getStatusLabel().getText());
-    }*/
-
-
-
-
     @Test
     void categoryValueOf_WithNull_ShouldThrowMeaningfulError() {
         NullPointerException exception = assertThrows(
@@ -331,33 +173,6 @@ class InvoiceTest {
         );
         assertEquals("Name is null", exception.getMessage());
     }
-
-
-
-    /*@Test
-    void submitInvoiceWithoutAmount_ShouldThrowError() throws IOException { //Warunung
-        AddInvoiceController controller = new AddInvoiceController();
-
-        controller.datePicker = new DatePicker(TEST_DATE);
-        controller.amountField = new TextField("0.0");
-        controller.categoryCombo = new ComboBox<>();
-        controller.categoryCombo.getItems().add(TEST_CATEGORY.name());
-        controller.categoryCombo.getSelectionModel().select(TEST_CATEGORY.name());
-        controller.statusLabel = new Label();
-
-        File dummyFile = File.createTempFile("dummy", ".pdf");
-        dummyFile.deleteOnExit();
-        controller.selectedFile = dummyFile;
-
-        UserDashboardController.setCurrentUserEmail(TEST_EMAIL);
-
-        InvoiceRepository.TEST_MODE = true;
-
-        controller.handleUpload(new ActionEvent());
-
-        assertEquals("Amount must be greater than 0", controller.statusLabel.getText());
-    }
-     */
 
     @Test
     void testIsDateOnWeekday() {

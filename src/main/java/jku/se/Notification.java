@@ -13,7 +13,7 @@ public class Notification {
 
     private static final Logger LOGGER = Logger.getLogger(Notification.class.getName());
 
-    public static List<String> messagesSent = new ArrayList<>();
+    public static final List<String> messagesSent = new ArrayList<>();
     private String message;
     private LocalDateTime timestamp;
     private boolean isForAdmin;

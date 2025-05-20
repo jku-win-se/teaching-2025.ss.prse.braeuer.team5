@@ -6,7 +6,7 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class LoginTest {
+class LoginTest {
 
     private final String validEmail = "employee@lunchify.com";
     private final String validPassword = "123";
@@ -47,8 +47,7 @@ public class LoginTest {
     void loginThenLogout_ShouldRedirectToLoginPage() {
         User loggedInUser = UserRepository.findByEmailAndPassword(validEmail, validPassword);
         assertNotNull(loggedInUser);
-        loggedInUser = null;
 
-        assertNull(loggedInUser, "After logout, user should be null (logged out)");
+        assertNull(null, "After logout, user should be null (logged out)");
     }
 }
