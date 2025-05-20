@@ -50,7 +50,7 @@
 
    <Label layoutX="111.0" layoutY="327.0" text="Reimbursement:" />
    <TextField fx:id="reimbursementField" layoutX="240.0" layoutY="323.0" prefHeight="25.0" prefWidth="204.0" />
-    <Label fx:id="statusLabel" layoutX="129.0" layoutY="366.0" prefHeight="20.0" prefWidth="390.0" style="-fx-font-size: 14px; -fx-text-fill: green;" textAlignment="CENTER" />
+    <Label fx:id="statusLabel" alignment="CENTER" layoutX="105.0" layoutY="356.0" prefHeight="20.0" prefWidth="390.0" style="-fx-font-size: 14px; -fx-text-fill: green;" textAlignment="CENTER" />
    <Label layoutX="97.0" layoutY="341.0" text="is calculated automatically">
       <font>
          <Font name="System Italic" size="10.0" />

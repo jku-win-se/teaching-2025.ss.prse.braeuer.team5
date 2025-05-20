@@ -48,15 +48,17 @@ public class DeleteAdminUserController { //#18 Magdalena
         String selectedEmail = (String) email.getValue();
 
         if (selectedEmail == null || selectedEmail.isEmpty()) {
-            message.setText("Please select an e-mail!");
+            message.setText("Please select an e-mail! ");
             return;
         }
 
         boolean success = UserRepository.deleteUser(selectedEmail);
         if (success) {
+            message.setStyle("-fx-text-fill: green;");
             message.setText("User has been successfully deleted.");
             email.getItems().remove(selectedEmail); // delete user from database
         } else {
+            message.setStyle("-fx-text-fill: red;");
             message.setText("User could not be deleted.");
         }
     }
