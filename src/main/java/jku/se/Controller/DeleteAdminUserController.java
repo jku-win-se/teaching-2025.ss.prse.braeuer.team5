@@ -48,7 +48,7 @@ public class DeleteAdminUserController { //#18 Magdalena
         String selectedEmail = (String) email.getValue();
 
         if (selectedEmail == null || selectedEmail.isEmpty()) {
-            message.setText("Please select an e-mail!");
+            message.setText("Please select an e-mail! ");
             return;
         }
 
