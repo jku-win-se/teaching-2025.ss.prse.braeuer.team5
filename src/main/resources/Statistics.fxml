@@ -15,10 +15,6 @@
             </font>
         </TextField>
 
-        <ComboBox fx:id="saveFormatComboBox" focusTraversable="false" layoutX="85.0" layoutY="361.0" prefWidth="143.0" />
-        <Text layoutX="29.0" layoutY="378.0" text="Save as:" />
-
-        <Button focusTraversable="false" layoutX="246.0" layoutY="361.0" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Save" />
         <Button focusTraversable="false" layoutX="483.0" layoutY="361.0" onAction="#cancelStatistics" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Exit" />
       <Text layoutX="401.0" layoutY="137.0" text="Average number of invoices per user per month:" wrappingWidth="164.529296875">
          <font>
