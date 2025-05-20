@@ -24,7 +24,7 @@
     <bottom>
         <VBox alignment="CENTER" spacing="10" style="-fx-padding: 10;" BorderPane.alignment="CENTER">
             <children>
-                <Button onAction="#closeWindow" text="Schließen" />
+                <Button onAction="#closeWindow" text="Close" />
             </children>
         </VBox>
     </bottom>

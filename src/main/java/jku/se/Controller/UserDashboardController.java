@@ -130,11 +130,11 @@ public class UserDashboardController {
     @FXML
     private void openNotifications(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/notifications.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/notificationsUser.fxml"));
             Parent root = loader.load();
 
             Stage stage = new Stage();
-            stage.setTitle("Benachrichtigungen");
+            stage.setTitle("Notifications");
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {

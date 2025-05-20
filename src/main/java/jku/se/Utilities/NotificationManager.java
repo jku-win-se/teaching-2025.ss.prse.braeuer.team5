@@ -45,4 +45,25 @@ public class NotificationManager {
             LOGGER.info("In-App-Benachrichtigung für " + user.getName() + ": " + message);
         }
     }
+
+    public List<Notification> getNotificationsForUser(User user) {
+        List<Notification> filtered = new ArrayList<>();
+        for (Notification n : notifications) {
+            if (!n.isForAdmin() && user.getEmail().equals(n.getTargetUserEmail())) {
+                filtered.add(n);
+            }
+        }
+        return filtered;
+    }
+
+    public List<Notification> getNotificationsForAdmin() {
+        List<Notification> filtered = new ArrayList<>();
+        for (Notification n : notifications) {
+            if (n.isForAdmin()) {
+                filtered.add(n);
+            }
+        }
+        return filtered;
+    }
+
 }

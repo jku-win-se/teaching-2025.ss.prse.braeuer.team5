@@ -33,22 +33,15 @@ public class User {
     public String getName() { return name; }
     public String getEmail() { return email; }
     public String getPassword(){return password;}
-    public boolean isAdministrator() { return isAdministrator; }
-    public String getPreferredNotificationMethod(){return preferredNotificationMethod;}
+    public boolean isAdministrator() {
+        return isAdministrator;
+    }
+
 
     public void login() { //frida #3
         if (LOGGER.isLoggable(Level.INFO)) {
             LOGGER.info(name + " hat sich eingeloggt.");
         }
-    }
-
-    public void uploadInvoice(Invoice invoice) { //jovana #4
-        invoices.add(invoice);
-
-        double amount = invoice.calculateRefund();
-        String message = "Deine Rechnung über " + amount + " € wurde erfolgreich eingereicht.";
-
-        receiveNotification(message);
     }
 
     //to see all invoices in user dashboard
@@ -62,33 +55,7 @@ public class User {
 
     public void receiveNotification(String message) { // jovana # 8
         Notification notification = new Notification();
-        switch (preferredNotificationMethod){
-            case "In-App":
-                notification.sendInApp(this, message);
-                break;
-            case "Email":
-                notification.sendEmail(this, message);
-                break;
-            case "Both":
-                notification.sendInApp(this, message);
-                notification.sendEmail(this, message);
-                break;
-            default:
-                notification.sendInApp(this,message);
-        }
-    }
-
-    public void changeNotificationSettings(String newPreference) { //jovana - #22
-        if(newPreference.equals("Email") || newPreference.equals("In-App")|| newPreference.equals("Both")){
-            this.preferredNotificationMethod = newPreference;
-            if (LOGGER.isLoggable(Level.INFO)) {
-                LOGGER.info("Benachrichtigungspräferenz geändert zu: " + newPreference);
-            }
-        } else {
-            if (LOGGER.isLoggable(Level.INFO)) {
-                LOGGER.info("Ungültige Eingabe. Mögliche Optionen: Email, In-App, Both");
-            }
-        }
+        notification.sendInApp(this,message);
     }
 
     public void setNotification(Notification notification) {

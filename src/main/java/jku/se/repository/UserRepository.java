@@ -124,8 +124,7 @@ public class UserRepository {
             if (rs.next()) {
                 String name = rs.getString("name");
                 String password = rs.getString("password");
-                boolean isAdmin = rs.getBoolean("is_admin");
-                String preferredNotification = rs.getString("preferred_notification");
+                boolean isAdmin = rs.getBoolean("isadministrator");
 
                 User user = new User(name, email, password, isAdmin);
                 return user;

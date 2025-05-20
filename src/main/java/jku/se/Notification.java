@@ -16,11 +16,23 @@ public class Notification {
     public static List<String> messagesSent = new ArrayList<>();
     private String message;
     private LocalDateTime timestamp;
+    private boolean isForAdmin;
+    private String targetUserEmail;
+
+    public Notification(String message, boolean isForAdmin, String targetUserEmail) {
+        this.message = message;
+        this.timestamp = LocalDateTime.now();
+        this.isForAdmin = isForAdmin;
+        this.targetUserEmail = targetUserEmail;
+    }
 
     public Notification() {
         this.message = "";
         this.timestamp = LocalDateTime.now();
+        this.isForAdmin = false;
+        this.targetUserEmail = null;
     }
+
 
 
     public void sendInApp(User user, String message){
@@ -29,14 +41,6 @@ public class Notification {
         messagesSent.add(formatted);
         if (LOGGER.isLoggable(Level.INFO)) {
             LOGGER.info("In-App-Benachrichtigung für " + user.getName() + ": " + message);
-        }
-    }
-
-    public void sendEmail(User user, String message){
-        String formatted = "[Email] " + message;
-        messagesSent.add(formatted);
-        if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("E-Mail an " + user.getEmail() + ": " + message);
         }
     }
 
@@ -55,5 +59,13 @@ public class Notification {
 
     public String getTimestampFormatted() {
         return timestamp.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+    }
+
+    public boolean isForAdmin() {
+        return isForAdmin;
+    }
+
+    public String getTargetUserEmail() {
+        return targetUserEmail;
     }
 }

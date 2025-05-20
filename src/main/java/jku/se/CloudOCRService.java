@@ -58,11 +58,6 @@ public class CloudOCRService {
         String response = new String(connection.getInputStream().readAllBytes());
 
         String extractedText = extractTextFromJson(response);
-        if (LOGGER.isLoggable(java.util.logging.Level.INFO)) {
-            LOGGER.info("-------- EXTRACTED OCR TEXT --------");
-            LOGGER.info(extractedText);
-            LOGGER.info("------------------------------------");
-        }
 
 
         return new OCRResult(
