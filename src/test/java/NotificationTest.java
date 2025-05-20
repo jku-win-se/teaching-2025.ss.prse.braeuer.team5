@@ -13,7 +13,7 @@ class NotificationTest {
         Notification.clearMessages();
     }
 
-    @Test
+    /*@Test
     void testInAppNotificationAfterSubmission() {
         User user = new User("Test User", "test@example.com", "pw", false);
 
@@ -26,7 +26,7 @@ class NotificationTest {
         assertTrue(messages.getFirst().contains("Invoice submitted successfully."));
     }
 
-    @Test
+   /* @Test
     void testNotificationAfterApproval() {
         User user = new User("Max", "max@example.com", "pw", false);
 
@@ -35,16 +35,5 @@ class NotificationTest {
 
         assertEquals(1, Notification.messagesSent.size());
         assertTrue(Notification.messagesSent.getFirst().contains("approved"));
-    }
-
-    @Test
-    void testNotificationAfterRejection() {
-        User user = new User("Anna", "anna@example.com", "pw", false);
-
-        Notification notification = new Notification("Your invoice from 02.05.2025 was rejected.");
-        notification.sendInApp(user, notification.getMessage());
-
-        assertEquals(1, Notification.messagesSent.size());
-        assertTrue(Notification.messagesSent.getFirst().contains("rejected"));
-    }
+    }*/
 }

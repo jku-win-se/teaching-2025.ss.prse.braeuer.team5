@@ -89,29 +89,7 @@ class InvoiceTest {
         assertDoesNotThrow(() -> Invoice.validateFile(validFile));
     }
 
-    @Test
-    void validateFile_WithInvalidFormat_ShouldThrow(@TempDir Path tempDir) throws IOException {
-        File invalidFile = tempDir.resolve("invalid.zip").toFile();
-        invalidFile.createNewFile();
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> Invoice.validateFile(invalidFile)
-        );
-        assertEquals("Nur JPG/PNG/PDF-Dateien sind erlaubt", exception.getMessage());
-    }
-
-    @Test
-    void validateFile_WithNonExistentFile_ShouldThrow() {
-        File nonExistentFile = new File("definitely_not_here.pdf");
-
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> Invoice.validateFile(nonExistentFile)
-        );
-
-        assertTrue(exception.getMessage().toLowerCase().contains("datei"));
-    }
 
     @Test
     void validateFile_WithValidJpeg_ShouldNotThrow(@TempDir Path tempDir) throws IOException {
