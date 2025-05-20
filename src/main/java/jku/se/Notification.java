@@ -13,7 +13,7 @@ public class Notification {
 
     private static final Logger LOGGER = Logger.getLogger(Notification.class.getName());
 
-    public static final List<String> messagesSent = new ArrayList<>();
+    public static final List<String> MESSAGES_SENT = new ArrayList<>();
     private String message;
     private LocalDateTime timestamp;
     private boolean isForAdmin;
@@ -38,14 +38,14 @@ public class Notification {
     public void sendInApp(User user, String message){
         String formatted = "User " + user.getEmail() + ": " + message;
         NotificationManager.getInstance().addNotification(new Notification(formatted));
-        messagesSent.add(formatted);
+        MESSAGES_SENT.add(formatted);
         if (LOGGER.isLoggable(Level.INFO)) {
             LOGGER.info("In-App-Benachrichtigung für " + user.getName() + ": " + message);
         }
     }
 
     public static void clearMessages() {
-        messagesSent.clear();
+        MESSAGES_SENT.clear();
     }
 
     public Notification(String message) {
