@@ -9,7 +9,7 @@
 
 
     <!-- Titel -->
-    <Label layoutX="234.0" layoutY="44.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-alignment: CENTER;" text="Delete Admin/User" />
+    <Label layoutX="192.0" layoutY="56.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-alignment: CENTER;" text="Delete Admin/User" />
 
     <!-- Type Admin/User -->
     <Label layoutX="157.0" layoutY="144.0" text="Type:" />
@@ -22,8 +22,8 @@
     <Button layoutX="184.0" layoutY="273.0" onAction="#deleteAdminUser" prefWidth="100.0" style="-fx-background-color: red; -fx-text-fill: white; -fx-font-weight: bold;" text="Delete" textFill="WHITE" />
 
     <!--exit-->
-    <Button layoutX="374.0" layoutY="273.0" onAction="#cancelDeleteAdminUser" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Exit" />
-   <Label fx:id="message" layoutX="286.0" layoutY="330.0" />
+    <Button layoutX="336.0" layoutY="273.0" onAction="#cancelDeleteAdminUser" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Exit" />
+   <Label fx:id="message" alignment="CENTER" layoutX="74.0" layoutY="322.0" prefHeight="17.0" prefWidth="452.0" />
 
 
 

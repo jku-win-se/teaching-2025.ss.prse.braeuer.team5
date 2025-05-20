@@ -54,9 +54,11 @@ public class DeleteAdminUserController { //#18 Magdalena
 
         boolean success = UserRepository.deleteUser(selectedEmail);
         if (success) {
+            message.setStyle("-fx-text-fill: green;");
             message.setText("User has been successfully deleted.");
             email.getItems().remove(selectedEmail); // delete user from database
         } else {
+            message.setStyle("-fx-text-fill: red;");
             message.setText("User could not be deleted.");
         }
     }

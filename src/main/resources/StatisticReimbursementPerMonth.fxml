@@ -18,7 +18,7 @@
             </font>
         </TextField>
         <Button layoutX="496.0" layoutY="361.0" onAction="#cancelReimbursement" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Exit" />
-        <BarChart fx:id="BarChartReimbursementPerMonth" layoutX="124.0" layoutY="95.0" prefHeight="248.0" prefWidth="365.0">
+        <BarChart fx:id="barChartReimbursementPerMonth" layoutX="124.0" layoutY="95.0" prefHeight="248.0" prefWidth="365.0">
             <xAxis>
                 <CategoryAxis side="BOTTOM" />
             </xAxis>

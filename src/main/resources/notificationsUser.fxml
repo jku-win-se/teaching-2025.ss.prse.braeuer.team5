@@ -7,28 +7,24 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="400" prefWidth="600" xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="jku.se.Controller.NotificationsUserController">
+<BorderPane prefHeight="400" prefWidth="600" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jku.se.Controller.NotificationsUserController">
 
     <top>
-        <Label prefHeight="57.0" prefWidth="605.0"
-               style="-fx-background-color: lightblue; -fx-padding: 15;"
-               text="Notifications">
+        <Label focusTraversable="false" prefHeight="57.0" prefWidth="605.0" style="-fx-background-color: lightblue; -fx-padding: 15;" text="Notifications">
             <font>
-                <Font name="System Bold" size="18.0"/>
+                <Font name="System Bold" size="18.0" />
             </font>
         </Label>
     </top>
 
     <center>
-        <ListView fx:id="notificationList" prefHeight="300" prefWidth="550"/>
+        <ListView fx:id="notificationList" focusTraversable="false" prefHeight="300" prefWidth="550" />
     </center>
 
     <bottom>
         <VBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
             <children>
-                <Button onAction="#closeWindow" text="Close"/>
+                <Button focusTraversable="false" onAction="#closeWindow" text="Close" />
             </children>
         </VBox>
     </bottom>

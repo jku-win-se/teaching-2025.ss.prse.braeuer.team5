@@ -34,12 +34,14 @@ public class AddAdminUserController { //#18 Magdalena
 
 
         if (email.isEmpty() || name.isEmpty() || password.isEmpty()) {
+            message.setStyle("-fx-text-fill: red;");
             message.setText("Please fill in all fields!");
             return;
         }
 
         User newUser = new User(name, email, password, isAdmin);
         UserRepository.addUser(newUser);  // add User in database
+        message.setStyle("-fx-text-fill: green;");
         message.setText("User added successfully!");
         clearFields();
     }

@@ -11,7 +11,7 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jku.se.Controller.AdminDashboardController">
 
    <top>
-      <TextField prefHeight="73.0" prefWidth="600.0" style="-fx-background-color: lightblue;" text="Dashboard" BorderPane.alignment="CENTER">
+      <TextField focusTraversable="false" prefHeight="73.0" prefWidth="600.0" style="-fx-background-color: lightblue;" text="Dashboard" BorderPane.alignment="CENTER">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
@@ -21,13 +21,13 @@
    <left>
       <VBox prefHeight="155.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <Button accessibleRole="IMAGE_VIEW" mnemonicParsing="false" onAction="#handleEditInvoice" prefHeight="46.0" prefWidth="100.0" text="Manage invoice" textAlignment="CENTER" wrapText="true" />
-            <Button accessibleRole="IMAGE_VIEW" mnemonicParsing="false" onAction="#handleStatistics" prefHeight="46.0" prefWidth="100.0" text="Statistics" textAlignment="CENTER" wrapText="true" />
-            <Button accessibleRole="IMAGE_VIEW" layoutX="10.0" layoutY="56.0" mnemonicParsing="false" onAction="#handleAddAdminUser" prefHeight="46.0" prefWidth="100.0" text="Add Admin/User" textAlignment="CENTER" wrapText="true" />
-            <Button accessibleRole="IMAGE_VIEW" layoutX="10.0" layoutY="194.0" mnemonicParsing="false" onAction="#handleDeleteAdminUser" prefHeight="46.0" prefWidth="100.0" text="Delete Admin/User" textAlignment="CENTER" wrapText="true" />
-            <Button accessibleRole="IMAGE_VIEW" mnemonicParsing="false" onAction="#changeReimbursement" prefHeight="46.0" prefWidth="100.0" text="Change Reimbursement" textAlignment="CENTER" wrapText="true" />
-            <Button mnemonicParsing="false" onAction="#openNotifications" prefHeight="53.0" prefWidth="100.0" text="Notifications" />
-            <Button accessibleRole="IMAGE_VIEW" mnemonicParsing="false" onAction="#handleLogoutAdmin" prefHeight="46.0" prefWidth="100.0" text="Logout" textAlignment="CENTER" wrapText="true" />
+            <Button accessibleRole="IMAGE_VIEW" focusTraversable="false" mnemonicParsing="false" onAction="#handleEditInvoice" prefHeight="46.0" prefWidth="100.0" text="Manage invoice" textAlignment="CENTER" wrapText="true" />
+            <Button accessibleRole="IMAGE_VIEW" focusTraversable="false" mnemonicParsing="false" onAction="#handleStatistics" prefHeight="46.0" prefWidth="100.0" text="Statistics" textAlignment="CENTER" wrapText="true" />
+            <Button accessibleRole="IMAGE_VIEW" focusTraversable="false" layoutX="10.0" layoutY="56.0" mnemonicParsing="false" onAction="#handleAddAdminUser" prefHeight="46.0" prefWidth="100.0" text="Add Admin/User" textAlignment="CENTER" wrapText="true" />
+            <Button accessibleRole="IMAGE_VIEW" focusTraversable="false" layoutX="10.0" layoutY="194.0" mnemonicParsing="false" onAction="#handleDeleteAdminUser" prefHeight="46.0" prefWidth="100.0" text="Delete Admin/User" textAlignment="CENTER" wrapText="true" />
+            <Button accessibleRole="IMAGE_VIEW" focusTraversable="false" mnemonicParsing="false" onAction="#changeReimbursement" prefHeight="46.0" prefWidth="100.0" text="Change Reimbursement" textAlignment="CENTER" wrapText="true" />
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#openNotifications" prefHeight="53.0" prefWidth="100.0" text="Notifications" />
+            <Button accessibleRole="IMAGE_VIEW" focusTraversable="false" mnemonicParsing="false" onAction="#handleLogoutAdmin" prefHeight="46.0" prefWidth="100.0" text="Logout" textAlignment="CENTER" wrapText="true" />
          </children>
       </VBox>
    </left>
@@ -35,7 +35,7 @@
       <VBox alignment="CENTER" spacing="10" BorderPane.alignment="CENTER" />
    </right>
    <center>
-      <TableView fx:id="invoiceTable" prefHeight="159.0" prefWidth="545.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="invoiceTable" focusTraversable="false" prefHeight="159.0" prefWidth="545.0" BorderPane.alignment="CENTER">
          <columns>
             <TableColumn fx:id="userColumn" prefWidth="83.33328247070312" text="User" />
             <TableColumn fx:id="submissionDateColumn" prefWidth="99.33331298828125" text="Submission date" />
