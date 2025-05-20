@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import java.io.IOException;
 
+import jku.se.UserSession;
 import jku.se.repository.UserRepository;
 import jku.se.User;
 
@@ -56,6 +57,9 @@ public class StartController {
         String password = passwordFieldUser.getText();
 
         User user = UserRepository.findByEmailAndPassword(email, password);
+        if (user != null) {
+            UserSession.setCurrentUser(user);
+        }
 
         if (email.isEmpty() || password.isEmpty()) {
             errorLabel.setText("Email and password cannot be empty!");

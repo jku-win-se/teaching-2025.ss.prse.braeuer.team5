@@ -230,6 +230,36 @@ public class InvoiceRepository {
         return declinedInvoices;
     }
 
+    public static List<Invoice> getAcceptedInvoicesCurrentMonth(String userEmail) {
+        List<Invoice> acceptedInvoices = new ArrayList<>();
+        LocalDate now = LocalDate.now();
+
+        String query = "SELECT * FROM invoice WHERE user_email = ? AND status = 'ACCEPTED'";
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+
+            stmt.setString(1, userEmail);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Invoice invoice = createInvoiceFromResultSet(rs);
+
+                    if (invoice.getDate().getMonth() == now.getMonth() &&
+                            invoice.getDate().getYear() == now.getYear()) {
+                        acceptedInvoices.add(invoice);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error loading accepted invoices: ", e);
+        }
+
+        return acceptedInvoices;
+    }
+
+
     public static void updateInvoice(Invoice invoice) throws SQLException {
         try (Connection con = DatabaseConnection.getConnection()) {
             con.setAutoCommit(false);

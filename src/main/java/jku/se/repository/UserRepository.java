@@ -111,4 +111,29 @@ public class UserRepository {
         }
         return null;
     }
+
+    public static User getByEmail(String email) {
+        String sql = "SELECT * FROM users WHERE email = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String name = rs.getString("name");
+                String password = rs.getString("password");
+                boolean isAdmin = rs.getBoolean("isadministrator");
+
+                User user = new User(name, email, password, isAdmin);
+                return user;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

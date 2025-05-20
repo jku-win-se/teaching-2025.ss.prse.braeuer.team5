@@ -9,7 +9,10 @@ import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import jku.se.*;
+import jku.se.Utilities.NotificationManager;
 import jku.se.repository.InvoiceRepository;
+import jku.se.repository.UserRepository;
+
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +35,10 @@ public class AddInvoiceController {
     @FXML public ComboBox<String> categoryCombo;
     @FXML public Button uploadButton;
     public File selectedFile;
+    private String ocrAmount;
+    private String ocrDate;
+    private String ocrCategory;
+
 
     private Set<LocalDate> uploadedDates = new HashSet<>(); // Set, um bereits hochgeladene Tage zu speichern
 
@@ -50,7 +57,6 @@ public class AddInvoiceController {
         stage.show();
     }
 
-    //Dateiauswahl-Validierung: hat die Datei das richtige Format (pdf, jpeg, png)
     @FXML
     private void handleFileSelect(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -67,6 +73,9 @@ public class AddInvoiceController {
 
                 CloudOCRService ocrService = new CloudOCRService();
                 CloudOCRService.OCRResult ocrResult = ocrService.analyzeImage(selectedFile);
+                ocrAmount = ocrResult.amount;
+                ocrDate = ocrResult.date;
+                ocrCategory = ocrResult.category;
 
                 if (!"Not found".equals(ocrResult.date)) {
                     try {
@@ -104,7 +113,10 @@ public class AddInvoiceController {
     @FXML
     public void handleUpload(ActionEvent event) throws IOException {
         // Get user data (e-mail of the current user)
-        String userEmail = UserDashboardController.getCurrentUserEmail();  // Fetches the e-mail of the logged-in user
+        String userEmail = UserDashboardController.getCurrentUserEmail();
+        User currentUser = UserRepository.getByEmail(userEmail);
+
+
 
         if (userEmail == null || userEmail.isEmpty()) {
             statusLabel.setStyle("-fx-text-fill: red;");
@@ -172,7 +184,6 @@ public class AddInvoiceController {
             return;
         }
 
-        // Calculate the refund amount here before the Invoice object is created
         double reimbursement = selectedCategory.getRefundAmount();
         if (amount < reimbursement) {
             reimbursement = amount;  // If the amount is less than the refund amount, set the amount as refund
@@ -202,28 +213,45 @@ public class AddInvoiceController {
             statusLabel.setText("Error uploading file: " + e.getMessage());
             return;
         }
+        String displayDate = selectedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 
-        // Create an instance of the Invoice class with the user input
+        if (ocrAmount != null && !ocrAmount.equals(amountField.getText().trim())) {
+            NotificationManager.getInstance().addNotification(new Notification("User " + userEmail + " changed field Amount of OCR recognition for Invoice " + displayDate + "."));
+        }
+
+        if (ocrDate != null) {
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[dd.MM.yyyy][yyyy-MM-dd][dd/MM/yyyy]");
+                LocalDate parsedOcrDate = LocalDate.parse(ocrDate, formatter);
+                if (!parsedOcrDate.equals(selectedDate)) {
+                    NotificationManager.getInstance().addNotification(new Notification("User " + userEmail + " changed field Date of OCR recognition for Invoice " + displayDate + "."));
+                }
+            } catch (Exception ignored) {}
+        }
+
+
+        if (ocrCategory != null && !ocrCategory.equalsIgnoreCase(categoryCombo.getValue())) {
+            NotificationManager.getInstance().addNotification(new Notification("User " + userEmail + " changed field Category of OCR recognition for Invoice " + displayDate + "."));
+        }
+
         Invoice invoice = new Invoice(userEmail, selectedDate, amount, selectedCategory, selectedStatus, "", LocalDateTime.now(), reimbursement);
 
-        // Update the Invoice object with the uploaded file URL
         invoice.setFileUrl(fileUrl);
 
-        // Save the invoice in the database
         try (Connection connection = DatabaseConnection.getConnection()) {
             InvoiceRepository.saveInvoiceInfo(
                     connection,
-                    userEmail,  // Dynamic e-mail of the user
+                    userEmail,
                     java.sql.Date.valueOf(selectedDate),
                     amount,
-                    selectedCategory,  // User-defined category
-                    selectedStatus,  // default status
+                    selectedCategory,
+                    selectedStatus,
                     fileUrl,
                     LocalDateTime.now(),
                     reimbursement,
-                    selectedFile  // uploaded image
+                    selectedFile
             );
-            uploadedDates.add(selectedDate);  // Add the date to the list to prevent multiple uploads
+            uploadedDates.add(selectedDate);
             statusLabel.setStyle("-fx-text-fill: green;");
             statusLabel.setText("Invoice and file uploaded successfully.");
 
@@ -235,6 +263,8 @@ public class AddInvoiceController {
         AnomalyDetection anomalyDetection = new AnomalyDetection();
         boolean anomaly = AnomalyDetection.detectMismatch(invoice);
         invoice.setAnomalyDetected(anomaly);
+        Notification notification = new Notification("Invoice submitted successfully.");
+
 
     }
 
