@@ -8,4 +8,4 @@ Alle Daten werden sicher in einer PostgreSQL-Datenbank gespeichert, die über Su
 
 ##Wichtige Unterlagen: 
 
-https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/tree/main/docs
+docs
