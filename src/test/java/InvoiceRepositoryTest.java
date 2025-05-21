@@ -17,15 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class InvoiceRepositoryTest {
 
-    private InvoiceRepository invoiceRepository;
-
     public static final String USER = "postgres.dljjtuynbgxgmhkcdypu";
     public static final String PWD = "LunchifyTeam5!";
     private static final String URL = "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres";
 
     @BeforeEach
     void setUp() {
-        invoiceRepository = new InvoiceRepository(); 
+        InvoiceRepository invoiceRepository = new InvoiceRepository();
         cleanUpTestInvoices();
 
         //before add user to connect with test invoices
