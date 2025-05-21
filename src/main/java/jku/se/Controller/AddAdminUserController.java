@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -34,15 +35,13 @@ public class AddAdminUserController { //#18 Magdalena
 
 
         if (email.isEmpty() || name.isEmpty() || password.isEmpty()) {
-            message.setStyle("-fx-text-fill: red;");
-            message.setText("Please fill in all fields!");
+            showAlert(Alert.AlertType.ERROR, "Input Error", "Please fill in all fields!");
             return;
         }
 
         User newUser = new User(name, email, password, isAdmin);
         UserRepository.addUser(newUser);  // add User in database
-        message.setStyle("-fx-text-fill: green;");
-        message.setText("User added successfully!");
+        showAlert(Alert.AlertType.INFORMATION, "Success", "User added successfully!");
         clearFields();
     }
 
@@ -70,4 +69,12 @@ public class AddAdminUserController { //#18 Magdalena
         stage.show();
     }
 
+    //add alert for information
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 }

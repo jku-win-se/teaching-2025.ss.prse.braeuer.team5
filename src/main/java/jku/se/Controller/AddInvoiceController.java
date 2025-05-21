@@ -97,13 +97,13 @@ public class AddInvoiceController {
                     categoryCombo.setValue(ocrResult.category);
                 }
 
-                statusLabel.setStyle("-fx-text-fill: green;");
-                statusLabel.setText("OCR erfolgreich ausgefüllt! Bitte kontrollieren.");
+                showAlert(Alert.AlertType.INFORMATION, "OCR Success", "OCR successfully completed! Please check.");
+
 
             } catch (Exception e) {
                 e.printStackTrace();
-                statusLabel.setStyle("-fx-text-fill: red;");
-                statusLabel.setText("Fehler beim Verarbeiten: " + e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "File Error", "Errors during processing: " + e.getMessage());
+
             }
         }
     }
@@ -118,15 +118,13 @@ public class AddInvoiceController {
 
 
         if (userEmail == null || userEmail.isEmpty()) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("User is not logged in or email is missing.");
+            showAlert(Alert.AlertType.ERROR, "Login Error", "User is not logged in or email is missing.");
             return;
         }
 
         // Validate all fields
         if (datePicker.getValue() == null) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Please select an invoice date");
+            showAlert(Alert.AlertType.ERROR, "Date Error", "Please select an invoice date");
             return;
         }
 
@@ -135,29 +133,25 @@ public class AddInvoiceController {
         // Check whether the selected date is in the future
         LocalDate currentDate = LocalDate.now(); // Current date
         if (selectedDate.isAfter(currentDate)) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("You cannot use a future date.");
+            showAlert(Alert.AlertType.ERROR, "Date Error", "You cannot use a future date.");
             return;  // Prevent the upload if the date is in the future
         }
 
         // Check whether an invoice already exists for the same user and day
         try (Connection connection = DatabaseConnection.getConnection()) {
             if (InvoiceRepository.invoiceExists(connection, userEmail, java.sql.Date.valueOf(selectedDate))) {
-                statusLabel.setStyle("-fx-text-fill: red;");
-                statusLabel.setText("Upload Limit: One Invoice per day");
+                showAlert(Alert.AlertType.INFORMATION, "Upload Limit", " One Invoice per day");
                 return;  // Prevent the upload if an invoice already exists
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Database error: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Error saving invoice to database: " + e.getMessage());
             return;
         }
 
         // Amount Validierung: Betrag muss größer als 0 sein
         if (amountField.getText().isEmpty()) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Please enter an amount");
+            showAlert(Alert.AlertType.ERROR,"Amount Error", "Please enter an amount");
             return;
         }
 
@@ -165,23 +159,22 @@ public class AddInvoiceController {
         try {
             amount = Double.parseDouble(amountField.getText());
             if (amount <= 0) { // Amount must be greater than 0
-                statusLabel.setStyle("-fx-text-fill: red;");
-                statusLabel.setText("Amount must be greater than 0");
+                showAlert(Alert.AlertType.ERROR,"Amount Error", "Amount must be greater than 0");
                 return;
             }
         } catch (NumberFormatException e) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Please enter a valid amount");
+            showAlert(Alert.AlertType.ERROR,"Amount Error", "Please enter a valid amount");
             return;
         }
 
         // Get the user selection for the category (from the ComboBox)
-        Category selectedCategory = Category.valueOf(categoryCombo.getValue());
-        if (selectedCategory == null) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Please select a category");
+        String selectedCategoryString = categoryCombo.getValue();
+        if (selectedCategoryString == null || selectedCategoryString.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR,"Category Error", "Please select a category");
             return;
         }
+
+        Category selectedCategory = Category.valueOf(selectedCategoryString);
 
         double reimbursement = selectedCategory.getRefundAmount();
         if (amount < reimbursement) {
@@ -193,8 +186,7 @@ public class AddInvoiceController {
 
         // Check whether a file has been selected
         if (selectedFile == null) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Please select a file to upload");
+            showAlert(Alert.AlertType.ERROR,"File Error", "Please select a file to upload");
             return;
         }
 
@@ -203,13 +195,11 @@ public class AddInvoiceController {
         try {
             fileUrl = DatabaseConnection.uploadFileToBucket(selectedFile);
             if (fileUrl == null) {
-                statusLabel.setStyle("-fx-text-fill: red;");
-                statusLabel.setText("File upload failed");
+                showAlert(Alert.AlertType.ERROR,"File Error","File upload failed");
                 return;
             }
         } catch (IOException e) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Error uploading file: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR,"File Error","Error uploading file: " + e.getMessage());
             return;
         }
         String displayDate = selectedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
@@ -251,13 +241,11 @@ public class AddInvoiceController {
                     selectedFile
             );
             uploadedDates.add(selectedDate);
-            statusLabel.setStyle("-fx-text-fill: green;");
-            statusLabel.setText("Invoice and file uploaded successfully.");
+            showAlert(Alert.AlertType.INFORMATION,"Invoice Success","Invoice and file uploaded successfully.");
 
             resetForm();
         } catch (SQLException e) {
-            statusLabel.setStyle("-fx-text-fill: red;");
-            statusLabel.setText("Error saving invoice to database: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR,"Invoice Error","Error saving invoice to database: " + e.getMessage());
         }
         AnomalyDetection anomalyDetection = new AnomalyDetection();
         boolean anomaly = AnomalyDetection.detectMismatch(invoice);
@@ -273,5 +261,14 @@ public class AddInvoiceController {
         amountField.clear();        // delete the image
         categoryCombo.getSelectionModel().clearSelection();  // Reset the category
         selectedFile = null;        // reset the image
+    }
+
+    //add alert for information
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
