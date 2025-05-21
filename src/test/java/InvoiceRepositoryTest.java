@@ -89,7 +89,7 @@ public class InvoiceRepositoryTest {
     void testGetAllInvoicesAdmin() {
 
 
-        List<Invoice> invoices = invoiceRepository.getAllInvoicesAdmin();
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
 
         assertNotNull(invoices, "Invoices list should not be null");
         assertTrue(invoices.size() >= 3, "There should be at least three invoices in total.");

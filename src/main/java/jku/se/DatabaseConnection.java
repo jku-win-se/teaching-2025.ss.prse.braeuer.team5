@@ -1,6 +1,6 @@
 package jku.se;
 
-import jku.se.repository.InvoiceRepository;
+
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -8,7 +8,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,7 +36,8 @@ public class DatabaseConnection {
             String contentType = Files.probeContentType(imageFile.toPath());
             if (contentType == null) contentType = "application/octet-stream";
 
-            HttpURLConnection connection = (HttpURLConnection) new URL(uploadUrl).openConnection();
+            HttpURLConnection connection;
+            connection = (HttpURLConnection) new URL(uploadUrl).openConnection();
             connection.setRequestMethod("PUT");
             connection.setRequestProperty("Authorization", "Bearer " + DatabaseConnection.API_KEY);
             connection.setRequestProperty("Content-Type", contentType);
@@ -83,7 +83,7 @@ public class DatabaseConnection {
 
     // Check database connection (test connection)
     public static void main(String[] args) {
-        try (Connection con = getConnection()) {
+        try (Connection ignored = getConnection()) {
             if (LOGGER.isLoggable(Level.INFO)) {
                 LOGGER.info("Connection to Supabase successful!");
             }

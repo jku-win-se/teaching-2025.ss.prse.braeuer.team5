@@ -14,14 +14,13 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserRepositoryTest {
-    private UserRepository userRepository;
     public static String USER = "postgres.dljjtuynbgxgmhkcdypu";
     public static String PWD = "LunchifyTeam5!";
     private static final String URL = "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres";
 
     @BeforeEach
     void setUp() {
-        userRepository = new UserRepository();
+        UserRepository userRepository = new UserRepository();
     }
 
     @AfterEach
