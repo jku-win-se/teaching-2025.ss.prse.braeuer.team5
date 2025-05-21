@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.WritableImage;
 import javafx.scene.text.Text;
@@ -31,11 +32,9 @@ import java.util.*;
 public class StatisticReimbursementPerMonthController {
     @FXML private BarChart<String, Number> barChartReimbursementPerMonth;
     @FXML private ComboBox<String> saveFormatComboBox;
-    @FXML
-    public Text statusText;
 
     public Statistics statistics = new Statistics();
-    private PauseTransition statusTimer;
+
 
     @FXML
     public void initialize() {
@@ -65,9 +64,6 @@ public class StatisticReimbursementPerMonthController {
         saveFormatComboBox.getItems().addAll("JSON", "PDF", "CSV");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
-        statusTimer = new PauseTransition(Duration.seconds(3));
-        statusTimer.setOnFinished(e -> statusText.setText(""));
-
     }
 
     @FXML
@@ -85,7 +81,7 @@ public class StatisticReimbursementPerMonthController {
                 exportJson();
                 break;
             default:
-                showStatus("Unsupported format: " + selectedFormat, false);
+                showAlert(Alert.AlertType.ERROR, "Export Error", "Unsupported format: " + selectedFormat);
         }
     }
 
@@ -151,7 +147,7 @@ public class StatisticReimbursementPerMonthController {
         exporter.end();
         exporter.saveToFile("reimbursement_per_month_detailed");
 
-        showStatus("PDF export with detailed user info successful!", true);
+        showAlert(Alert.AlertType.INFORMATION,"Export Success","PDF export with detailed user info successful!");
     }
 
     public void exportCsv() throws IOException, SQLException {
@@ -191,21 +187,25 @@ public class StatisticReimbursementPerMonthController {
 
         CsvExporter exporter = new CsvExporter(";");
         exporter.export(rows, "reimbursement_per_month_detailed");
-        showStatus("CSV export with detailed user info successful!", true);
+        showAlert(Alert.AlertType.INFORMATION,"Export Success","CSV export with detailed user info successful!");
     }
 
     public void exportJson() throws SQLException, IOException {
         Map<String, Object> jsonData = statistics.getUserReimbursementDetails();
         JsonExporter exporter = new JsonExporter();
         exporter.export(jsonData, "reimbursement_details");
-        showStatus("JSON export successful!", true);
+        showAlert(Alert.AlertType.INFORMATION,"Export Success","JSON export successful!");
     }
 
-    private void showStatus(String message, boolean success) {
-        statusText.setStyle(success ? "-fx-fill: green;" : "-fx-fill: red;");
-        statusText.setText(message);
-        statusTimer.playFromStart();
+    //add information in an alert
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
+
 
     @FXML
     private void cancelReimbursement(ActionEvent event) throws IOException {
