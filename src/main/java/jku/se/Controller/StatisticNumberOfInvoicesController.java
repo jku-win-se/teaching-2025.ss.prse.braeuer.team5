@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.WritableImage;
 import javafx.scene.text.Text;
@@ -31,10 +32,10 @@ import java.util.*;
 public class StatisticNumberOfInvoicesController {
     @FXML private BarChart<String, Number> barChartInvoicesPerMonth;
     @FXML private ComboBox<String> saveFormatComboBox;
-    @FXML private Text statusText;
+
 
     public Statistics statistics = new Statistics();
-    private PauseTransition statusTimer;
+
 
     @FXML
     public void initialize() {
@@ -64,8 +65,6 @@ public class StatisticNumberOfInvoicesController {
         saveFormatComboBox.getItems().addAll("PDF", "CSV", "JSON");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
-        statusTimer = new PauseTransition(Duration.seconds(3));
-        statusTimer.setOnFinished(e -> statusText.setText(""));
     }
 
     @FXML
@@ -83,10 +82,10 @@ public class StatisticNumberOfInvoicesController {
                     exportJson();
                     break;
                 default:
-                    showStatus("Unsupported format: " + format, false);
+                    showAlert(Alert.AlertType.ERROR, "Export Failed","Unsupported format: " + format);
             }
         } catch (IOException e) {
-            showStatus("Export failed: " + e.getMessage(), false);
+            showAlert(Alert.AlertType.ERROR, "Export Failed", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -139,7 +138,7 @@ public class StatisticNumberOfInvoicesController {
         exporter.end();
         exporter.saveToFile("invoices_per_month_detailed");
 
-        showStatus("PDF export with detailed user info successful!", true);
+        showAlert(Alert.AlertType.INFORMATION, "Export Success","PDF export with detailed user info successful!");
     }
 
 
@@ -180,7 +179,7 @@ public class StatisticNumberOfInvoicesController {
 
         CsvExporter exporter = new CsvExporter(";");
         exporter.export(rows, "invoices_per_month_detailed");
-        showStatus("CSV export with detailed user info successful!", true);
+        showAlert(Alert.AlertType.INFORMATION, "Export Success","CSV export with detailed user info successful!");
     }
 
 
@@ -207,13 +206,15 @@ public class StatisticNumberOfInvoicesController {
 
         JsonExporter exporter = new JsonExporter();
         exporter.export(jsonData, "invoices_per_month_detailed");
-        showStatus("JSON export successful!", true);
+        showAlert(Alert.AlertType.INFORMATION, "Export Success","JSON export successful!");
     }
-
-    private void showStatus(String message, boolean success) {
-        statusText.setStyle(success ? "-fx-fill: green;" : "-fx-fill: red;");
-        statusText.setText(message);
-        statusTimer.playFromStart();
+    //add alert for information
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     @FXML
