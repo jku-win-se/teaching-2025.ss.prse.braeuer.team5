@@ -8,5 +8,4 @@ Alle Daten werden sicher in einer PostgreSQL-Datenbank gespeichert, die über Su
 
 ## Wichtige Unterlagen: 
 
-
-docs/Prototyp Lunchify.pptx
+[docs](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/tree/e76f232010a10e7386eb4bc3df6dd038941aa3dd/docs)
