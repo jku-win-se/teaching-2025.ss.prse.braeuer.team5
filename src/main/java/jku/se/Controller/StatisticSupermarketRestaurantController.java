@@ -1,6 +1,7 @@
 package jku.se.Controller;
 
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -10,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.image.WritableImage;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -45,6 +47,29 @@ public class StatisticSupermarketRestaurantController {
 
         statusTimer = new PauseTransition(Duration.seconds(3));
         statusTimer.setOnFinished(e -> statusText.setText(""));
+
+        //design
+        Platform.runLater(() -> {
+            for (PieChart.Data data : pieChartDistribution.getData()) {
+                String name = data.getName();
+                if (name.contains("Supermarket")) {
+                    data.getNode().setStyle("-fx-pie-color: lightblue;");
+                } else if (name.contains("Restaurant")) {
+                    data.getNode().setStyle("-fx-pie-color: grey;");
+                }
+            }
+
+            for (Node node : pieChartDistribution.lookupAll(".chart-legend-item")) {
+                if (node instanceof Label label) {
+                    String text = label.getText();
+                    if (text.contains("Supermarket")) {
+                        label.getGraphic().setStyle("-fx-background-color: lightblue;");
+                    } else if (text.contains("Restaurant")) {
+                        label.getGraphic().setStyle("-fx-background-color: grey;");
+                    }
+                }
+            }
+        });
     }
 
     @FXML

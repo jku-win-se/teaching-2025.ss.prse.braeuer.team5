@@ -5,21 +5,21 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="jku.se.Controller.ChangeReimbursementController">
+<AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jku.se.Controller.ChangeReimbursementController">
     <children>
         <!-- Header Section -->
         <Label layoutX="165.0" layoutY="65.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Change Reimbursement" />
 
         <!-- Restaurant Text Field -->
-        <Label layoutX="121.0" layoutY="156.0" text="RESTAURANT:" />
+        <Label layoutX="121.0" layoutY="156.0" text="Restaurant:" />
         <TextField fx:id="restaurantField" layoutX="236.0" layoutY="152.0" prefWidth="200.0" />
 
         <!-- Supermarket Text Field -->
-        <Label layoutX="117.0" layoutY="204.0" text="SUPERMARKET:" />
+        <Label layoutX="117.0" layoutY="204.0" text="Supermarket" />
         <TextField fx:id="supermarketField" layoutX="236.0" layoutY="200.0" prefWidth="200.0" />
 
         <!-- Buttons -->
-        <Button layoutX="166.0" layoutY="281.0" prefWidth="100.0" style="-fx-background-color: #1e90ff; -fx-text-fill: white;" text="Save" onAction="#handleSave"/>
-        <Button layoutX="336.0" layoutY="281.0" prefWidth="100.0" style="-fx-background-color: #808080; -fx-text-fill: white;" text="Exit" onAction="#handleExit"/>
+        <Button layoutX="166.0" layoutY="281.0" onAction="#handleSave" prefWidth="100.0" style="-fx-background-color: green; -fx-text-fill: white;" text="Save" />
+        <Button layoutX="336.0" layoutY="281.0" onAction="#handleExit" prefWidth="100.0" style="-fx-background-color: #808080; -fx-text-fill: white;" text="Exit" />
     </children>
 </AnchorPane>

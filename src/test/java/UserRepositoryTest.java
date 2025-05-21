@@ -14,14 +14,13 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserRepositoryTest {
-    private UserRepository userRepository;
     public static String USER = "postgres.dljjtuynbgxgmhkcdypu";
     public static String PWD = "LunchifyTeam5!";
     private static final String URL = "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres";
 
     @BeforeEach
     void setUp() {
-        userRepository = new UserRepository();
+        UserRepository userRepository = new UserRepository();
     }
 
     @AfterEach
@@ -76,6 +75,26 @@ public class UserRepositoryTest {
         assertNull(userFromDb, "User should not exist after deletion");
     }
 
+    //Test get an user by email
+    @Test
+    void testGetByEmail() {
 
+        String email = "testuser1@lunchify.com";
+        User user = new User("Test User", email, "secret", false);
+        UserRepository.addUser(user);
+
+
+        User result = UserRepository.getByEmail(email);
+
+
+        assertNotNull(result, "User should be found by email");
+        assertEquals(user.getEmail(), result.getEmail());
+        assertEquals(user.getName(), result.getName());
+        assertEquals(user.getPassword(), result.getPassword());
+        assertFalse(result.isAdministrator());
+
+
+        UserRepository.deleteUser(email);
+    }
 }
 

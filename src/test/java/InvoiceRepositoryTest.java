@@ -17,15 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class InvoiceRepositoryTest {
 
-    private InvoiceRepository invoiceRepository;
-
     public static final String USER = "postgres.dljjtuynbgxgmhkcdypu";
     public static final String PWD = "LunchifyTeam5!";
     private static final String URL = "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres";
 
     @BeforeEach
     void setUp() {
-        invoiceRepository = new InvoiceRepository(); 
+        InvoiceRepository invoiceRepository = new InvoiceRepository();
         cleanUpTestInvoices();
 
         //before add user to connect with test invoices
@@ -89,7 +87,7 @@ public class InvoiceRepositoryTest {
     void testGetAllInvoicesAdmin() {
 
 
-        List<Invoice> invoices = invoiceRepository.getAllInvoicesAdmin();
+        List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
 
         assertNotNull(invoices, "Invoices list should not be null");
         assertTrue(invoices.size() >= 3, "There should be at least three invoices in total.");
@@ -259,7 +257,7 @@ public class InvoiceRepositoryTest {
         assertEquals(newAmount, updated.getAmount(), 0.01);
         assertEquals(expectedReimbursement, updated.getReimbursement(), 0.01);
     }
-
+    //test update invoice category reimbursement
     @Test
     void testUpdateInvoiceCategoryReimbursement() {
         Invoice invoice = InvoiceRepository.getAllInvoicesAdmin().stream()
@@ -287,6 +285,7 @@ public class InvoiceRepositoryTest {
         assertEquals(expectedReimbursement, updated.getReimbursement(), 0.01);
     }
 
+    //test delete invoice
     @Test
     void testDeleteInvoice() {
         // Setup
@@ -305,6 +304,8 @@ public class InvoiceRepositoryTest {
 
         assertFalse(stillExists, "Invoice should no longer exist in database");
     }
+
+    //Test insert invoice
     private void insertTestInvoice(String userEmail, LocalDate date, double amount, Category category, Status status, String fileUrl, LocalDateTime createdAt, double reimbursement) {
         try (Connection connection = DriverManager.getConnection(URL, USER, PWD)) {
             String sql = "INSERT INTO invoice (user_email, date, amount, category, status, file_url, created_at, reimbursement) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";

@@ -1,6 +1,7 @@
 package jku.se.Controller;
 
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -53,11 +54,20 @@ public class StatisticReimbursementPerMonthController {
         barChartReimbursementPerMonth.getData().clear();
         barChartReimbursementPerMonth.getData().add(series);
 
+        //chart legend in blue
+        Platform.runLater(() -> {
+            Set<Node> legendItems = barChartReimbursementPerMonth.lookupAll(".chart-legend-item-symbol");
+            for (Node node : legendItems) {
+                node.setStyle("-fx-background-color: lightblue;");
+            }
+        });
+
         saveFormatComboBox.getItems().addAll("JSON", "PDF", "CSV");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
         statusTimer = new PauseTransition(Duration.seconds(3));
         statusTimer.setOnFinished(e -> statusText.setText(""));
+
     }
 
     @FXML
