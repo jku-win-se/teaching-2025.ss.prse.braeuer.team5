@@ -1,6 +1,7 @@
 package jku.se.Controller;
 
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -58,6 +59,7 @@ public class StatisticReimbursementPerMonthController {
 
         statusTimer = new PauseTransition(Duration.seconds(3));
         statusTimer.setOnFinished(e -> statusText.setText(""));
+
     }
 
     @FXML
