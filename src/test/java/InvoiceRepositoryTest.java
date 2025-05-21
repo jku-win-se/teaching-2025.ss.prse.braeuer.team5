@@ -259,7 +259,7 @@ public class InvoiceRepositoryTest {
         assertEquals(newAmount, updated.getAmount(), 0.01);
         assertEquals(expectedReimbursement, updated.getReimbursement(), 0.01);
     }
-
+    //test update invoice category reimbursement
     @Test
     void testUpdateInvoiceCategoryReimbursement() {
         Invoice invoice = InvoiceRepository.getAllInvoicesAdmin().stream()
@@ -287,6 +287,7 @@ public class InvoiceRepositoryTest {
         assertEquals(expectedReimbursement, updated.getReimbursement(), 0.01);
     }
 
+    //test delete invoice
     @Test
     void testDeleteInvoice() {
         // Setup
@@ -305,6 +306,8 @@ public class InvoiceRepositoryTest {
 
         assertFalse(stillExists, "Invoice should no longer exist in database");
     }
+
+    //Test insert invoice
     private void insertTestInvoice(String userEmail, LocalDate date, double amount, Category category, Status status, String fileUrl, LocalDateTime createdAt, double reimbursement) {
         try (Connection connection = DriverManager.getConnection(URL, USER, PWD)) {
             String sql = "INSERT INTO invoice (user_email, date, amount, category, status, file_url, created_at, reimbursement) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";

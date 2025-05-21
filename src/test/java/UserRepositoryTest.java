@@ -76,6 +76,26 @@ public class UserRepositoryTest {
         assertNull(userFromDb, "User should not exist after deletion");
     }
 
+    //Test get an user by email
+    @Test
+    void testGetByEmail() {
 
+        String email = "testuser1@lunchify.com";
+        User user = new User("Test User", email, "secret", false);
+        UserRepository.addUser(user);
+
+
+        User result = UserRepository.getByEmail(email);
+
+
+        assertNotNull(result, "User should be found by email");
+        assertEquals(user.getEmail(), result.getEmail());
+        assertEquals(user.getName(), result.getName());
+        assertEquals(user.getPassword(), result.getPassword());
+        assertFalse(result.isAdministrator());
+
+
+        UserRepository.deleteUser(email);
+    }
 }
 

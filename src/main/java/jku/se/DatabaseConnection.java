@@ -85,10 +85,10 @@ public class DatabaseConnection {
     public static void main(String[] args) {
         try (Connection con = getConnection()) {
             if (LOGGER.isLoggable(Level.INFO)) {
-                LOGGER.info("Verbindung zu Supabase erfolgreich!");
+                LOGGER.info("Connection to Supabase successful!");
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Fehler bei der Verbindung: ", e);
+            LOGGER.log(Level.SEVERE, "Error during connection:  ", e);
         }
     }
 }
