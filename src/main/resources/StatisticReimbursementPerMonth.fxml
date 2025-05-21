@@ -29,6 +29,6 @@
         <ComboBox fx:id="saveFormatComboBox" layoutX="101.0" layoutY="361.0" prefWidth="143.0" />
         <Text layoutX="40.0" layoutY="378.0" text="Save as:" />
         <Button layoutX="257.0" layoutY="359.0" onAction="#handleExport" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Export" />
-        <Text fx:id="statusText" layoutX="50.0" layoutY="80.0" style="-fx-font-size: 14; -fx-fill: transparent;" />
+        <Text fx:id="statusText" layoutX="40.0" layoutY="348.0" style="-fx-font-size: 14; -fx-fill: transparent;" wrappingWidth="242.0" />
     </children>
 </AnchorPane>

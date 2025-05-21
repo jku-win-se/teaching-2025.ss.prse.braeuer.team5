@@ -30,6 +30,6 @@
         <Text layoutX="39.0" layoutY="378.0" text="Save as:" />
         <Button layoutX="256.0" layoutY="361.0" onAction="#handleExport" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Export" />
         <!-- Angepasste Position des Status-Textes (weiter links und höher) -->
-        <Text fx:id="statusText" layoutX="50.0" layoutY="80.0" style="-fx-font-size: 14; -fx-fill: transparent;" />
+        <Text fx:id="statusText" layoutX="12.0" layoutY="349.0" style="-fx-font-size: 14; -fx-fill: transparent;" wrappingWidth="137.0" />
     </children>
 </AnchorPane>

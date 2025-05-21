@@ -9,23 +9,21 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.image.ImageView?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jku.se.Controller.AddInvoiceController">
 
    <!-- Titel -->
    <Label layoutX="234.0" layoutY="44.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-alignment: CENTER;" text="Add invoice" />
-   <Label layoutX="161.0" layoutY="290.0" text="Max size: 10MB" style="-fx-font-style: italic;"/>
+   <Label layoutX="161.0" layoutY="290.0" style="-fx-font-style: italic;" text="Max size: 10MB" />
 
    <!-- Formularfelder -->
    <Label layoutX="161.0" layoutY="112.0" text="Invoice date:" />
-   <DatePicker fx:id="datePicker" layoutX="272.0" layoutY="108.0" prefHeight="25.0" prefWidth="204.0" />
+   <DatePicker fx:id="datePicker" focusTraversable="false" layoutX="272.0" layoutY="108.0" prefHeight="25.0" prefWidth="204.0" />
 
    <Label layoutX="161.0" layoutY="162.0" text="Amount (€):" />
-   <TextField fx:id="amountField" layoutX="272.0" layoutY="162.0" prefHeight="25.0" prefWidth="204.0" />
+   <TextField fx:id="amountField" focusTraversable="false" layoutX="272.0" layoutY="162.0" prefHeight="25.0" prefWidth="204.0" />
 
    <Label layoutX="161.0" layoutY="212.0" text="Category:" />
-   <ComboBox fx:id="categoryCombo" layoutX="272.0" layoutY="208.0" prefHeight="25.0" prefWidth="204.0">
+   <ComboBox fx:id="categoryCombo" focusTraversable="false" layoutX="272.0" layoutY="208.0" prefHeight="25.0" prefWidth="204.0">
       <items>
          <FXCollections fx:factory="observableArrayList">
             <String fx:value="RESTAURANT" />
@@ -36,15 +34,13 @@
 
    <!-- Dateiauswahl -->
    <Label layoutX="161.0" layoutY="262.0" text="Upload image:" />
-   <Button layoutX="272.0" layoutY="258.0" onAction="#handleFileSelect" text="Select image" prefHeight="25.0" prefWidth="204.0" />
+   <Button focusTraversable="false" layoutX="272.0" layoutY="258.0" onAction="#handleFileSelect" prefHeight="25.0" prefWidth="204.0" text="Select image" />
 
    <!-- Statusmeldung -->
    <Label fx:id="statusLabel" layoutX="272.0" layoutY="290.0" prefWidth="204.0" />
 
    <!-- Aktionsbuttons -->
-   <Button fx:id="uploadButton" layoutX="200.0" layoutY="330.0" onAction="#handleUpload" prefWidth="100.0"
-           style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Upload" />
-   <Button layoutX="342.0" layoutY="330.0" onAction="#cancelAdd" prefWidth="100.0"
-           style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Exit" />
+   <Button fx:id="uploadButton" focusTraversable="false" layoutX="200.0" layoutY="330.0" onAction="#handleUpload" prefWidth="100.0" style="-fx-background-color: green; -fx-text-fill: white; -fx-font-weight: bold;" text="Upload" />
+   <Button focusTraversable="false" layoutX="342.0" layoutY="330.0" onAction="#cancelAdd" prefWidth="100.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold;" text="Exit" />
 
 </AnchorPane>
