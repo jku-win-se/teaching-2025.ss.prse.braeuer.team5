@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.WritableImage;
@@ -27,10 +28,10 @@ import java.util.*;
 public class StatisticSupermarketRestaurantController {
     @FXML private PieChart pieChartDistribution;
     @FXML private ComboBox<String> saveFormatComboBox;
-    @FXML private Text statusText;
+
 
     private final Statistics statistics = new Statistics();
-    private PauseTransition statusTimer;
+
 
     @FXML
     public void initialize() {
@@ -45,8 +46,6 @@ public class StatisticSupermarketRestaurantController {
         saveFormatComboBox.getItems().addAll("PDF", "CSV");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
-        statusTimer = new PauseTransition(Duration.seconds(3));
-        statusTimer.setOnFinished(e -> statusText.setText(""));
 
         //design
         Platform.runLater(() -> {
@@ -84,10 +83,11 @@ public class StatisticSupermarketRestaurantController {
                     exportCsv();
                     break;
                 default:
-                    showStatus("Unsupported export format: " + format, false);
+                    showAlert(Alert.AlertType.ERROR, "Export Error", "Unsupported export format: " + format);
+
             }
         } catch (IOException e) {
-            showStatus("Export failed: " + e.getMessage(), false);
+            showAlert(Alert.AlertType.ERROR, "Export Failed", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -125,7 +125,7 @@ public class StatisticSupermarketRestaurantController {
         exporter.end();
         exporter.saveToFile("supermarket_restaurant_distribution");
 
-        showStatus("PDF export successful!", true);
+        showAlert(Alert.AlertType.INFORMATION,"Export Success","PDF export successful!");
     }
 
     private void exportCsv() throws IOException {
@@ -147,13 +147,16 @@ public class StatisticSupermarketRestaurantController {
         CsvExporter exporter = new CsvExporter(";");
         exporter.export(rows, "supermarket_vs_restaurant_distribution");
 
-        showStatus("CSV export successful!", true);
+        showAlert(Alert.AlertType.INFORMATION,"Export Success", "CSV export successful!");
     }
 
-    private void showStatus(String message, boolean success) {
-        statusText.setStyle(success ? "-fx-fill: green;" : "-fx-fill: red;");
-        statusText.setText(message);
-        statusTimer.playFromStart();
+    //add information in an alert
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     @FXML
