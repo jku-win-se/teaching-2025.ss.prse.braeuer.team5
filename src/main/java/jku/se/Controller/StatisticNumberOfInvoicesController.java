@@ -1,6 +1,7 @@
 package jku.se.Controller;
 
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -51,6 +52,14 @@ public class StatisticNumberOfInvoicesController {
 
         barChartInvoicesPerMonth.getData().clear();
         barChartInvoicesPerMonth.getData().add(series);
+
+        //chart legend in blue
+        Platform.runLater(() -> {
+            Set<Node> legendItems = barChartInvoicesPerMonth.lookupAll(".chart-legend-item-symbol");
+            for (Node node : legendItems) {
+                node.setStyle("-fx-background-color: lightblue;");
+            }
+        });
 
         saveFormatComboBox.getItems().addAll("PDF", "CSV", "JSON");
         saveFormatComboBox.getSelectionModel().selectFirst();

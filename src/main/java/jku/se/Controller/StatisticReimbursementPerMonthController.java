@@ -54,6 +54,14 @@ public class StatisticReimbursementPerMonthController {
         barChartReimbursementPerMonth.getData().clear();
         barChartReimbursementPerMonth.getData().add(series);
 
+        //chart legend in blue
+        Platform.runLater(() -> {
+            Set<Node> legendItems = barChartReimbursementPerMonth.lookupAll(".chart-legend-item-symbol");
+            for (Node node : legendItems) {
+                node.setStyle("-fx-background-color: lightblue;");
+            }
+        });
+
         saveFormatComboBox.getItems().addAll("JSON", "PDF", "CSV");
         saveFormatComboBox.getSelectionModel().selectFirst();
 
