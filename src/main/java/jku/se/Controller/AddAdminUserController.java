@@ -41,7 +41,6 @@ public class AddAdminUserController { //#18 Magdalena
 
         User newUser = new User(name, email, password, isAdmin);
         UserRepository.addUser(newUser);  // add User in database
-        message.setStyle("-fx-text-fill: green;");
         showAlert(Alert.AlertType.INFORMATION, "Success", "User added successfully!");
         clearFields();
     }
