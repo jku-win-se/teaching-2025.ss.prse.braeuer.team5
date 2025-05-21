@@ -6,7 +6,7 @@ Administratoren haben Zugriff auf ein Dashboard, um Rechnungen zu genehmigen ode
 
 Alle Daten werden sicher in einer PostgreSQL-Datenbank gespeichert, die über Supabase gehostet wird. Damit bietet Lunchify eine vollständige Lösung zur digitalen Belegverwaltung und Rückerstattung von Verpflegungskosten.
 
-##Wichtige Unterlagen: 
+## Wichtige Unterlagen: 
 
 
-https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/e872d4f1214a41632a75cfcf0c4111e1d25e1fca/docs/Prototyp%20Lunchify.pptx
+docs/Prototyp Lunchify.pptx
