@@ -64,3 +64,10 @@
 | AN01    | Zwei identische Rechnungsbilder hochladen            | Gleiches Bild zweimal                  | Warnung oder automatische Markierung als Duplikat          |
 
 ---
+## Sonderfälle
+
+| Test-ID | Beschreibung                                         | Eingabe                                | Erwartetes Ergebnis                                        |
+|---------|------------------------------------------------------|----------------------------------------|------------------------------------------------------------|
+| S01     | Änderung exakt um 00:00 Uhr Monatswechsel            | 00:00:00                               | Änderung gehört zum neuen Monat                            |
+| S02     | Rechnung mit negativer Summe                         | -5,00 €                                | Fehlermeldung: „Negativer Betrag ungültig“                 |
+| S03     | Anmeldung mit Unicode-Zeichen                        | 𝓾𝓼𝓮𝓻@firma.at                          | Fehlermeldung: „Ungültige E-Mail-Adresse“                  |
