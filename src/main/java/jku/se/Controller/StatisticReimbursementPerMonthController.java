@@ -136,7 +136,7 @@ public class StatisticReimbursementPerMonthController {
                         .map(e -> {
                             Map<?, ?> map = (Map<?, ?>) e.getValue();
                             return java.util.List.of(
-                                    e.getKey().toString(),
+                                    e.getKey(),
                                     String.valueOf(map.get("invoice_count")),
                                     String.format("%.2f", (Double) map.get("total_reimbursement"))
                             );

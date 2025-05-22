@@ -111,10 +111,10 @@ public class AddInvoiceController {
 
 
     @FXML
-    public void handleUpload(ActionEvent event) throws IOException {
+    public void handleUpload() throws IOException {
         // Get user data (e-mail of the current user)
         String userEmail = UserDashboardController.getCurrentUserEmail();
-        User currentUser = UserRepository.getByEmail(userEmail);
+        UserRepository.getByEmail(userEmail);
 
 
         if (userEmail == null || userEmail.isEmpty()) {
@@ -247,10 +247,9 @@ public class AddInvoiceController {
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR,"Invoice Error","Error saving invoice to database: " + e.getMessage());
         }
-        AnomalyDetection anomalyDetection = new AnomalyDetection();
         boolean anomaly = AnomalyDetection.detectMismatch(invoice);
         invoice.setAnomalyDetected(anomaly);
-        Notification notification = new Notification("Invoice submitted successfully.");
+        new Notification("Invoice submitted successfully.");
 
 
     }

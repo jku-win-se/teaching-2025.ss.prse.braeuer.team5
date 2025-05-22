@@ -97,7 +97,6 @@ public class AdminInvoiceManagementController {
         }
         //save old and new date for changing date
         LocalDate oldDate = selectedInvoice.getDate();
-        Category oldCategory = selectedInvoice.getCategory();
 
         //check if invoice is in current month
         LocalDate now = LocalDate.now();
@@ -177,8 +176,8 @@ public class AdminInvoiceManagementController {
         if (selectedInvoice != null) {
             selectedInvoice.setStatus(Status.APPROVED);
             InvoiceRepository.updateInvoiceStatus(selectedInvoice);
-            User user = UserRepository.getByEmail(selectedInvoice.getUserEmail());
-            Notification notification = new Notification("Your invoice from " + selectedInvoice.getCreatedAtString() + " was approved.");
+            UserRepository.getByEmail(selectedInvoice.getUserEmail());
+            new Notification("Your invoice from " + selectedInvoice.getCreatedAtString() + " was approved.");
             statusLabel.setText("Invoice accepted successfully.");
             statusLabel.setStyle("-fx-text-fill: green;");
         }
@@ -192,8 +191,8 @@ public class AdminInvoiceManagementController {
         if (selectedInvoice != null) {
             selectedInvoice.setStatus(Status.DECLINED);
             InvoiceRepository.updateInvoiceStatus(selectedInvoice);
-            User user = UserRepository.getByEmail(selectedInvoice.getUserEmail());
-            Notification notification = new Notification("Your invoice from " + selectedInvoice.getCreatedAtString() + " was rejected.");
+            UserRepository.getByEmail(selectedInvoice.getUserEmail());
+            new Notification("Your invoice from " + selectedInvoice.getCreatedAtString() + " was rejected.");
             statusLabel.setText("Invoice declined.");
             statusLabel.setStyle("-fx-text-fill: red;");
         }
