@@ -89,6 +89,7 @@ public class AdminDashboardController {
         stage.show();
     }
 
+    //add Admin User to database
     @FXML //#18 Magda
     private void handleAddAdminUser(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddAdminUser.fxml"));
@@ -99,6 +100,7 @@ public class AdminDashboardController {
         stage.show();
     }
 
+    //delete admin user from database
     @FXML //#18 Magda
     private void handleDeleteAdminUser(ActionEvent event)throws IOException{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/DeleteAdminUser.fxml"));
