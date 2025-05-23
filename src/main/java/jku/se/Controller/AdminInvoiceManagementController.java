@@ -173,7 +173,7 @@ public class AdminInvoiceManagementController {
             InvoiceRepository.updateInvoiceStatus(selectedInvoice);
             UserRepository.getByEmail(selectedInvoice.getUserEmail());
             new Notification("Your invoice from " + selectedInvoice.getCreatedAtString() + " was approved.");
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Invoice updated successfully.");
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Invoice accepted successfully.");
 
         }
     }
