@@ -75,7 +75,7 @@ public class AdminInvoiceManagementController {
         }
 
         if (selectedUserEmail == null || selectedUserEmail.isEmpty()) {
-            statusLabel.setText("Please select an user first.");
+            showAlert(Alert.AlertType.ERROR, "User Error", "Please select an user first.");
             return;
         }
 
@@ -91,8 +91,7 @@ public class AdminInvoiceManagementController {
         Invoice selectedInvoice = selectInvoice.getValue();
 
         if (selectedInvoice == null) {
-            statusLabel.setText("Please select an invoice to update.");
-            statusLabel.setStyle("-fx-text-fill: red;");
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Please select an invoice to update.");
             return;
         }
         //save old and new date for changing date
@@ -101,8 +100,7 @@ public class AdminInvoiceManagementController {
         //check if invoice is in current month
         LocalDate now = LocalDate.now();
         if(!selectedInvoice.isInCurrentMonth(oldDate, now)){
-            statusLabel.setText("The invoice can no longer be changed - only possible in the current month!");
-            statusLabel.setStyle("-fx-text-fill: red;");
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "The invoice can no longer be changed - only possible in the current month!");
             return;
         }
 
@@ -113,8 +111,7 @@ public class AdminInvoiceManagementController {
                 LocalDate newDate = invoiceDateField.getValue();
 
                 if (!selectedInvoice.isValidAmount(newAmount)) {
-                    statusLabel.setText("Amount must be greater than 0 and less than 1000!");
-                    statusLabel.setStyle("-fx-text-fill: red;");
+                    showAlert(Alert.AlertType.ERROR, "Validation Error", "Amount must be greater than 0 and less than 1000!");
                     return;
                 }
 
@@ -122,8 +119,7 @@ public class AdminInvoiceManagementController {
                 selectedInvoice.setCategory(Category.valueOf(newCategory));
 
                 if(!selectedInvoice.isDateOnWeekday(newDate)){
-                    statusLabel.setText("Invoice date must be a weekday!");
-                    statusLabel.setStyle("-fx-text-fill: red;");
+                    showAlert(Alert.AlertType.ERROR, "Validation Error", "Invoice date must be a weekday!");
                     return;
                 }
                 // Check if date changed - AI generated
@@ -131,13 +127,12 @@ public class AdminInvoiceManagementController {
                     try (Connection con = DatabaseConnection.getConnection()) {
                         boolean exists = InvoiceRepository.invoiceExists(con, selectedInvoice.getUserEmail(), java.sql.Date.valueOf(newDate));
                         if (exists) {
-                            statusLabel.setText("An invoice already exists for this user on the selected date.");
-                            statusLabel.setStyle("-fx-text-fill: red;");
+                            showAlert(Alert.AlertType.ERROR, "Validation Error", "An invoice already exists for this user on the selected date.");
                             return;
                         }
                     } catch (SQLException e) {
-                        statusLabel.setText("Database error: " + e.getMessage());
-                        statusLabel.setStyle("-fx-text-fill: red;");
+
+                        showAlert(Alert.AlertType.ERROR, "Database Error", "Database error: " + e.getMessage());
                         return;
                     }
                 }
@@ -153,8 +148,8 @@ public class AdminInvoiceManagementController {
                 InvoiceRepository.updateInvoiceDate(selectedInvoice);
                 InvoiceRepository.updateInvoiceStatus(selectedInvoice);
                 InvoiceRepository.updateInvoiceReimbursement(selectedInvoice);
-                statusLabel.setText("Invoice updated successfully.");
-                statusLabel.setStyle("-fx-text-fill: green;");
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Invoice updated successfully.");
+
 
                 //Update data output in JAVAFX
                 amountField.setText(String.valueOf(selectedInvoice.getAmount()));
@@ -162,8 +157,8 @@ public class AdminInvoiceManagementController {
                 invoiceDateField.setValue(selectedInvoice.getDate());
                 categoryCombobox.setValue(selectedInvoice.getCategory().name());
             } catch (Exception e) {
-                statusLabel.setText("Update failed: " + e.getMessage());
-                statusLabel.setStyle("-fx-text-fill: red;");
+                showAlert(Alert.AlertType.ERROR, "Update Error", "Update failed: " + e.getMessage());
+
             }
         }
 
@@ -178,8 +173,8 @@ public class AdminInvoiceManagementController {
             InvoiceRepository.updateInvoiceStatus(selectedInvoice);
             UserRepository.getByEmail(selectedInvoice.getUserEmail());
             new Notification("Your invoice from " + selectedInvoice.getCreatedAtString() + " was approved.");
-            statusLabel.setText("Invoice accepted successfully.");
-            statusLabel.setStyle("-fx-text-fill: green;");
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Invoice updated successfully.");
+
         }
     }
 
@@ -193,8 +188,8 @@ public class AdminInvoiceManagementController {
             InvoiceRepository.updateInvoiceStatus(selectedInvoice);
             UserRepository.getByEmail(selectedInvoice.getUserEmail());
             new Notification("Your invoice from " + selectedInvoice.getCreatedAtString() + " was rejected.");
-            statusLabel.setText("Invoice declined.");
-            statusLabel.setStyle("-fx-text-fill: red;");
+            showAlert(Alert.AlertType.WARNING, "Invoice Declined", "Invoice was declined.");
+
         }
     }
 
@@ -205,8 +200,8 @@ public class AdminInvoiceManagementController {
 
         if (selectedInvoice != null) {
             InvoiceRepository.deleteInvoice(selectedInvoice);
-            statusLabel.setText("Invoice delete.");
-            statusLabel.setStyle("-fx-text-fill: red;");
+            showAlert(Alert.AlertType.INFORMATION, "Invoice Deleted", "Invoice was deleted.");
+
         }
     }
 
@@ -220,6 +215,14 @@ public class AdminInvoiceManagementController {
 
             stage.setScene(scene);
             stage.show();
+    }
+    //add alerts for information
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
 
