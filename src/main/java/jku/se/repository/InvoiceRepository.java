@@ -327,7 +327,7 @@ public class InvoiceRepository {
         }
     }
 
-    //delete an invoice from an user as admin
+    //delete an invoice from a user as admin
     public static void deleteInvoice(Invoice invoice) {
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(DELETE_INVOICE)) {

@@ -1,6 +1,6 @@
 package jku.se;
 
-
+import jku.se.repository.InvoiceRepository;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -8,6 +8,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +28,7 @@ public class DatabaseConnection {
         return DriverManager.getConnection(URL_JDBC, USER, PWD);
     }
 
-    // Verbindung zu Supabase und Upload
+    // Connection to Supabase and upload
     public static String uploadFileToBucket(File imageFile) throws IOException {
 
         try {
@@ -36,8 +37,7 @@ public class DatabaseConnection {
             String contentType = Files.probeContentType(imageFile.toPath());
             if (contentType == null) contentType = "application/octet-stream";
 
-            HttpURLConnection connection;
-            connection = (HttpURLConnection) new URL(uploadUrl).openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL(uploadUrl).openConnection();
             connection.setRequestMethod("PUT");
             connection.setRequestProperty("Authorization", "Bearer " + DatabaseConnection.API_KEY);
             connection.setRequestProperty("Content-Type", contentType);
@@ -66,12 +66,12 @@ public class DatabaseConnection {
                         response.append(inputLine);
                     }
                     if (LOGGER.isLoggable(Level.INFO)) {
-                        LOGGER.info("Fehlerdetails: " + response);
+                        LOGGER.info("Error details: " + response);
                     }
                 }
             }
         } catch(Exception e) {
-            LOGGER.log(Level.SEVERE, "Fehler beim Upload der Datei: ", e);
+            LOGGER.log(Level.SEVERE, "Error uploading the file: ", e);
         }
         return null;
     }
@@ -83,12 +83,12 @@ public class DatabaseConnection {
 
     // Check database connection (test connection)
     public static void main(String[] args) {
-        try (Connection ignored = getConnection()) {
+        try (Connection con = getConnection()) {
             if (LOGGER.isLoggable(Level.INFO)) {
                 LOGGER.info("Connection to Supabase successful!");
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error during connection:  ", e);
+            LOGGER.log(Level.SEVERE, "Error in the connection: ", e);
         }
     }
 }

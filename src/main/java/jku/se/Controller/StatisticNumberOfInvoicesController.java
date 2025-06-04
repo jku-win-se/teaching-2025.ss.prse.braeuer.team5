@@ -1,6 +1,5 @@
 package jku.se.Controller;
 
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -14,9 +13,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.WritableImage;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import jku.se.Statistics;
 import jku.se.UserInvoiceData;
 import jku.se.export.CsvExporter;
@@ -25,8 +22,6 @@ import jku.se.export.PdfExporter;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class StatisticNumberOfInvoicesController {
@@ -97,15 +92,15 @@ public class StatisticNumberOfInvoicesController {
         PdfExporter exporter = new PdfExporter();
         exporter.startPage();
 
-        // 1. Titel hinzufügen (oben)
+        // 1. Add title (at the top)
         exporter.addTitle("Invoices Per Month Report");
 
-        // 2. Chart als Bild ins PDF einfügen und yPosition anpassen (x=50, Breite=300, Höhe=150, Abstand 20)
+        // 2. Insert the chart as an image into the PDF and adjust the yPosition (x=50, width=300, height=150, spacing 20)
         WritableImage fxImage = barChartInvoicesPerMonth.snapshot(new SnapshotParameters(), null);
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(fxImage, null);
         exporter.addImageAndMovePosition(bufferedImage, 50, 300, 180, 20);
 
-        // 3. Tabelle Gesamtanzahl pro Monat (kommt unterhalb des Bildes)
+        // 3. Table total number per month (comes below the image)
         List<String> headersMonth = List.of("Month", "Invoice Count");
         List<List<String>> rowsMonth = new ArrayList<>();
         for (var entry : invoicesPerMonth.entrySet()) {
@@ -114,7 +109,7 @@ public class StatisticNumberOfInvoicesController {
         exporter.addTable(headersMonth, rowsMonth);
         exporter.addParagraph(" ");
 
-        // 4. Tabelle Detail User pro Monat (unter der ersten Tabelle)
+        // 4. Table Detail User per Month (under the first table)
         for (var monthEntry : userInvoicesPerMonth.entrySet()) {
             String month = monthEntry.getKey();
             Map<String, UserInvoiceData> userMap = monthEntry.getValue();

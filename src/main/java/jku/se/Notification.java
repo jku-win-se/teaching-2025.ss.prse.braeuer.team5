@@ -3,7 +3,6 @@ package jku.se;
 import jku.se.Utilities.NotificationManager;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -40,7 +39,7 @@ public class Notification {
         NotificationManager.getInstance().addNotification(new Notification(formatted));
         MESSAGES_SENT.add(formatted);
         if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("In-App-Benachrichtigung für " + user.getName() + ": " + message);
+            LOGGER.info("In-App-Notifications for " + user.getName() + ": " + message);
         }
     }
 
@@ -57,15 +56,4 @@ public class Notification {
         return message;
     }
 
-    public String getTimestampFormatted() {
-        return timestamp.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
-    }
-
-    public boolean isForAdmin() {
-        return isForAdmin;
-    }
-
-    public String getTargetUserEmail() {
-        return targetUserEmail;
-    }
 }

@@ -113,7 +113,7 @@ public class UserRepository {
     }
 
     public static User getByEmail(String email) {
-        String sql = "SELECT * FROM userlunchify WHERE email = ?";
+        String sql = "SELECT * FROM userlunchify11 WHERE email = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

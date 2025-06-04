@@ -1,26 +1,18 @@
 package jku.se.Controller;
 
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import jku.se.Category;
 import jku.se.Statistics;
 
-import javax.swing.*;
 import java.io.IOException;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class StatisticsController {
 

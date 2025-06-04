@@ -10,7 +10,7 @@ public class CsvExporter {
     private final String delimiter;
 
     public CsvExporter() {
-        this.delimiter = ";"; // Standard Semikolon für AT/DE Excel
+        this.delimiter = ";"; // Standard Semicolon for AT/DE Excel
     }
 
     public CsvExporter(String delimiter) {
@@ -25,7 +25,7 @@ public class CsvExporter {
                 OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
                 BufferedWriter writer = new BufferedWriter(osw)
         ) {
-            // UTF-8 BOM schreiben für Excel
+            // UTF-8 BOM write for Excel
             fos.write(new byte[]{(byte)0xEF, (byte)0xBB, (byte)0xBF});
 
             if (rows.isEmpty()) {

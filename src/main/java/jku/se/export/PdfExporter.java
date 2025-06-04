@@ -127,29 +127,29 @@ public class PdfExporter {
     }
 
     /**
-     * Fügt ein Bild in das PDF ein.
-     * @param image  Das BufferedImage, das eingefügt werden soll
-     * @param x      X-Position (von links unten)
-     * @param y      Y-Position (von links unten)
-     * @param width  Breite des Bildes in PDF-Punkten
-     * @param height Höhe des Bildes in PDF-Punkten
-     * @throws IOException falls Einfügen fehlschlägt
+     * Insert an image into the PDF.
+     * @param image  The BufferedImage, which should be inserted
+     * @param x      X-position (from bottom left)
+     * @param y      Y-position (from bottom left)
+     * @param width  Width of the image in PDF points
+     * @param height Height of the image in PDF points
+     * @throws IOException if insertion fails
      */
     public void addImage(BufferedImage image, float x, float y, float width, float height) throws IOException {
         if (contentStream == null || document == null) {
-            throw new IllegalStateException("ContentStream oder Dokument sind nicht initialisiert. Rufe startPage() zuerst auf.");
+            throw new IllegalStateException("ContentStream or document are not initialized. Call startPage() first.");
         }
         PDImageXObject pdImage = LosslessFactory.createFromImage(document, image);
         contentStream.drawImage(pdImage, x, y, width, height);
     }
 
     /**
-     * Hilfsmethode: Bild einfügen und yPosition nach unten verschieben, sodass der folgende Text darunter ist.
+     * Helper method: Insert image and shift yPosition down so that the following text is underneath.
      * @param image  BufferedImage
-     * @param x      x-Position
-     * @param width  Breite des Bildes
-     * @param height Höhe des Bildes
-     * @param gap    Abstand nach unten zum nächsten Element
+     * @param x      x-position
+     * @param width  Width of the image
+     * @param height Height of the image
+     * @param gap    Distance down to the next element
      * @throws IOException
      */
     public void addImageAndMovePosition(BufferedImage image, float x, float width, float height, float gap) throws IOException {

@@ -1,7 +1,5 @@
 package jku.se.Controller;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import jku.se.repository.UserRepository;
 import javafx.event.ActionEvent;
@@ -23,7 +21,7 @@ public class DeleteAdminUserController { //#18 Magdalena
     @FXML private Label message;
 
 
-    //filled choicebox type - Admin/User
+    //filled choice-box type - Admin/User
     @FXML
     public void initialize() {
         type.getItems().addAll("Admin", "User"); //
@@ -49,16 +47,16 @@ public class DeleteAdminUserController { //#18 Magdalena
         String selectedEmail = (String) email.getValue();
 
         if (selectedEmail == null || selectedEmail.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Missing", "Please select an e-mail.");
+            message.setText("Please select an e-mail!");
             return;
         }
 
         boolean success = UserRepository.deleteUser(selectedEmail);
         if (success) {
-            showAlert(Alert.AlertType.INFORMATION, "Success", "User has been successfully deleted.");
+            message.setText("User has been successfully deleted.");
             email.getItems().remove(selectedEmail); // delete user from database
         } else {
-            showAlert(Alert.AlertType.ERROR, "Error", "User could not be deleted.");
+            message.setText("User could not be deleted.");
         }
     }
 
@@ -77,14 +75,5 @@ public class DeleteAdminUserController { //#18 Magdalena
 
         stage.setScene(scene);
         stage.show();
-    }
-
-    //add alert with information
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
     }
 }

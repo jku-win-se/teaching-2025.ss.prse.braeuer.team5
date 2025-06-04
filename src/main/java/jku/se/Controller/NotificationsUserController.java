@@ -47,7 +47,7 @@ public class NotificationsUserController {
             }
 
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Fehler beim Laden der Benachrichtigungen: ", e);
+            LOGGER.log(Level.SEVERE, "Error loading notifications: ", e);
         }
     }
 

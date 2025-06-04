@@ -70,7 +70,7 @@ public class UserDashboardController {
     //load pie chart with distribution of invoices from restaurant or supermarket
     private void loadPieChart(){
 
-        int supermarketCount = statistics.getInvoicesPerSupermaketUser(currentUserEmail);
+        int supermarketCount = statistics.getInvoicesPerSupermarketUser(currentUserEmail);
         int restaurantCount = statistics.getInvoicesPerRestaurantUser(currentUserEmail);
 
         PieChart.Data supermarketData = new PieChart.Data("Supermarket (" + supermarketCount + ")", supermarketCount);

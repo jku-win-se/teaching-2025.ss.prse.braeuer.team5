@@ -48,7 +48,7 @@ public class Invoice {
         this.reimbursement = reimbursement;
     }
 
-    // --- Validierungsmethoden ---
+    //Validation methods
     public LocalDate validateDate(LocalDate date) {
         validateAmount(this.amount);
 
@@ -65,20 +65,20 @@ public class Invoice {
         return amount;
     }
 
-    // Diese Methode validiert das Dateiformat und die Größe der hochgeladenen Datei
+    // This method validates the file format and the size of the uploaded file.
     public static void validateFile(File file) {
-        // Existenzprüfung
+        // Existence check
         if (file == null || !file.exists()) {
             throw new IllegalArgumentException("File does not exist");
         }
 
-        // Formatprüfung
+        // Format check
         String fileName = file.getName().toLowerCase();
         if (!fileName.matches(".*\\.(jpg|jpeg|png|pdf)$")) {
             throw new IllegalArgumentException("Only JPG/PNG/PDF-Files allowed");
         }
 
-        // Größenprüfung (max 10MB)
+        // Size check (max 10MB)
         if (file.length() > MAX_FILE_SIZE) {
             throw new IllegalArgumentException(String.format(
                     "File too big (%.2f MB > 10 MB Limit)", file.length() / (1024.0 * 1024)
@@ -160,7 +160,7 @@ public class Invoice {
         this.amount = newAmount;
         this.category = newCategory;
         this.date = newDate;
-        this.status = Status.PROCESSING; //if the invoice is corrected so it is again in the process
+        this.status = Status.PROCESSING; //if the invoice is corrected, so it is again in the process
     }
 
     public boolean isEditable() {
@@ -171,7 +171,7 @@ public class Invoice {
         LocalDate invoiceDate = createdAt.toLocalDate();
         LocalDate now = LocalDate.now();
 
-        // Die Rechnung ist nur im selben Monat und Jahr editierbar
+        // The invoice can only be edited in the same month and year.
         return invoiceDate.getMonth() == now.getMonth() && invoiceDate.getYear() == now.getYear();
     }
 

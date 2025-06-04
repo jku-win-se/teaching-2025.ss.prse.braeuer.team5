@@ -72,7 +72,7 @@ class StatisticTest {
         try (MockedStatic<InvoiceRepository> mocked = mockStatic(InvoiceRepository.class)) {
             mocked.when(InvoiceRepository::getAllInvoicesAdmin).thenReturn(invoices);
 
-            assertEquals(1, statistics.getInvoicesPerSupermaket());
+            assertEquals(1, statistics.getInvoicesPerSupermarket());
             assertEquals(2, statistics.getInvoicesPerRestaurant());
         }
     }

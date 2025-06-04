@@ -12,7 +12,7 @@ import java.util.*;
 
 public class Statistics {
 
-    //ai
+    //AI
     //method für statistic invoices per month
     public Map<String, Integer> getInvoicesPerMonth() {
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
@@ -33,7 +33,7 @@ public class Statistics {
 
     public Map<String, Map<String, UserInvoiceData>> getInvoicesPerUserAndMonth() {
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
-        Map<String, Map<String, UserInvoiceData>> result = new LinkedHashMap<>(); // Monat -> (UserEmail -> Daten)
+        Map<String, Map<String, UserInvoiceData>> result = new LinkedHashMap<>(); // Month -> (UserEmail -> Data)
 
         for (Invoice invoice : invoices) {
             String monthName = getMonthName(invoice.getDate().getMonthValue());
@@ -59,7 +59,7 @@ public class Statistics {
     //method für statistic reimbursement per month
     public Map<String, Double> getReimbursementPerMonth() {
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
-        Map<Integer, Double> sumPerMonth = new TreeMap<>(); // automatisch nach Monat sortiert
+        Map<Integer, Double> sumPerMonth = new TreeMap<>(); // automatically sorted by month
 
         for (Invoice invoice : invoices) {
             int monthNumber = invoice.getDate().getMonthValue(); // 1–12
@@ -117,7 +117,7 @@ public class Statistics {
     }
 
     //for statistic overview invoices from supermarket, restaurant
-    public int getInvoicesPerSupermaket(){
+    public int getInvoicesPerSupermarket(){
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
         int countSupermarket = 0;
 
@@ -142,7 +142,7 @@ public class Statistics {
     }
 
     //for statistic overview invoices from supermarket, restaurant - UserDashboard
-    public int getInvoicesPerSupermaketUser(String currentUser){
+    public int getInvoicesPerSupermarketUser(String currentUser){
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser(currentUser);
         int countSupermarket = 0;
 
@@ -193,8 +193,8 @@ public class Statistics {
     }
 
     /**
-     * Liefert User-Reimbursement-Daten gruppiert nach Monat und User.
-     * Jede User-Map enthält z.B. "name", "email", "total_reimbursement".
+     * Delivers user reimbursement data grouped by month and user.
+     * Each user map contains, for example, "name", "email", "total_reimbursement".
      */
     public Map<String, Map<String, Map<String, Object>>> getUserReimbursementDetailsPerMonth() throws SQLException {
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();

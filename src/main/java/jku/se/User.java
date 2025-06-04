@@ -40,7 +40,7 @@ public class User {
 
     public void login() { //frida #3
         if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info(name + " hat sich eingeloggt.");
+            LOGGER.info(name + " has logged in.");
         }
     }
 

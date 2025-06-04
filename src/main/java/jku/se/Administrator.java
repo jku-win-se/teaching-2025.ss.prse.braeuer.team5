@@ -5,7 +5,6 @@ import jku.se.repository.UserRepository;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -47,14 +46,14 @@ public class Administrator extends User{
 
 
     // using these methods, the admins can approve the individual invoices, etc.
-    public void approveInvoice(Invoice invoice) throws SQLException {
-        invoice.setStatus(Status.APPROVED); // Status setzen
-        InvoiceRepository.updateInvoiceStatus(invoice); // Status in der Datenbank aktualisieren
+    public void approveInvoice(Invoice invoice) {
+        invoice.setStatus(Status.APPROVED); // set status
+        InvoiceRepository.updateInvoiceStatus(invoice); // update status in the database
     }
 
-    public void declinedInvoice(Invoice invoice) throws SQLException {
-        invoice.setStatus(Status.DECLINED); // Status setzen
-        InvoiceRepository.updateInvoiceStatus(invoice); // Status in der Datenbank aktualisieren
+    public void declinedInvoice(Invoice invoice)  {
+        invoice.setStatus(Status.DECLINED); // set status
+        InvoiceRepository.updateInvoiceStatus(invoice); // update status in the database
     }
 
     public void correctInvoice(Invoice invoice, double newAmount, Category newCategory, LocalDate newDate) {

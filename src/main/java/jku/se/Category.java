@@ -2,24 +2,24 @@ package jku.se;
 
 public enum Category {
     RESTAURANT("Restaurant"),
-    SUPERMARKET("Supermarkt");
+    SUPERMARKET("Supermarket");
 
     private final String displayName;
-    public double customRefundAmount = -1; // -1 bedeutet, dass kein benutzerdefinierter Wert gesetzt wurde
+    public double customRefundAmount = -1; // -1 means that no custom value has been set.
 
-    // Konstruktor, der den Anzeigenamen der Kategorie festlegt
+    // Constructor that sets the display name of the category
     Category(String displayName) {
         this.displayName = displayName;
     }
 
-    // Methode zur Berechnung des Rückerstattungsbetrags
+    // Method for calculating the reimbursement amount
     public double getRefundAmount() {
-        // Wenn der benutzerdefinierte Rückerstattungsbetrag gesetzt wurde, verwende diesen.
-        // Ansonsten gebe den Standardwert zurück.
+        // If the custom refund amount has been set, use this.
+        // Otherwise, return the default value.
         return customRefundAmount >= 0 ? customRefundAmount : getDefaultRefund();
     }
 
-    // Stellt sicher, dass der benutzerdefinierte Rückerstattungsbetrag positiv ist
+    // Ensure that the custom refund amount is positive
     public static void setCustomRefundAmount(Category category, double amount) {
         if (amount < 0) {
             throw new IllegalArgumentException("Amount has to be positive");
@@ -27,7 +27,7 @@ public enum Category {
         category.customRefundAmount = amount;
     }
 
-    // Gibt den Standardrückerstattungsbetrag je nach Kategorie zurück
+    // Returns the standard refund amount depending on the category.
     private double getDefaultRefund() {
         switch (this) {
             case RESTAURANT:
@@ -35,12 +35,7 @@ public enum Category {
             case SUPERMARKET:
                 return 2.50;
             default:
-                throw new IllegalArgumentException("Unbekannte Kategorie");
+                throw new IllegalArgumentException("Unknown Category");
         }
-    }
-
-    // Getter für den Anzeigenamen der Kategorie
-    public String getDisplayName() {
-        return displayName;
     }
 }

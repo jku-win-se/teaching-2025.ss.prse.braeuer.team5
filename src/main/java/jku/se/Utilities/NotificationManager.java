@@ -33,37 +33,5 @@ public final class NotificationManager {
         return new ArrayList<>(notifications); // Defensive copy
     }
 
-    public void clearNotifications() {
-        notifications.clear();
-    }
-
-    public void sendInApp(User user, String message) {
-        String formatted = "User " + user.getEmail() + ": " + message;
-        this.addNotification(new Notification(formatted));
-        Notification.MESSAGES_SENT.add(formatted);
-        if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("In-App-Benachrichtigung für " + user.getName() + ": " + message);
-        }
-    }
-
-    public List<Notification> getNotificationsForUser(User user) {
-        List<Notification> filtered = new ArrayList<>();
-        for (Notification n : notifications) {
-            if (!n.isForAdmin() && user.getEmail().equals(n.getTargetUserEmail())) {
-                filtered.add(n);
-            }
-        }
-        return filtered;
-    }
-
-    public List<Notification> getNotificationsForAdmin() {
-        List<Notification> filtered = new ArrayList<>();
-        for (Notification n : notifications) {
-            if (n.isForAdmin()) {
-                filtered.add(n);
-            }
-        }
-        return filtered;
-    }
 
 }

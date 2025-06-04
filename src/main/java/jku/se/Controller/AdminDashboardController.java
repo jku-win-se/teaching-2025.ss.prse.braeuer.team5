@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -40,11 +39,9 @@ public class AdminDashboardController {
 
     @FXML
     private TableColumn<Invoice, Double> reimbursementColumn;
-    @FXML
-    private Button notificationButton;
 
 
-    //fill table with invoices -ai
+    //fill table with invoices -AI
     @FXML
     private void initialize() { //#15- Magdalena
         // Connect columns with the invoice attributes
@@ -136,22 +133,13 @@ public class AdminDashboardController {
     }
 
     @FXML
-    private void handleNotifications(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/notifications.fxml"));
-        Scene scene = new Scene(loader.load());
-
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
-    }
-    @FXML
     private void openNotifications(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/notifications.fxml"));
             Parent root = loader.load();
 
             Stage stage = new Stage();
-            stage.setTitle("Benachrichtigungen");
+            stage.setTitle("Notifications");
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {

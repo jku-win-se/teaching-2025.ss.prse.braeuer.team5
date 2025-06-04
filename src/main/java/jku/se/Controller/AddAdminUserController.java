@@ -27,7 +27,7 @@ public class AddAdminUserController { //#18 Magdalena
     //only admins may create users or other admins
     //add user - if the admin checkbox is ticked, an admin is created
     @FXML
-    private void addAdminUser(ActionEvent event) throws IOException{
+    private void addAdminUser(){
         String email = txtEmail.getText();
         String name = txtName.getText();
         String password = txtPassword.getText();

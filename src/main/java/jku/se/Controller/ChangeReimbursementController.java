@@ -21,41 +21,36 @@ public class ChangeReimbursementController {
     @FXML
     private TextField supermarketField;
 
-    @FXML
-    private Button saveButton;
 
-    @FXML
-    private Button exitButton;
-
-    // Initialisierung der Textfelder mit den aktuellen Rückerstattungswerten
+    // Initialization of the text fields with the current refund values
     @FXML
     public void initialize() {
-        // Aktuelle Rückerstattungsbeträge in die Textfelder laden
+        // Load current refund amounts into the text fields
         restaurantField.setText(String.valueOf(Category.RESTAURANT.getRefundAmount()));
         supermarketField.setText(String.valueOf(Category.SUPERMARKET.getRefundAmount()));
     }
 
-    // Methode zum Speichern der Änderungen
+    // Method for saving changes
     @FXML
     public void handleSave() {
         try {
-            // Abrufen und Überprüfen der Eingabewerte
+            // Retrieving and verifying the input values
             double restaurantAmount = validateInput(restaurantField.getText());
             double supermarketAmount = validateInput(supermarketField.getText());
 
-            // Setzen der neuen benutzerdefinierten Rückerstattungsbeträge für jede Kategorie
+            // Setting the new custom refund amounts for each category
             Category.setCustomRefundAmount(Category.RESTAURANT, restaurantAmount);
             Category.setCustomRefundAmount(Category.SUPERMARKET, supermarketAmount);
 
-            // Erfolgreiche Speicherung anzeigen
+            // Show successful save
             showAlert(Alert.AlertType.INFORMATION, "Successful", "The Reimbursement has been successfully changed.");
         } catch (NumberFormatException e) {
-            // Fehlerhafte Eingabe
+            // Incorrect input
             showAlert(Alert.AlertType.ERROR, "Error", "Please enter a valid number.");
         }
     }
 
-    // Methode zum Beenden der Anwendung
+    // Method to close the application
     @FXML
     private void handleExit(ActionEvent event) throws IOException {
         loadPage("dashboard2.fxml", event);
@@ -71,12 +66,12 @@ public class ChangeReimbursementController {
         stage.show();
     }
 
-    // Validierung der Eingabe
+    // Validation of the input
     private double validateInput(String input) throws NumberFormatException {
-        // Versuchen, den Text in eine Zahl zu konvertieren
+        // Try to convert the text into a number
         double amount = Double.parseDouble(input.trim());
 
-        // Überprüfen, ob der Betrag eine gültige Zahl ist
+        // Check if the amount is a valid number
         if (amount <= 0) {
             throw new NumberFormatException("Error: Needs to be positive");
         }
@@ -84,7 +79,7 @@ public class ChangeReimbursementController {
         return amount;
     }
 
-    // Methode zur Anzeige von Fehlermeldungen
+    // Method for displaying error messages
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

@@ -1,6 +1,5 @@
 package jku.se.Controller;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,11 +18,9 @@ import jku.se.repository.InvoiceRepository;
 
 import java.io.IOException;
 import java.sql.*;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class EditInvoiceController {
     private Invoice invoice;
@@ -34,26 +31,22 @@ public class EditInvoiceController {
     @FXML private ComboBox<String> categoryComboBox;
     @FXML private Button changeButton;
 
-    private static final String SELECT_REJECTED_CURRENT_MONTH =
-            "SELECT * FROM invoice WHERE user_email = ? " +
-                    "AND status = 'DECLINED' ";
-
     @FXML
     private void initialize() {
         String userEmail = UserDashboardController.getCurrentUserEmail();
         List<Invoice> declinedInvoices = InvoiceRepository.getDeclinedInvoicesCurrentMonth(userEmail);
 
-        // ComboBox konfigurieren
+        // configure ComboBox
         configureComboBox(declinedInvoices);
 
-        // Button-Text basierend auf der Anzahl der Rechnungen setzen
+        // Set button text based on the number of invoices
         if (declinedInvoices.isEmpty()) {
             invoiceComboBox.setPromptText("No declined invoices");
         } else {
             invoiceComboBox.setPromptText(declinedInvoices.size() + " declined invoice(s)");
         }
 
-        // Listener für Auswahl
+        // Listener for selection
         invoiceComboBox.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldVal, newVal) -> {
                     if (newVal != null) {
@@ -90,7 +83,7 @@ public class EditInvoiceController {
         ObservableList<Invoice> observableList = FXCollections.observableArrayList(invoices);
         invoiceComboBox.setItems(observableList);
 
-        // Anzeigeformat für die Dropdown-Liste
+        // Display format for the dropdown list
         invoiceComboBox.setConverter(new StringConverter<Invoice>() {
             @Override
             public String toString(Invoice invoice) {
@@ -109,7 +102,7 @@ public class EditInvoiceController {
             }
         });
 
-        // Listener für Auswahl
+        // Listener for selection
         invoiceComboBox.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldVal, newVal) -> {
                     if (newVal != null) {
@@ -131,13 +124,13 @@ public class EditInvoiceController {
         try (Connection con = DatabaseConnection.getConnection()) {
             con.setAutoCommit(false);
 
-            // Werte aktualisieren
+            // update values
             invoice.setAmount(Double.parseDouble(amountField.getText()));
             invoice.setDate(datePicker.getValue());
             invoice.setCategory(Category.valueOf(categoryComboBox.getValue()));
-            invoice.setStatus(Status.PROCESSING); // Status ändern
+            invoice.setStatus(Status.PROCESSING); // change status
 
-            // Datenbank aktualisieren
+            // update Database
             updateInvoiceInDatabase(con, invoice);
 
             con.commit();
