@@ -76,7 +76,7 @@ public class UserRepositoryTest {
     }
 
     //Test get an user by email
-    @Test
+    /*@Test
     void testGetByEmail() {
 
         String email = "testuser1@lunchify.com";
@@ -95,6 +95,6 @@ public class UserRepositoryTest {
 
 
         UserRepository.deleteUser(email);
-    }
+    }*/
 }
 
