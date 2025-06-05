@@ -2,6 +2,7 @@ package jku.se.export;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,10 @@ public class CsvExporter {
 
     public CsvExporter(String delimiter) {
         this.delimiter = delimiter;
+    }
+
+    public String getDelimiter() {
+        return delimiter;
     }
 
     public void export(List<Map<String, String>> rows, String baseFileName) throws IOException {
@@ -52,7 +57,7 @@ public class CsvExporter {
         }
     }
 
-    private String escapeCsv(String value) {
+    public String escapeCsv(String value) {
         if (value == null) return "";
         boolean mustQuote = value.contains(delimiter) || value.contains("\"") || value.contains("\n") || value.contains("\r");
         String escaped = value.replace("\"", "\"\"");
@@ -63,7 +68,7 @@ public class CsvExporter {
         }
     }
 
-    private String generateFileName(String baseName, String extension) {
+    public String generateFileName(String baseName, String extension) {
         String timestamp = java.time.LocalDateTime.now()
                 .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         return System.getProperty("user.home") + File.separator + "Downloads" + File.separator + baseName + "_" + timestamp + "." + extension;
