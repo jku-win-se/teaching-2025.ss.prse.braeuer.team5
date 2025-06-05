@@ -11,12 +11,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CsvExporterTest {
 
+    //Testet, ob beim Standardkonstruktor der Delimiter korrekt auf ';' gesetzt wird.
     @Test
     void testConstructorWithDefaultDelimiter() {
         CsvExporter exporter = new CsvExporter();
         assertEquals(";", exporter.getDelimiter());
     }
 
+    //Testet, ob Escape-Logik für Sonderzeichen korrekt funktioniert.
     @Test
     void testEscapeCsv_WithSpecialCharacters() {
         CsvExporter exporter = new CsvExporter();
@@ -25,6 +27,7 @@ class CsvExporterTest {
         assertEquals("\"text\nwith\nnewlines\"", exporter.escapeCsv("text\nwith\nnewlines"));
     }
 
+    //Testet das Schreiben einer einzelnen Datenzeile in eine CSV-Datei.
     @Test
     void testExport_SingleRow() throws IOException {
         CsvExporter exporter = new CsvExporter();
@@ -68,6 +71,7 @@ class CsvExporterTest {
         Files.deleteIfExists(outputFile);
     }
 
+    //Testet das Schreiben einer CSV-Datei mit benutzerdefiniertem Delimiter (z.B. ',').
     @Test
     void testExport_WithCustomDelimiter() throws IOException {
         CsvExporter exporter = new CsvExporter(",");
