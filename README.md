@@ -48,6 +48,32 @@ Lunchify basiert auf einer JavaFX-Anwendung mit Anbindung an eine PostgreSQL-Dat
 Dieser Abschnitt beschreibt die wichtigsten Funktionen und Abläufe des Projekts. Die 
 
 ## Code Qualität
+Zur Sicherstellung einer hohen Codequalität wurde das Projekt mit den Tools PMD und SonarQube analysiert und optimiert.
+
+### Verwendung von PMD
+PMD wurde zur statischen Codeanalyse eingesetzt, um typische Programmierfehler und Verstöße gegen Java-Konventionen frühzeitig zu erkennen. Im Zuge der Analyse wurden unter anderem folgende Auffälligkeiten festgestellt:
+
+Verwendung von System.out.println-Ausgaben: Diese temporären Debug-Ausgaben wurden identifiziert und vollständig entfernt.
+
+Fehlerhafte oder uneinheitliche Benennung von Variablen: Mehrere Variablennamen entsprachen nicht dem CamelCase-Stil oder enthielten unzulässige Zeichen. Diese wurden gemäß Java-Benennungskonventionen angepasst.
+
+Fehlende Modifizierer für Konstanten: Einige als Konstanten verwendete Felder waren nicht als static final deklariert und wurden entsprechend korrigiert.
+
+Alle identifizierten Probleme wurden überprüft und – sofern sinnvoll – behoben, um Lesbarkeit, Wartbarkeit und Konsistenz im Quellcode zu verbessern.
+
+### SonarQube-Integration
+Das Projekt wurde zusätzlich in SonarQube integriert, um eine tiefere Codeanalyse und kontinuierliches Qualitätsmonitoring zu ermöglichen. Durch die Auswertung konnten weitere Verbesserungsmaßnahmen umgesetzt werden:
+
+Anpassung der Sichtbarkeit: Nicht benötigte public-Modifizierer wurden durch private ersetzt, um die Kapselung zu stärken.
+
+Verwendung von static final: Für unveränderliche Felder wurde konsequent der static final-Modifier verwendet.
+
+Reduzierung von Duplikationen: Wiederholte Logik, insbesondere in der Datenbankverarbeitung, wurde durch Refactoring reduziert.
+
+Behandlung von Code Smells: SonarQube erkannte mehrere potenzielle Wartbarkeitsprobleme (z. B. unvollständiges Exception-Handling), die gezielt verbessert wurden.
+
+Insgesamt trugen beide Tools wesentlich dazu bei, die Codebasis robuster, verständlicher und leichter wartbar zu gestalten.
+
 
 ## Testen
 [Testplan](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/main/docs/Testplan).
