@@ -12,14 +12,14 @@ https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/issues?q=is%3A
 
 # Überblick über die Applikation aus Benutzersicht
 
-[Benutzerdokumentation](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/main/docs/benutzerdoku.md).
+[Benutzerdokumentation](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/main/docs/benutzerdoku.md)
 
 # Übersicht über die Applikation aus Entwicklersicht
 
-[Systemdokumentation](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/main/docs/systemdoku.md).
+[Systemdokumentation](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/main/docs/systemdoku.md)
 
 ## Entwurf
-[Lunchify - UML-Diagramm](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/main/UML/LunchifyUML.md).
+[Lunchify - UML-Diagramm](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/main/UML/LunchifyUML.md)
 
 ### Überblick über die Applikation
 Lunchify basiert auf einer JavaFX-Anwendung mit Anbindung an eine PostgreSQL-Datenbank über Supabase. Die Architektur folgt dem **Model-View-Controller (MVC)**-Muster.
@@ -74,98 +74,16 @@ Behandlung von Code Smells: SonarQube erkannte mehrere potenzielle Wartbarkeitsp
 
 Insgesamt trugen beide Tools wesentlich dazu bei, die Codebasis robuster, verständlicher und leichter wartbar zu gestalten.
 
+<img width="913" alt="Bildschirmfoto 2025-06-10 um 14 32 13 1" src="https://github.com/user-attachments/assets/25e53fe1-1f43-4847-8832-f84b6b9e0ba2" />
 
 ## Testen
-[Testplan](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/main/docs/Testplan).
+[Testplan](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/main/docs/Testplan)
 
 Testabdeckung:
---noch Foto einfügen
+![WhatsApp Bild 2025-06-10 um 15 55 14_96f00ed8](https://github.com/user-attachments/assets/3b3f0fac-a1e4-469b-a8ab-52068f9a48f0)
+
 
 # JavaDoc für wichtige Klassen, Interfaces und Methoden
-
-## Überblick
-
-Dieses Projekt ermöglicht die automatisierte Texterkennung auf eingescannten Rechnungen und deren Speicherung in einer Datenbank. Es nutzt die Google Cloud Vision API zur Texterkennung und bietet Funktionen zur Verwaltung von Benutzerkonten und Rechnungsdaten.
-
-## Wichtige Klassen
-
-### 🔍 CloudOCRService
-
-#### Zweck:
-Die Klasse CloudOCRService nutzt die Google Cloud Vision API zur automatischen Texterkennung auf eingescannten Belegen. Sie analysiert die Bilder und extrahiert relevante Daten wie Datum, Betrag und Kategorie von Rechnungen.
-
-#### Hauptfunktionen:
-
-analyzeImage(File imageFile)
-Führt die Texterkennung durch und extrahiert Datum, Betrag und Kategorie aus dem OCR-Ergebnis.
-
-encodeImageToBase64(File imageFile)
-Wandelt das Bild in einen Base64-kodierten String zur Übertragung an die API um.
-
-extractTextFromJson(String json)
-Parst die JSON-Antwort der Vision API und extrahiert den reinen Text.
-
-extractDate(String text) / extractAmount(String text)
-Sucht nach typischen Datums- und Betragsformaten im Text.
-
-detectCategory(String text)
-Erkennt aus dem Textinhalt die passende Ausgabenkategorie (z. B. "RESTAURANT", "SUPERMARKET").
-
-### 👤 UserRepository
-
-#### Zweck:
-Verwaltet alle persistenzbezogenen Operationen für Benutzerkonten in der Datenbank. Unterstützt die Funktionen Login, Benutzeranlage, -abfrage und -löschung.
-
-#### Hauptfunktionen:
-
-addUser(User user)
-Legt einen neuen Benutzer in der Datenbank an.
-
-deleteUser(String email)
-Löscht einen Benutzer anhand seiner E-Mail-Adresse.
-
-findByEmailAndPassword(String email, String password)
-Führt einen Login-Abgleich durch.
-
-getByEmail(String email)
-Holt den vollständigen Benutzerdatensatz.
-
-getAllAdminEmails() / getAllUserEmails()
-Gibt Listen von Admin- bzw. Benutzer-E-Mails zurück.
-
-getAllUsersWithoutLoggedAdmin(String email)
-Gibt alle Benutzer-E-Mails außer der des eingeloggten Admins zurück.
-
-### 📄 InvoiceRepository
-
-#### Zweck:
-Verwaltet alle Datenbankoperationen rund um Rechnungen, einschließlich Speicherung, Abfrage, Statusaktualisierung, Löschung und Statistikauswertung.
-
-#### Hauptfunktionen:
-
-saveInvoiceInfo(...)
-Speichert neue Rechnungsdaten in der Datenbank und lädt das Bild in einen Bucket.
-
-getAllInvoicesAdmin() / getAllInvoicesUser(String userEmail)
-Gibt alle Rechnungen zurück (für Admins bzw. pro Benutzer).
-
-updateInvoice(...) + Einzelmethoden
-Aktualisiert Betrag, Datum, Kategorie, Status und Erstattung.
-
-getAcceptedInvoicesCurrentMonth(...) / getDeclinedInvoicesCurrentMonth(...)
-Liefert monatlich gefilterte Rechnungen nach Status.
-
-deleteInvoice(...)
-Löscht eine Rechnung anhand von Benutzer und Datum.
-
-#### Statistikfunktionen:
-
-getActiveUsersThisMonth()
-
-getInvoiceCountForUserThisMonth()
-
-getTotalReimbursementForUserThisMonth()
-Diese Funktionen berechnen Kennzahlen für Dashboards oder Reports.
 
 # Installationsanleitung
 
