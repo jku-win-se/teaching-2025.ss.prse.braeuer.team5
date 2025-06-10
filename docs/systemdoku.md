@@ -26,13 +26,15 @@
 
 ---
 
-## 3. Systemarchitektur (technisch)
+## 3. Systemarchitektur 
 
 - **Frontend:** JavaFX  
 - **Backend:** Java  
 - **Persistenz:** Relationale Datenbank  
 - **OCR-Technologie:** Open-Source OCR  
-- **Exportformate:** JSON, XML, CSV, PDF  
+- **Exportformate:** JSON, XML, CSV, PDF
+- 
+<img width="612" alt="Bildschirmfoto 2025-06-10 um 15 35 46 1" src="https://github.com/user-attachments/assets/f19ca9dd-bf20-4062-aa47-d8eedaf6b098" />
 
 ---
 
@@ -102,6 +104,90 @@
 
 ---
 
+
+## 8. Überblick
+
+Dieses Projekt ermöglicht die automatisierte Texterkennung auf eingescannten Rechnungen und deren Speicherung in einer Datenbank. Es nutzt die Google Cloud Vision API zur Texterkennung und bietet Funktionen zur Verwaltung von Benutzerkonten und Rechnungsdaten.
+
+## Wichtige Klassen
+
+### 🔍 8.1. CloudOCRService
+
+#### Zweck:
+Die Klasse CloudOCRService nutzt die Google Cloud Vision API zur automatischen Texterkennung auf eingescannten Belegen. Sie analysiert die Bilder und extrahiert relevante Daten wie Datum, Betrag und Kategorie von Rechnungen.
+
+#### Hauptfunktionen:
+
+analyzeImage(File imageFile)
+Führt die Texterkennung durch und extrahiert Datum, Betrag und Kategorie aus dem OCR-Ergebnis.
+
+encodeImageToBase64(File imageFile)
+Wandelt das Bild in einen Base64-kodierten String zur Übertragung an die API um.
+
+extractTextFromJson(String json)
+Parst die JSON-Antwort der Vision API und extrahiert den reinen Text.
+
+extractDate(String text) / extractAmount(String text)
+Sucht nach typischen Datums- und Betragsformaten im Text.
+
+detectCategory(String text)
+Erkennt aus dem Textinhalt die passende Ausgabenkategorie (z. B. "RESTAURANT", "SUPERMARKET").
+
+### 👤 8.2. UserRepository
+
+#### Zweck:
+Verwaltet alle persistenzbezogenen Operationen für Benutzerkonten in der Datenbank. Unterstützt die Funktionen Login, Benutzeranlage, -abfrage und -löschung.
+
+#### Hauptfunktionen:
+
+addUser(User user)
+Legt einen neuen Benutzer in der Datenbank an.
+
+deleteUser(String email)
+Löscht einen Benutzer anhand seiner E-Mail-Adresse.
+
+findByEmailAndPassword(String email, String password)
+Führt einen Login-Abgleich durch.
+
+getByEmail(String email)
+Holt den vollständigen Benutzerdatensatz.
+
+getAllAdminEmails() / getAllUserEmails()
+Gibt Listen von Admin- bzw. Benutzer-E-Mails zurück.
+
+getAllUsersWithoutLoggedAdmin(String email)
+Gibt alle Benutzer-E-Mails außer der des eingeloggten Admins zurück.
+
+### 📄 8.3. InvoiceRepository
+
+#### Zweck:
+Verwaltet alle Datenbankoperationen rund um Rechnungen, einschließlich Speicherung, Abfrage, Statusaktualisierung, Löschung und Statistikauswertung.
+
+#### Hauptfunktionen:
+
+saveInvoiceInfo(...)
+Speichert neue Rechnungsdaten in der Datenbank und lädt das Bild in einen Bucket.
+
+getAllInvoicesAdmin() / getAllInvoicesUser(String userEmail)
+Gibt alle Rechnungen zurück (für Admins bzw. pro Benutzer).
+
+updateInvoice(...) + Einzelmethoden
+Aktualisiert Betrag, Datum, Kategorie, Status und Erstattung.
+
+getAcceptedInvoicesCurrentMonth(...) / getDeclinedInvoicesCurrentMonth(...)
+Liefert monatlich gefilterte Rechnungen nach Status.
+
+deleteInvoice(...)
+Löscht eine Rechnung anhand von Benutzer und Datum.
+
+#### Statistikfunktionen:
+
+getActiveUsersThisMonth()
+
+getInvoiceCountForUserThisMonth()
+
+getTotalReimbursementForUserThisMonth()
+Diese Funktionen berechnen Kennzahlen für Dashboards oder Reports.
 
 
 
