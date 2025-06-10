@@ -33,7 +33,7 @@
 - **Persistenz:** Relationale Datenbank  
 - **OCR-Technologie:** Open-Source OCR  
 - **Exportformate:** JSON, XML, CSV, PDF
-- 
+  
 <img width="612" alt="Bildschirmfoto 2025-06-10 um 15 35 46 1" src="https://github.com/user-attachments/assets/f19ca9dd-bf20-4062-aa47-d8eedaf6b098" />
 
 ---
@@ -111,7 +111,7 @@ Dieses Projekt ermöglicht die automatisierte Texterkennung auf eingescannten Re
 
 ## Wichtige Klassen
 
-### 🔍 8.1. CloudOCRService
+### 🔍 8.1 CloudOCRService
 
 #### Zweck:
 Die Klasse CloudOCRService nutzt die Google Cloud Vision API zur automatischen Texterkennung auf eingescannten Belegen. Sie analysiert die Bilder und extrahiert relevante Daten wie Datum, Betrag und Kategorie von Rechnungen.
@@ -133,7 +133,7 @@ Sucht nach typischen Datums- und Betragsformaten im Text.
 detectCategory(String text)
 Erkennt aus dem Textinhalt die passende Ausgabenkategorie (z. B. "RESTAURANT", "SUPERMARKET").
 
-### 👤 8.2. UserRepository
+### 👤 8.2 UserRepository
 
 #### Zweck:
 Verwaltet alle persistenzbezogenen Operationen für Benutzerkonten in der Datenbank. Unterstützt die Funktionen Login, Benutzeranlage, -abfrage und -löschung.
@@ -158,7 +158,7 @@ Gibt Listen von Admin- bzw. Benutzer-E-Mails zurück.
 getAllUsersWithoutLoggedAdmin(String email)
 Gibt alle Benutzer-E-Mails außer der des eingeloggten Admins zurück.
 
-### 📄 8.3. InvoiceRepository
+### 📄 8.3 InvoiceRepository
 
 #### Zweck:
 Verwaltet alle Datenbankoperationen rund um Rechnungen, einschließlich Speicherung, Abfrage, Statusaktualisierung, Löschung und Statistikauswertung.
