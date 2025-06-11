@@ -5,14 +5,11 @@ import jku.se.Category;
 import jku.se.Status;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-public class InvoiceNotificationTest {
+class InvoiceNotificationTest {
 
     private User user;
     private Invoice invoice;

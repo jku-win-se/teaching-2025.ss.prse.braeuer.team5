@@ -10,6 +10,7 @@ import org.mockito.MockedStatic;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -67,7 +68,7 @@ class AdministratorTest {
 
     //test admin approved an invoice
     @Test
-    void testApproveInvoice() throws SQLException {
+    void testApproveInvoice() {
         Invoice invoice = mock(Invoice.class);
 
         try (MockedStatic<InvoiceRepository> mockedRepo = mockStatic(InvoiceRepository.class)) {
@@ -80,7 +81,7 @@ class AdministratorTest {
 
     //Test admin decline invoice
     @Test
-    void testDeclineInvoice() throws SQLException {
+    void testDeclineInvoice() {
         Invoice invoice = mock(Invoice.class);
 
         try (MockedStatic<InvoiceRepository> mockedRepo = mockStatic(InvoiceRepository.class)) {
@@ -101,5 +102,18 @@ class AdministratorTest {
         admin.correctInvoice(invoice, 99.9, newCategory, newDate);
 
         verify(invoice).correct(99.9, newCategory, newDate);
+    }
+
+    @Test
+    void testViewAllInvoices() {
+        try (MockedStatic<InvoiceRepository> mockedRepo = mockStatic(InvoiceRepository.class)) {
+            List<Invoice> dummyInvoices = List.of(mock(Invoice.class), mock(Invoice.class));
+            mockedRepo.when(InvoiceRepository::getAllInvoicesAdmin).thenReturn(dummyInvoices);
+
+            List<Invoice> result = admin.viewAllInvoices();
+
+            assertEquals(dummyInvoices, result);
+            mockedRepo.verify(InvoiceRepository::getAllInvoicesAdmin, times(1));
+        }
     }
 }

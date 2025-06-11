@@ -1,27 +1,15 @@
-import javafx.application.Platform;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import jku.se.Category;
-import jku.se.Controller.AddInvoiceController;
-import jku.se.Controller.UserDashboardController;
 import jku.se.Invoice;
 import jku.se.Status;
-import jku.se.repository.InvoiceRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.awt.*;
-import javafx.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Label;
-import org.testng.annotations.BeforeTest;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -181,5 +169,89 @@ class InvoiceTest {
 
         assertFalse(invoice.isValidAmount(-1.0), "Amount is not valid");
         assertFalse(invoice.isValidAmount(1000.01), "Amount is not valid");
+    }
+
+    @Test
+    void validateDate_WithValidWeekday_ShouldReturnDate() {
+        Invoice invoice = new Invoice(TEST_EMAIL, TEST_DATE, 100.0, TEST_CATEGORY, TEST_STATUS, TEST_URL, TEST_DATETIME, 3.0);
+        LocalDate weekday = LocalDate.of(2025, 6, 11);
+        assertEquals(weekday, invoice.validateDate(weekday));
+    }
+
+    @Test
+    void validateDate_WithWeekend_ShouldThrow() {
+        Invoice invoice = new Invoice(TEST_EMAIL, TEST_DATE, 100.0, TEST_CATEGORY, TEST_STATUS, TEST_URL, TEST_DATETIME, 3.0);
+        LocalDate weekend = LocalDate.of(2025, 6, 8);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> invoice.validateDate(weekend));
+        assertEquals("Invoices only on weekdays allowed.", exception.getMessage());
+    }
+
+    @Test
+    void getCreatedAtString_ShouldReturnFormattedDate() {
+        LocalDateTime testDateTime = LocalDateTime.of(2025, 6, 11, 15, 30);
+        Invoice invoice = new Invoice(TEST_EMAIL, TEST_DATE, 100.0, TEST_CATEGORY, TEST_STATUS, TEST_URL, testDateTime, 3.0);
+        assertEquals("11.06.2025", invoice.getCreatedAtString());
+    }
+
+    @Test
+    void calculateRefund_WithLowerAmount_ShouldReturnAmount() {
+        Invoice invoice = new Invoice(TEST_EMAIL, TEST_DATE, 3.0, TEST_CATEGORY, TEST_STATUS, TEST_URL, TEST_DATETIME, 3.0);
+        assertEquals(3.0, invoice.calculateRefund());
+    }
+
+    @Test
+    void calculateRefund_WithHigherAmount_ShouldReturnMaxRefund() {
+        Category mockCategory = mock(Category.class);
+        when(mockCategory.getRefundAmount()).thenReturn(5.0);
+        Invoice invoice = new Invoice(TEST_EMAIL, TEST_DATE, 10.0, mockCategory, TEST_STATUS, TEST_URL, TEST_DATETIME, 5.0);
+        assertEquals(5.0, invoice.calculateRefund());
+    }
+
+    @Test
+    void getCategoryString_ShouldReturnCategoryName() {
+        Invoice invoice = new Invoice(TEST_EMAIL, TEST_DATE, 100.0, Category.RESTAURANT, Status.PROCESSING, TEST_URL, TEST_DATETIME, 3.0);
+        assertEquals("RESTAURANT", invoice.getCategoryString());
+    }
+
+    @Test
+    void getStatusString_ShouldReturnStatusName() {
+        Invoice invoice = new Invoice(TEST_EMAIL, TEST_DATE, 100.0, Category.RESTAURANT, Status.APPROVED, TEST_URL, TEST_DATETIME, 3.0);
+        assertEquals("APPROVED", invoice.getStatusString());
+    }
+
+    @Test
+    void approve_ShouldSetStatusToApproved() {
+        Invoice invoice = new Invoice(TEST_EMAIL, TEST_DATE, 100.0, TEST_CATEGORY, Status.PROCESSING, TEST_URL, TEST_DATETIME, 3.0);
+        invoice.approve();
+        assertEquals(Status.APPROVED, invoice.getStatus());
+    }
+
+    @Test
+    void declined_ShouldSetStatusToDeclined() {
+        Invoice invoice = new Invoice(TEST_EMAIL, TEST_DATE, 100.0, TEST_CATEGORY, Status.PROCESSING, TEST_URL, TEST_DATETIME, 3.0);
+        invoice.declined();
+        assertEquals(Status.DECLINED, invoice.getStatus());
+    }
+
+    @Test
+    void correct_ShouldUpdateFieldsAndSetStatusToProcessing() {
+        Invoice invoice = new Invoice(TEST_EMAIL, TEST_DATE, 100.0, TEST_CATEGORY, Status.DECLINED, TEST_URL, TEST_DATETIME, 3.0);
+        LocalDate newDate = LocalDate.of(2025, 5, 20);
+        invoice.correct(80.0, Category.RESTAURANT, newDate);
+
+        assertEquals(80.0, invoice.getAmount());
+        assertEquals(Category.RESTAURANT, invoice.getCategory());
+        assertEquals(newDate, invoice.getDate());
+        assertEquals(Status.PROCESSING, invoice.getStatus());
+    }
+
+    @Test
+    void toString_ShouldReturnFormattedInvoiceString() {
+        LocalDate testDate = LocalDate.of(2025, 6, 11);
+        Invoice invoice = new Invoice(TEST_EMAIL, testDate, 123.45, TEST_CATEGORY, Status.PROCESSING, TEST_URL, TEST_DATETIME, 3.0);
+
+        String expected = "11.06.2025 | 123,45€ | PROCESSING".replace(",", ".");
+        assertEquals(expected, invoice.toString().replace(",", "."));
     }
 }

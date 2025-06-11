@@ -5,11 +5,11 @@ import java.sql.Connection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DatabaseConnectionTest {
+class DatabaseConnectionTest {
 
     //Test database connection
     @Test
-    public void testDatabaseConnection() {
+    void testDatabaseConnection() {
         try (Connection connection = DatabaseConnection.getConnection()) {
             assertNotNull(connection, "Connection should not be null");
             assertTrue(connection.isValid(2), "Connection should be valid");
@@ -19,7 +19,7 @@ public class DatabaseConnectionTest {
     }
     //Test correct url
     @Test
-    public void testGetPublicFileUrl() {
+    void testGetPublicFileUrl() {
         String testFileName = "test_invoice.pdf";
         String expectedUrlStart = "https://dljjtuynbgxgmhkcdypu.supabase.co/storage/v1/object/invoicefiles/";
 

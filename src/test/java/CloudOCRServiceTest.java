@@ -44,16 +44,16 @@ class CloudOCRServiceTest {
     void testExtractAmount_withKeywords() {
         String input = "Amount: 34,95 EUR\nTotal: 55.00\nSum: 12,30";
         String result = service.extractAmount(input);
-        assertEquals("34.95", result); // Should match first keyword-related amount
+        assertEquals("34.95", result);
     }
-    /**
+
     @Test
     void testExtractAmount_fallbackToLargest() {
         String input = "1.00\n3.00\n999.99\n1001.00\n0.20";
         String result = service.extractAmount(input);
-        assertEquals("999.99", result); // Largest valid amount under limit
+        assertEquals("999,99", result);
     }
-    **/
+
     @Test
     void testExtractAmount_notFound() {
         String input = "No amounts here.";

@@ -17,9 +17,9 @@ public class Invoice {
     private LocalDateTime createdAt;
     private double reimbursement; // The refund amount
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in Bytes
-    String ocrDate;
-    String ocrAmount;
-    String ocrCategory;
+    public String ocrDate;
+    public String ocrAmount;
+    public String ocrCategory;
     private boolean anomalyDetected;
 
     //Constructor
@@ -46,6 +46,10 @@ public class Invoice {
         this.fileUrl = fileUrl;
         this.createdAt = createdAt;
         this.reimbursement = reimbursement;
+    }
+
+    public Invoice() {
+
     }
 
     //Validation methods

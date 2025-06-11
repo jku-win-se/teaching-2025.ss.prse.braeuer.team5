@@ -69,4 +69,27 @@ class CategoryTest {
         assertEquals("Category cannot be null", thrown.getMessage());
     }
 
+    @Test
+    void testGetRefundAmount_DefaultRestaurant() {
+        Category.RESTAURANT.customRefundAmount = -1;
+        assertEquals(3.00, Category.RESTAURANT.getRefundAmount(), 0.001);
+    }
+
+    @Test
+    void testGetRefundAmount_DefaultSupermarket() {
+        Category.SUPERMARKET.customRefundAmount = -1;
+        assertEquals(2.50, Category.SUPERMARKET.getRefundAmount(), 0.001);
+    }
+
+    @Test
+    void testGetRefundAmount_WithCustomValue() {
+        Category.setCustomRefundAmount(Category.SUPERMARKET, 5.75);
+        assertEquals(5.75, Category.SUPERMARKET.getRefundAmount(), 0.001);
+    }
+
+    @org.junit.jupiter.api.AfterEach
+    void resetCustomRefundAmounts() {
+        Category.RESTAURANT.customRefundAmount = -1;
+        Category.SUPERMARKET.customRefundAmount = -1;
+    }
 }

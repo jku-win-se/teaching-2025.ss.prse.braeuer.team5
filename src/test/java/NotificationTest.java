@@ -1,39 +1,51 @@
 import jku.se.Notification;
-import jku.se.User;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-import java.util.List;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class NotificationTest {
 
-    @AfterEach
-    void clearMessages() {
+    @BeforeEach
+    void clearBefore() {
         Notification.clearMessages();
     }
 
-    /*@Test
-    void testInAppNotificationAfterSubmission() {
-        User user = new User("Test User", "test@example.com", "pw", false);
+    @Test
+    void constructor_WithMessageForAdminAndTargetUser_ShouldInitializeFields() {
+        String message = "New invoice submitted";
+        boolean isForAdmin = true;
+        String email = "admin@lunchify.com";
 
-        Notification notification = new Notification("Invoice submitted successfully.");
-        notification.sendInApp(user, notification.getMessage());
+        Notification notification = new Notification(message, isForAdmin, email);
 
-        List<String> messages = Notification.messagesSent;
-        assertEquals(1, messages.size());
-        assertTrue(messages.getFirst().contains("In-App"));
-        assertTrue(messages.getFirst().contains("Invoice submitted successfully."));
+        assertEquals(message, notification.getMessage());
+        assertNotNull(notification);
     }
 
-   /* @Test
-    void testNotificationAfterApproval() {
-        User user = new User("Max", "max@example.com", "pw", false);
+    @Test
+    void constructor_WithMessageOnly_ShouldSetMessageAndTimestamp() {
+        String msg = "System maintenance";
+        Notification notification = new Notification(msg);
 
-        Notification notification = new Notification("Your invoice from 01.05.2025 was approved.");
-        notification.sendInApp(user, notification.getMessage());
+        assertEquals(msg, notification.getMessage());
+        assertNotNull(notification);
+    }
 
-        assertEquals(1, Notification.messagesSent.size());
-        assertTrue(Notification.messagesSent.getFirst().contains("approved"));
-    }*/
+    @Test
+    void constructor_Empty_ShouldSetDefaults() {
+        Notification notification = new Notification();
+
+        assertEquals("", notification.getMessage());
+        assertNotNull(notification);
+    }
+
+    @Test
+    void clearMessages_ShouldEmptyTheMessageList() {
+        Notification.MESSAGES_SENT.add("TestMessage");
+        assertFalse(Notification.MESSAGES_SENT.isEmpty());
+
+        Notification.clearMessages();
+
+        assertTrue(Notification.MESSAGES_SENT.isEmpty());
+    }
 }

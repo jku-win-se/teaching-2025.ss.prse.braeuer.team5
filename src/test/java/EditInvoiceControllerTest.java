@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EditInvoiceControllerTest {
+class EditInvoiceControllerTest {
 
     private Connection connection;
     private Invoice testInvoice;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         // Establish connection to the database
         connection = DatabaseConnection.getConnection();
 
@@ -59,7 +59,7 @@ public class EditInvoiceControllerTest {
     }
 
     @Test
-    public void testUpdateInvoiceStatusToProcessing() throws Exception {
+    void testUpdateInvoiceStatusToProcessing() throws Exception {
         // Update the invoice status
         testInvoice.setStatus(Status.PROCESSING);
         InvoiceRepository.updateInvoiceStatus(testInvoice);
@@ -79,7 +79,7 @@ public class EditInvoiceControllerTest {
     }
 
     @Test
-    public void testUpdateInvoiceAmount() throws Exception {
+    void testUpdateInvoiceAmount() throws Exception {
         // Update the invoice amount
         testInvoice.setAmount(200.00);
         InvoiceRepository.updateInvoiceAmount(testInvoice);
@@ -99,7 +99,7 @@ public class EditInvoiceControllerTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         // Clean up test data from the database
         String deleteQuery = "DELETE FROM invoice WHERE user_email = ? AND date = ?";
         try (PreparedStatement stmt = connection.prepareStatement(deleteQuery)) {

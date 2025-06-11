@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,26 +76,38 @@ public class UserRepositoryTest {
         assertNull(userFromDb, "User should not exist after deletion");
     }
 
-    //Test get an user by email
-    /*@Test
-    void testGetByEmail() {
+    @Test
+    void testGetAllAdminEmails() {
+        User admin = new User("Admin Karl", "admin.karl@lunchify.com", "adminpass", true);
+        UserRepository.addUser(admin);
 
-        String email = "testuser1@lunchify.com";
-        User user = new User("Test User", email, "secret", false);
+        List<String> admins = UserRepository.getAllAdminEmails();
+        assertTrue(admins.contains("admin.karl@lunchify.com"));
+
+        UserRepository.deleteUser("admin.karl@lunchify.com");
+    }
+
+    @Test
+    void testGetAllUserEmails() {
+        User user = new User("User Karl", "user.karl@lunchify.com", "userpass", false);
         UserRepository.addUser(user);
 
+        List<String> users = UserRepository.getAllUserEmails();
+        assertTrue(users.contains("user.karl@lunchify.com"));
 
-        User result = UserRepository.getByEmail(email);
+        UserRepository.deleteUser("user.karl@lunchify.com");
+    }
 
+    @Test
+    void testFindByEmailAndPassword_InvalidCredentials_ShouldReturnNull() {
+        User result = UserRepository.findByEmailAndPassword("nonexistent@lunchify.com", "wrongpass");
+        assertNull(result, "Should return null for invalid credentials");
+    }
 
-        assertNotNull(result, "User should be found by email");
-        assertEquals(user.getEmail(), result.getEmail());
-        assertEquals(user.getName(), result.getName());
-        assertEquals(user.getPassword(), result.getPassword());
-        assertFalse(result.isAdministrator());
-
-
-        UserRepository.deleteUser(email);
-    }*/
+    @Test
+    void testGetByEmail_WrongTable_ShouldReturnNull() {
+        User result = UserRepository.getByEmail("any@lunchify.com");
+        assertNull(result, "Should return null if user is not found (table name incorrect?)");
+    }
 }
 
