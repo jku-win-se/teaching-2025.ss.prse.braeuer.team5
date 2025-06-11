@@ -24,7 +24,7 @@ public class AddAdminUserController { //#18 Magdalena
     @FXML private Label message;
 
 
-    //only admins may create users or other admins
+    //only admins can create users or other admins
     //add user - if the admin checkbox is ticked, an admin is created
     @FXML
     private void addAdminUser(){
