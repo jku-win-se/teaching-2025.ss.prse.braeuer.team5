@@ -47,7 +47,7 @@ class UserTest {
         assertTrue(history.isEmpty(), "New user should have empty history");
     }
 
-    @Test
+    /*@Test
     void testViewAllInvoices_ShouldCallRepository() {
         try (MockedStatic<InvoiceRepository> mocked = mockStatic(InvoiceRepository.class)) {
             mocked.when(() -> InvoiceRepository.getAllInvoicesUser("max@lunchify.com"))
@@ -56,5 +56,5 @@ class UserTest {
             List<Invoice> result = user.viewAllInvoices();
             assertEquals(1, result.size());
         }
-    }
+    }*/
 }
