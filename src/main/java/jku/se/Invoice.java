@@ -48,10 +48,6 @@ public class Invoice {
         this.reimbursement = reimbursement;
     }
 
-    public Invoice() {
-
-    }
-
     //Validation methods
     public LocalDate validateDate(LocalDate date) {
         validateAmount(this.amount);
