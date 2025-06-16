@@ -14,6 +14,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Controller class for handling the deletion of users (Admin or User) from the system.
+ * Allows an admin to choose a user type, select an email, and delete the selected user.
+ */
 public class DeleteAdminUserController { //#18 Magdalena
 
     @FXML private ChoiceBox type;
@@ -21,12 +25,20 @@ public class DeleteAdminUserController { //#18 Magdalena
     @FXML private Label message;
 
 
-    //filled choice-box type - Admin/User
+    /**
+     * Initializes the controller by populating the user type choice box.
+     * Adds an event listener to update the email list based on selection.
+     */
     @FXML
     public void initialize() {
         type.getItems().addAll("Admin", "User"); //
         type.setOnAction(event -> updateEmailList());
     }
+
+    /**
+     * Updates the email list based on the selected user type (Admin or User).
+     * Fetches emails from the corresponding repository method.
+     */
     @FXML
     private void updateEmailList() {
         String selectedType = (String) type.getValue();
@@ -41,7 +53,13 @@ public class DeleteAdminUserController { //#18 Magdalena
         email.setItems(FXCollections.observableArrayList(emails));
     }
 
-    //delete user
+    /**
+     * Deletes the selected user based on the email chosen from the dropdown.
+     * Displays a success or failure message accordingly.
+     *
+     * @param event the action event triggered by clicking the delete button
+     * @throws IOException if any scene loading fails
+     */
     @FXML
     private void deleteAdminUser(ActionEvent event) throws IOException{
         String selectedEmail = (String) email.getValue();
@@ -60,13 +78,24 @@ public class DeleteAdminUserController { //#18 Magdalena
         }
     }
 
-    //exit
+    /**
+     * Cancels the deletion process and navigates back to the admin dashboard.
+     *
+     * @param event the action event triggered by clicking the cancel button
+     * @throws IOException if the FXML file cannot be loaded
+     */
     @FXML
     private void cancelDeleteAdminUser(ActionEvent event) throws IOException {
         loadPage("dashboard2.fxml", event);
     }
 
-    //switch to dashboard
+    /**
+     * Loads a new page based on the provided FXML file.
+     *
+     * @param fxmlFile the name of the FXML file to load
+     * @param event the action event used to retrieve the current window
+     * @throws IOException if the FXML file cannot be loaded
+     */
     @FXML
     private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));

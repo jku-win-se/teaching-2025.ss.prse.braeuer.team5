@@ -24,6 +24,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Controller responsible for displaying and exporting statistics
+ * about the number of invoices per month using a bar chart.
+ */
 public class StatisticNumberOfInvoicesController {
     @FXML private BarChart<String, Number> barChartInvoicesPerMonth;
     @FXML private ComboBox<String> saveFormatComboBox;
@@ -31,7 +35,10 @@ public class StatisticNumberOfInvoicesController {
 
     public Statistics statistics = new Statistics();
 
-
+    /**
+     * Initializes the chart and combo box.
+     * Loads the invoice data into the bar chart and sets available export formats.
+     */
     @FXML
     public void initialize() {
         Map<String, Integer> invoicesPerMonth = statistics.getInvoicesPerMonth();
@@ -62,6 +69,9 @@ public class StatisticNumberOfInvoicesController {
 
     }
 
+    /**
+     * Handles export based on selected format.
+     */
     @FXML
     private void handleExport() {
         String format = saveFormatComboBox.getValue();
@@ -85,6 +95,9 @@ public class StatisticNumberOfInvoicesController {
         }
     }
 
+    /**
+     * Exports chart and data to a PDF file including detailed invoice info per user and month.
+     */
     public void exportPdf() throws IOException {
         Map<String, Integer> invoicesPerMonth = statistics.getInvoicesPerMonth();
         Map<String, Map<String, UserInvoiceData>> userInvoicesPerMonth = statistics.getInvoicesPerUserAndMonth();
@@ -137,7 +150,9 @@ public class StatisticNumberOfInvoicesController {
     }
 
 
-
+    /**
+     * Exports detailed invoice data to CSV format.
+     */
     public void exportCsv() throws IOException {
         Map<String, Map<String, UserInvoiceData>> invoicesPerUserAndMonth = statistics.getInvoicesPerUserAndMonth();
 
@@ -177,6 +192,9 @@ public class StatisticNumberOfInvoicesController {
         showAlert(Alert.AlertType.INFORMATION, "Export Success","CSV export with detailed user info successful!");
     }
 
+    /**
+     * Exports invoice statistics to JSON format.
+     */
 
     public void exportJson() throws IOException {
         Map<String, Integer> invoicesPerMonth = statistics.getInvoicesPerMonth();
@@ -203,7 +221,14 @@ public class StatisticNumberOfInvoicesController {
         exporter.export(jsonData, "invoices_per_month_detailed");
         showAlert(Alert.AlertType.INFORMATION, "Export Success","JSON export successful!");
     }
-    //add alert for information
+
+    /**
+     * Shows an alert message.
+     *
+     * @param type    the type of alert
+     * @param title   the title of the alert
+     * @param message the content message
+     */
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -212,6 +237,12 @@ public class StatisticNumberOfInvoicesController {
         alert.showAndWait();
     }
 
+    /**
+     * Navigates back to the statistics overview screen.
+     *
+     * @param event the triggered action event
+     * @throws IOException if the FXML cannot be loaded
+     */
     @FXML
     private void cancelNumberOfInvoices(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Statistics.fxml"));

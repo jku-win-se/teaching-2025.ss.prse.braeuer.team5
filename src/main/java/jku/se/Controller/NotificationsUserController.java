@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Controller for displaying user-specific invoice notifications.
+ * Shows accepted and declined invoices for the current month.
+ */
 public class NotificationsUserController {
 
     @FXML
@@ -19,6 +23,10 @@ public class NotificationsUserController {
 
     private static final Logger LOGGER = Logger.getLogger(NotificationsUserController.class.getName());
 
+    /**
+     * Initializes the notification list with accepted and declined invoices
+     * of the currently logged-in user for the current month.
+     */
     @FXML
     public void initialize() {
         try {
@@ -51,6 +59,9 @@ public class NotificationsUserController {
         }
     }
 
+    /**
+     * Closes the notification window.
+     */
     @FXML
     private void closeWindow() {
         Stage stage = (Stage) notificationList.getScene().getWindow();

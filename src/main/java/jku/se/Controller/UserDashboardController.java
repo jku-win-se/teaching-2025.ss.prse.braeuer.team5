@@ -21,6 +21,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Controller for the User Dashboard.
+ * Displays a table of user invoices and a pie chart showing the distribution
+ * of invoice categories (Supermarket vs Restaurant).
+ * Allows navigation to invoice upload, edit, and notification views.
+ */
 public class UserDashboardController {
 
     private static final Logger LOGGER = Logger.getLogger(UserDashboardController.class.getName());
@@ -36,16 +42,29 @@ public class UserDashboardController {
     @FXML private PieChart pieChartDistribution;
     private final Statistics statistics = new Statistics();
 
-    // Setter-Methode
+    /**
+     * Sets the current user's email and initializes the dashboard data.
+     *
+     * @param email the email of the current user
+     */
     public  void setCurrentUserEmail(String email) {
         this.currentUserEmail = email;
         loadInvoices();
         loadPieChart();
     }
+
+    /**
+     * Gets the current user's email address.
+     *
+     * @return the current user's email
+     */
     public static String getCurrentUserEmail() {
         return currentUserEmail;
     }
-    //fill table with invoices
+
+    /**
+     * Initializes the invoice table and pie chart when the view is loaded.
+     */
     @FXML
     private void initialize() {
         // Connect columns with the invoice attributes
@@ -58,6 +77,9 @@ public class UserDashboardController {
         loadInvoices();
         loadPieChart();
     }
+    /**
+     * Loads the user's invoices into the table view.
+     */
     private void loadInvoices() {
         if (invoiceTable == null) {
             LOGGER.log(java.util.logging.Level.SEVERE, () -> "invoiceTable is null! Check whether the fx:id is set correctly in the FXML file.");
@@ -67,7 +89,10 @@ public class UserDashboardController {
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser(currentUserEmail);
         invoiceTable.getItems().setAll(invoices);
     }
-    //load pie chart with distribution of invoices from restaurant or supermarket
+
+    /**
+     * Loads and displays a pie chart showing invoice category distribution for the current user.
+     */
     private void loadPieChart(){
 
         int supermarketCount = statistics.getInvoicesPerSupermarketUser(currentUserEmail);
@@ -99,6 +124,10 @@ public class UserDashboardController {
             }
         });
     }
+
+    /**
+     * Handles navigation to the invoice editing screen.
+     */
     @FXML
     private void handleEditInvoiceUser(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/EditInvoice.fxml"));
@@ -108,6 +137,10 @@ public class UserDashboardController {
         stage.setScene(scene);
         stage.show();
     }
+
+    /**
+     * Handles navigation to the invoice upload screen.
+     */
     @FXML
     private void handleUploadInvoice(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddInvoice.fxml"));
@@ -117,6 +150,10 @@ public class UserDashboardController {
         stage.setScene(scene);
         stage.show();
     }
+
+    /**
+     * Logs out the user and navigates back to the start screen.
+     */
     @FXML
     private void handleLogoutUser(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/start.fxml"));
@@ -127,6 +164,9 @@ public class UserDashboardController {
         stage.show();
     }
 
+    /**
+     * Opens the user notifications window in a new stage.
+     */
     @FXML
     private void openNotifications(ActionEvent event) {
         try {

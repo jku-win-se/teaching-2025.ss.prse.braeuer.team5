@@ -25,6 +25,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Controller for adding invoices via manual entry or OCR.
+ * Handles validations, file upload, and notification logic.
+ */
+
 public class AddInvoiceController {
     private static final Logger LOGGER = Logger.getLogger(AddInvoiceController.class.getName());
 
@@ -41,11 +46,24 @@ public class AddInvoiceController {
 
     private Set<LocalDate> uploadedDates = new HashSet<>(); // Set to save already uploaded days
 
+    /**
+     * Navigates back to the user dashboard (dashboard1).
+     *
+     * @param event the ActionEvent triggering the navigation.
+     * @throws IOException if the FXML file cannot be loaded.
+     */
     @FXML
     private void cancelAdd(ActionEvent event) throws IOException {
         loadPage("dashboard1.fxml", event);
     }
 
+    /**
+     * Loads the specified FXML page.
+     *
+     * @param fxmlFile the name of the FXML file.
+     * @param event the triggering event.
+     * @throws IOException if loading fails.
+     */
     @FXML
     private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
@@ -56,6 +74,11 @@ public class AddInvoiceController {
         stage.show();
     }
 
+    /**
+     * Handles file selection and applies OCR to fill out invoice fields.
+     *
+     * @param event the ActionEvent triggering file selection.
+     */
     @FXML
     private void handleFileSelect(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -108,7 +131,9 @@ public class AddInvoiceController {
     }
 
 
-
+    /**
+     * Handles the upload of invoice data and document, with validation and database persistence.
+     */
     @FXML
     public void handleUpload(){
         // Get user data (e-mail of the current user)
@@ -254,7 +279,9 @@ public class AddInvoiceController {
 
     }
 
-    // Reset the form
+    /**
+     * Resets all form fields to their default state.
+     */
     private void resetForm() {
         datePicker.setValue(null);  // Reset the date
         amountField.clear();        // delete the image
@@ -263,7 +290,13 @@ public class AddInvoiceController {
     }
 
 
-    //add alert
+    /**
+     * Shows an alert window with a specified message and type.
+     *
+     * @param type the type of the alert.
+     * @param title the title of the alert.
+     * @param message the alert message body.
+     */
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

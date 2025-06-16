@@ -13,6 +13,10 @@ import jku.se.Category;
 
 import java.io.IOException;
 
+/**
+ * Controller class for managing the reimbursement rates of invoice categories (e.g., restaurant, supermarket).
+ * Allows an admin to view and update the refund amounts for each category.
+ */
 public class ChangeReimbursementController {
 
     @FXML
@@ -22,7 +26,9 @@ public class ChangeReimbursementController {
     private TextField supermarketField;
 
 
-    // Initialization of the text fields with the current refund values
+    /**
+     * Initializes the controller and pre-fills the text fields with current refund values.
+     */
     @FXML
     public void initialize() {
         // Load current refund amounts into the text fields
@@ -30,7 +36,10 @@ public class ChangeReimbursementController {
         supermarketField.setText(String.valueOf(Category.SUPERMARKET.getRefundAmount()));
     }
 
-    // Method for saving changes
+    /**
+     * Handles the logic to save changes made to the refund values.
+     * Validates the input and sets the custom refund amounts for both categories.
+     */
     @FXML
     public void handleSave() {
         try {
@@ -50,12 +59,24 @@ public class ChangeReimbursementController {
         }
     }
 
-    // Method to close the application
+    /**
+     * Handles navigation back to the admin dashboard.
+     *
+     * @param event the action event triggered by clicking the "Exit" button
+     * @throws IOException if the FXML file cannot be loaded
+     */
     @FXML
     private void handleExit(ActionEvent event) throws IOException {
         loadPage("dashboard2.fxml", event);
     }
 
+    /**
+     * Helper method to load a different scene.
+     *
+     * @param fxmlFile the name of the FXML file to load
+     * @param event the action event used to retrieve the current window
+     * @throws IOException if the FXML file cannot be loaded
+     */
     @FXML
     private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
@@ -66,7 +87,13 @@ public class ChangeReimbursementController {
         stage.show();
     }
 
-    // Validation of the input
+    /**
+     * Validates user input for the reimbursement amount.
+     *
+     * @param input the raw string input from the text field
+     * @return the validated and parsed double value
+     * @throws NumberFormatException if the input is not a positive number
+     */
     private double validateInput(String input) throws NumberFormatException {
         // Try to convert the text into a number
         double amount = Double.parseDouble(input.trim());
@@ -79,7 +106,13 @@ public class ChangeReimbursementController {
         return amount;
     }
 
-    // Method for displaying error messages
+    /**
+     * Shows a modal alert with the given type, title, and message.
+     *
+     * @param alertType the type of the alert (e.g., ERROR, INFORMATION)
+     * @param title the title of the alert dialog
+     * @param message the content message shown to the user
+     */
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

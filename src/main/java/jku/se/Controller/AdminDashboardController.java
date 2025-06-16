@@ -17,6 +17,11 @@ import jku.se.repository.InvoiceRepository;
 
 import java.io.IOException;
 import java.util.List;
+
+/**
+ * Controller for the admin dashboard.
+ * Allows admins to view invoices and navigate to other admin functionalities.
+ */
 public class AdminDashboardController {
 
     @FXML
@@ -41,7 +46,10 @@ public class AdminDashboardController {
     private TableColumn<Invoice, Double> reimbursementColumn;
 
 
-    //fill table with invoices -AI
+    /**
+     * Initializes the dashboard by setting up table columns and loading invoice data.
+     */
+    //ai
     @FXML
     private void initialize() { //#15- Magdalena
         // Connect columns with the invoice attributes
@@ -55,13 +63,20 @@ public class AdminDashboardController {
         loadInvoices();
     }
 
-    //load all invoices for admin
+    /**
+     * Loads all invoices available to the admin and displays them in the table.
+     */
     private void loadInvoices() { //#15-Magdalena
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
         invoiceTable.getItems().setAll(invoices);
     }
 
-    //the next methods switch to the individual functions
+    /**
+     * Navigates to the admin invoice management view.
+     *
+     * @param event the action event that triggered the method.
+     * @throws IOException if loading the FXML fails.
+     */
     @FXML
     private void handleEditInvoice(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdminInvoiceManagement.fxml"));
@@ -74,6 +89,12 @@ public class AdminDashboardController {
         stage.show();
     }
 
+    /**
+     * Navigates to the statistics view.
+     *
+     * @param event the action event that triggered the method.
+     * @throws IOException if loading the FXML fails.
+     */
     @FXML
     private void handleStatistics(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Statistics.fxml"));
@@ -86,7 +107,12 @@ public class AdminDashboardController {
         stage.show();
     }
 
-    //add Admin User to database
+    /**
+     * Navigates to the form to add a new admin user.
+     *
+     * @param event the action event that triggered the method.
+     * @throws IOException if loading the FXML fails.
+     */
     @FXML //#18 Magda
     private void handleAddAdminUser(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddAdminUser.fxml"));
@@ -97,7 +123,12 @@ public class AdminDashboardController {
         stage.show();
     }
 
-    //delete admin user from database
+    /**
+     * Navigates to the form to delete an admin user.
+     *
+     * @param event the action event that triggered the method.
+     * @throws IOException if loading the FXML fails.
+     */
     @FXML //#18 Magda
     private void handleDeleteAdminUser(ActionEvent event)throws IOException{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/DeleteAdminUser.fxml"));
@@ -108,6 +139,12 @@ public class AdminDashboardController {
         stage.show();
     }
 
+    /**
+     * Logs the admin out and returns to the start view.
+     *
+     * @param event the action event that triggered the method.
+     * @throws IOException if loading the FXML fails.
+     */
     @FXML
     private void handleLogoutAdmin(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/start.fxml"));
@@ -120,6 +157,12 @@ public class AdminDashboardController {
         stage.show();
     }
 
+    /**
+     * Opens the view to change reimbursement settings.
+     *
+     * @param event the action event that triggered the method.
+     * @throws IOException if loading the FXML fails.
+     */
     @FXML
     private void changeReimbursement(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ChangeReimbursement.fxml"));
@@ -132,6 +175,11 @@ public class AdminDashboardController {
         stage.show();
     }
 
+    /**
+     * Opens a new window displaying system notifications.
+     *
+     * @param event the action event that triggered the method.
+     */
     @FXML
     private void openNotifications(ActionEvent event) {
         try {

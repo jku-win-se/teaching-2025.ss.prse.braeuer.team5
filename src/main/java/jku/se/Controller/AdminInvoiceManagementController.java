@@ -20,6 +20,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Controller class for admin invoice management.
+ * Allows admins to search, edit, accept, decline, or delete invoices from users.
+ */
+
 public class AdminInvoiceManagementController {
     private static final Logger LOGGER = Logger.getLogger(AdminInvoiceManagementController.class.getName());
 
@@ -35,6 +40,10 @@ public class AdminInvoiceManagementController {
     @FXML private Button deleteButton1;
     @FXML private Label statusLabel;
 
+    /**
+     * Initializes the controller.
+     * Populates user ComboBox and sets listeners for invoice selection.
+     */
     @FXML
     public void initialize() {
         List<String> emails = UserRepository.getAllUserEmails();
@@ -58,7 +67,12 @@ public class AdminInvoiceManagementController {
         });
     }
 
-    //choice user - current user are not in
+    /**
+     * Loads all users except the currently logged-in admin into the user selection ComboBox. (without his own email)
+     *
+     * @param event the triggering ActionEvent
+     * @throws IOException if loading user data fails
+     */
     @FXML
     private void searchUser(ActionEvent event) throws IOException {
         List<String> emails = UserRepository.getAllUsersWithoutLoggedAdmin(UserDashboardController.getCurrentUserEmail());
@@ -66,8 +80,12 @@ public class AdminInvoiceManagementController {
         selectUser.setItems(FXCollections.observableArrayList(emails));
     }
 
+    /**
+     * Loads all invoices for the selected user and fills the invoice ComboBox.
+     *
+     * @param event the triggering ActionEvent
+     */
     @FXML
-    //choice invoice from user
     private void searchInvoice(ActionEvent event) {
         String selectedUserEmail = selectUser.getValue();
         if (LOGGER.isLoggable(Level.INFO)) {
@@ -84,7 +102,12 @@ public class AdminInvoiceManagementController {
         selectInvoice.setItems(FXCollections.observableArrayList(invoices));
     }
 
-    //is changed when you press the change button
+    /**
+     * Allows the admin to modify the selected invoice's amount, date, category, and status.
+     * Performs validation and saves changes to the database.
+     *
+     * @param event the triggering ActionEvent
+     */
     @FXML
     private void changeInvoiceDetails(ActionEvent event) {
 
@@ -163,7 +186,14 @@ public class AdminInvoiceManagementController {
         }
 
     }
-    //accept invoice update db
+
+    /**
+     * Approves the selected invoice, updates the status in the database,
+     * and notifies the corresponding user.
+     *
+     * @param event the triggering ActionEvent
+     * @throws SQLException if the update fails
+     */
     @FXML
     private void handleAcceptInvoice(ActionEvent event) throws SQLException {
         Invoice selectedInvoice = selectInvoice.getValue();
@@ -178,7 +208,13 @@ public class AdminInvoiceManagementController {
         }
     }
 
-    //declined invoice update db
+    /**
+     * Declines the selected invoice, updates the status in the database,
+            * and notifies the corresponding user.
+     *
+             * @param event the triggering ActionEvent
+     * @throws SQLException if the update fails
+     */
     @FXML
     private void handleDeclinedInvoice(ActionEvent event) throws SQLException {
         Invoice selectedInvoice = selectInvoice.getValue();
@@ -193,7 +229,12 @@ public class AdminInvoiceManagementController {
         }
     }
 
-    //Admin can delete a invoice from a user
+    /**
+     * Deletes the selected invoice from the database.
+     *
+     * @param event the triggering ActionEvent
+     * @throws SQLException if the deletion fails
+     */
     @FXML
     private void handleDeleteInvoice(ActionEvent event) throws SQLException{
         Invoice selectedInvoice = selectInvoice.getValue();
@@ -205,7 +246,12 @@ public class AdminInvoiceManagementController {
         }
     }
 
-
+    /**
+     * Returns to the admin dashboard screen.
+     *
+     * @param event the triggering ActionEvent
+     * @throws IOException if loading the dashboard fails
+     */
     @FXML
     private void cancelEditAdmin(ActionEvent event) throws IOException {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard2.fxml"));
@@ -216,7 +262,14 @@ public class AdminInvoiceManagementController {
             stage.setScene(scene);
             stage.show();
     }
-    //add alerts for information
+
+    /**
+     * Displays a JavaFX Alert dialog with a specified type, title and message.
+     *
+     * @param type the type of alert (e.g., INFORMATION, ERROR)
+     * @param title the title of the alert dialog
+     * @param message the message to display
+     */
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

@@ -14,6 +14,10 @@ import jku.se.UserSession;
 import jku.se.repository.UserRepository;
 import jku.se.User;
 
+/**
+ * Controller for the start (login) screen of the Lunchify application.
+ * Handles login actions for both admin and regular users.
+ */
 public class StartController {
 
     @FXML private TextField emailFieldUser;
@@ -22,6 +26,13 @@ public class StartController {
     @FXML private TextField passwordFieldAdmin;
     @FXML private Label errorLabel, errorLabel1;
 
+    /**
+     * Handles login for admin users.
+     * If the credentials are valid and the user is an admin, loads the admin dashboard.
+     *
+     * @param event the action event triggered by the login button
+     * @throws IOException if loading the FXML fails
+     */
     @FXML
     private void handleAdminLogin(ActionEvent event) throws IOException {
         String email = emailFieldAdmin.getText();
@@ -51,6 +62,13 @@ public class StartController {
         }
     }
 
+    /**
+     * Handles login for regular users.
+     * If the credentials are valid and the user is not an admin, loads the user dashboard.
+     *
+     * @param event the action event triggered by the login button
+     * @throws IOException if loading the FXML fails
+     */
     @FXML
     private void handleUserLogin(ActionEvent event) throws IOException {
         String email = emailFieldUser.getText();
