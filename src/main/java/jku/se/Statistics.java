@@ -10,10 +10,28 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+/**
+ * The {@code Statistics} class provides various statistical evaluations
+ * based on invoices and reimbursements stored in the system.
+ * <p>
+ * It is primarily used by administrators to:
+ * <ul>
+ *   <li>Analyze invoice submission trends over time</li>
+ *   <li>Track reimbursements by month and user</li>
+ *   <li>Calculate averages and category-specific counts</li>
+ *   <li>Generate reports for user-specific and monthly reimbursements</li>
+ * </ul>
+ * <p>
+ * The data is retrieved from the {@link InvoiceRepository} and {@link UserRepository}.
+ */
 public class Statistics {
 
     //AI
-    //method für statistic invoices per month
+    /**
+     * Calculates the number of invoices submitted per calendar month.
+     *
+     * @return Map with month names as keys and number of invoices as values.
+     */
     public Map<String, Integer> getInvoicesPerMonth() {
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
         Map<Integer, Integer> countPerMonth = new TreeMap<>();
@@ -31,6 +49,11 @@ public class Statistics {
         return result;
     }
 
+    /**
+     * Groups invoice counts per user for each month.
+     *
+     * @return Map with month names as keys and maps of user data as values.
+     */
     public Map<String, Map<String, UserInvoiceData>> getInvoicesPerUserAndMonth() {
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
         Map<String, Map<String, UserInvoiceData>> result = new LinkedHashMap<>(); // Month -> (UserEmail -> Data)
@@ -54,9 +77,11 @@ public class Statistics {
         return result;
     }
 
-
-
-    //method für statistic reimbursement per month
+    /**
+     * Calculates the total reimbursement amount per month.
+     *
+     * @return Map with month names as keys and reimbursement sums as values.
+     */
     public Map<String, Double> getReimbursementPerMonth() {
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
         Map<Integer, Double> sumPerMonth = new TreeMap<>(); // automatically sorted by month
@@ -76,7 +101,11 @@ public class Statistics {
         return result;
     }
 
-    //refund for the last 12 months
+    /**
+     * Calculates the total reimbursement over the last 12 months.
+     *
+     * @return Sum of reimbursements from the last year.
+     */
     public double getReimbursementForAYear(){
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
         LocalDate startDate = LocalDate.now().minusYears(1);
@@ -90,7 +119,11 @@ public class Statistics {
         return sumReimbursement;
     }
 
-    //Invoices submitted on average per user per month
+    /**
+     * Computes the average number of invoices submitted per user per month.
+     *
+     * @return Average invoices per user per month.
+     */
     public double getAverageOfInvoicesPerUserPerMonth(){
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
         List<String> users = UserRepository.getAllUserEmails();
@@ -116,7 +149,11 @@ public class Statistics {
         return countInvoices / monthsBetween / countUsers;
     }
 
-    //for statistic overview invoices from supermarket, restaurant
+    /**
+     * Counts all supermarket invoices from all users.
+     *
+     * @return Total number of supermarket invoices.
+     */
     public int getInvoicesPerSupermarket(){
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
         int countSupermarket = 0;
@@ -129,6 +166,11 @@ public class Statistics {
         return countSupermarket;
     }
 
+    /**
+     * Counts all restaurant invoices from all users.
+     *
+     * @return Total number of restaurant invoices.
+     */
     public int getInvoicesPerRestaurant(){
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesAdmin();
         int countRestaurant = 0;
@@ -141,7 +183,12 @@ public class Statistics {
         return countRestaurant;
     }
 
-    //for statistic overview invoices from supermarket, restaurant - UserDashboard
+    /**
+     * Counts all supermarket invoices for a specific user.
+     *
+     * @param currentUser The user's email.
+     * @return Number of supermarket invoices for the user.
+     */
     public int getInvoicesPerSupermarketUser(String currentUser){
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser(currentUser);
         int countSupermarket = 0;
@@ -154,6 +201,12 @@ public class Statistics {
         return countSupermarket;
     }
 
+    /**
+     * Counts all restaurant invoices for a specific user.
+     *
+     * @param currentUser The user's email.
+     * @return Number of restaurant invoices for the user.
+     */
     public int getInvoicesPerRestaurantUser(String currentUser){
         List<Invoice> invoices = InvoiceRepository.getAllInvoicesUser(currentUser);
         int countRestaurant = 0;
@@ -165,13 +218,24 @@ public class Statistics {
         }
         return countRestaurant;
     }
-    //switch number of months to names
+
+    /**
+     * Converts a numeric month (1–12) to its English full name (e.g., "January").
+     *
+     * @param monthNumber The number of the month.
+     * @return Name of the month.
+     */
     private String getMonthName(int monthNumber) {
         return Month.of(monthNumber)
                 .getDisplayName(java.time.format.TextStyle.FULL, Locale.ENGLISH);
     }
 
-    // User-Details für Reimbursement-Export
+    /**
+     * Retrieves invoice count and total reimbursement for all active users in the current month.
+     *
+     * @return Map of user emails to their invoice/reimbursement stats and a total.
+     * @throws SQLException if a database error occurs.
+     */
     public Map<String, Object> getUserReimbursementDetails() throws SQLException {
         Map<String, Object> result = new LinkedHashMap<>();
         double total = 0.0;

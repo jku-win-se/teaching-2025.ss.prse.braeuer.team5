@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Represents an in-app notification that can be sent to users or administrators.
+ * Supports message tracking and timestamping.
+ */
 public class Notification {
 
     private static final Logger LOGGER = Logger.getLogger(Notification.class.getName());
@@ -18,6 +22,13 @@ public class Notification {
     private boolean isForAdmin;
     private String targetUserEmail;
 
+    /**
+     * Constructs a new Notification with full attributes.
+     *
+     * @param message          The notification message.
+     * @param isForAdmin       Whether the notification is intended for an admin.
+     * @param targetUserEmail  The email of the target user (can be null).
+     */
     public Notification(String message, boolean isForAdmin, String targetUserEmail) {
         this.message = message;
         this.timestamp = LocalDateTime.now();
@@ -25,6 +36,9 @@ public class Notification {
         this.targetUserEmail = targetUserEmail;
     }
 
+    /**
+     * Default constructor. Creates an empty message with current timestamp and no target.
+     */
     public Notification() {
         this.message = "";
         this.timestamp = LocalDateTime.now();
@@ -32,8 +46,12 @@ public class Notification {
         this.targetUserEmail = null;
     }
 
-
-
+    /**
+     * Sends an in-app notification for a given user.
+     *
+     * @param user    The target user.
+     * @param message The message to send.
+     */
     public void sendInApp(User user, String message){
         String formatted = "User " + user.getEmail() + ": " + message;
         NotificationManager.getInstance().addNotification(new Notification(formatted));
@@ -43,15 +61,28 @@ public class Notification {
         }
     }
 
+    /**
+     * Clears the list of all sent messages (mainly for tests/debugging).
+     */
     public static void clearMessages() {
         MESSAGES_SENT.clear();
     }
 
+    /**
+     * Constructs a simple Notification with a given message and current timestamp.
+     *
+     * @param message The notification message.
+     */
     public Notification(String message) {
         this.message = message;
         this.timestamp = LocalDateTime.now();
     }
 
+    /**
+     * Returns the message content of the notification.
+     *
+     * @return The notification message.
+     */
     public String getMessage() {
         return message;
     }
