@@ -19,15 +19,13 @@ import java.io.IOException;
  * Only administrators are allowed to access this screen.
  * Fields include name, email, password, and checkboxes to define role.
  */
-
-public class AddAdminUserController { //#18 Magdalena
+public class AddAdminUserController {
 
     @FXML private TextField txtEmail;
     @FXML private TextField txtName;
     @FXML private TextField txtPassword;
     @FXML private CheckBox chkAdmin;
     @FXML private CheckBox chkUser;
-    @FXML private Label message;
 
 
     /**
