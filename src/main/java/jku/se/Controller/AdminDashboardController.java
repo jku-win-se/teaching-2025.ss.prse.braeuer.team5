@@ -46,7 +46,7 @@ public class AdminDashboardController {
     private void initialize() { //#15- Magdalena
         // Connect columns with the invoice attributes
         userColumn.setCellValueFactory(new PropertyValueFactory<>("UserEmail"));
-        submissionDateColumn.setCellValueFactory(new PropertyValueFactory<>("Date"));
+        submissionDateColumn.setCellValueFactory(new PropertyValueFactory<>("CreatedAtString"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("Amount"));
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("categoryString"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("statusString"));
