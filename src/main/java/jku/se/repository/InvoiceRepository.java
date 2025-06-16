@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Repository class for handling database operations related to invoices.
+ * Provides methods to retrieve, update, insert, and delete invoice data.
+ */
 public class InvoiceRepository {
 
     private static final Logger LOGGER = Logger.getLogger(InvoiceRepository.class.getName());
@@ -27,6 +31,11 @@ public class InvoiceRepository {
     private static final String UPDATE_DATE = "UPDATE invoice SET date = ? WHERE user_email = ? AND date = ?";
     private static final String UPDATE_CATEGORY = "UPDATE invoice SET category = ? WHERE user_email = ? AND date = ?";
     private static final String DELETE_INVOICE = "DELETE FROM invoice WHERE  user_email = ? AND date = ?";
+
+    /**
+     * Retrieves all invoices from the database.
+     * @return List of all invoices.
+     */
     public static List<Invoice> getAllInvoicesAdmin() {
         List<Invoice> invoices = new ArrayList<>();
 
@@ -45,6 +54,11 @@ public class InvoiceRepository {
         return invoices;
     }
 
+    /**
+     * Retrieves all invoices for a given user.
+     * @param userEmail Email address of the user.
+     * @return List of invoices associated with the user.
+     */
     public static List<Invoice> getAllInvoicesUser(String userEmail) {
         List<Invoice> invoices = new ArrayList<>();
 
@@ -64,6 +78,19 @@ public class InvoiceRepository {
         return invoices;
     }
 
+    /**
+     * Saves a new invoice record in the database and uploads associated file.
+     * @param connection Database connection.
+     * @param userEmail User email.
+     * @param date Invoice date.
+     * @param amount Invoice amount.
+     * @param category Invoice category.
+     * @param status Invoice status.
+     * @param fileUrl File URL.
+     * @param createdAt Timestamp of creation.
+     * @param reimbursement Reimbursement amount.
+     * @param imageFile File object to upload.
+     */
     public static void saveInvoiceInfo(Connection connection, String userEmail, Date date, double amount, Category category,
                                        Status status, String fileUrl, LocalDateTime createdAt, double reimbursement, File imageFile) {
         String insertInvoiceSql = "INSERT INTO invoice (user_email, date, amount, category, status, file_url, created_at, reimbursement) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -113,6 +140,13 @@ public class InvoiceRepository {
         }
     }
 
+    /**
+     * Checks if an invoice already exists for a user on a given date.
+     * @param connection Database connection.
+     * @param userEmail Email of the user.
+     * @param date Date to check.
+     * @return true if invoice exists, false otherwise.
+     */
     public static boolean invoiceExists(Connection connection, String userEmail, Date date) {
         String sql = "SELECT 1 FROM invoice WHERE user_email = ? AND date = ?";
 
@@ -128,6 +162,13 @@ public class InvoiceRepository {
         return false;
     }
 
+    /**
+     * Creates an Invoice object from a SQL ResultSet.
+     * Maps database columns to the Invoice fields.
+     * @param rs ResultSet containing invoice data.
+     * @return Invoice object.
+     * @throws SQLException if data extraction fails.
+     */
     private static Invoice createInvoiceFromResultSet(ResultSet rs) throws SQLException {
         return new Invoice(
                 rs.getString("user_email"),
@@ -141,6 +182,10 @@ public class InvoiceRepository {
         );
     }
 
+    /**
+     * Updates the invoice date in the database.
+     * @param invoice Invoice to update.
+     */
     public static void updateInvoiceDate(Invoice invoice) {
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(UPDATE_DATE)) {
@@ -153,6 +198,10 @@ public class InvoiceRepository {
         }
     }
 
+    /**
+     * Updates the invoice amount in the database.
+     * @param invoice Invoice to update.
+     */
     public static void updateInvoiceAmount(Invoice invoice) {
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(UPDATE_AMOUNT)) {
@@ -165,6 +214,10 @@ public class InvoiceRepository {
         }
     }
 
+    /**
+     * Updates the invoice status in the database.
+     * @param invoice Invoice to update.
+     */
     public static void updateInvoiceStatus(Invoice invoice) {
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(UPDATE_STATUS)) {
@@ -177,6 +230,10 @@ public class InvoiceRepository {
         }
     }
 
+    /**
+     * Updates the invoice category in the database.
+     * @param invoice Invoice to update.
+     */
     public static void updateInvoiceCategory(Invoice invoice) {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_CATEGORY)) {
@@ -189,6 +246,10 @@ public class InvoiceRepository {
         }
     }
 
+    /**
+     * Updates the invoice reimbursement value in the database.
+     * @param invoice Invoice to update.
+     */
     public static void updateInvoiceReimbursement(Invoice invoice) {
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(UPDATE_REIMBURSEMENT)) {
@@ -201,6 +262,11 @@ public class InvoiceRepository {
         }
     }
 
+    /**
+     * Retrieves all declined invoices for a user in the current month.
+     * @param userEmail Email of the user.
+     * @return List of declined invoices.
+     */
     public static List<Invoice> getDeclinedInvoicesCurrentMonth(String userEmail) {
         List<Invoice> declinedInvoices = new ArrayList<>();
         LocalDate now = LocalDate.now();
@@ -230,6 +296,11 @@ public class InvoiceRepository {
         return declinedInvoices;
     }
 
+    /**
+     * Retrieves all accepted invoices for a user in the current month.
+     * @param userEmail Email of the user.
+     * @return List of accepted invoices.
+     */
     public static List<Invoice> getAcceptedInvoicesCurrentMonth(String userEmail) {
         List<Invoice> acceptedInvoices = new ArrayList<>();
         LocalDate now = LocalDate.now();
@@ -259,7 +330,11 @@ public class InvoiceRepository {
         return acceptedInvoices;
     }
 
-
+    /**
+     * Updates all editable fields of an invoice.
+     * @param invoice Invoice to update.
+     * @throws SQLException if database error occurs.
+     */
     public static void updateInvoice(Invoice invoice) throws SQLException {
         try (Connection con = DatabaseConnection.getConnection()) {
             con.setAutoCommit(false);
@@ -276,11 +351,21 @@ public class InvoiceRepository {
         }
     }
 
+    /**
+     * Returns the SQL condition to match the current month and year.
+     * Used in WHERE clauses to filter invoices of the current month.
+     * @return SQL string for current month condition.
+     */
     private static String getCurrentMonthCondition() {
         return "EXTRACT(MONTH FROM date) = EXTRACT(MONTH FROM CURRENT_DATE) " +
                 "AND EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE)";
     }
 
+    /**
+     * Retrieves a list of user emails that have submitted invoices in the current month.
+     * @return List of user emails.
+     * @throws SQLException if database access fails.
+     */
     public static List<String> getActiveUsersThisMonth() throws SQLException {
         String sql = "SELECT DISTINCT user_email FROM invoice WHERE " + getCurrentMonthCondition();
         List<String> users = new ArrayList<>();
@@ -295,6 +380,12 @@ public class InvoiceRepository {
         return users;
     }
 
+    /**
+     * Counts how many invoices a user submitted in the current month.
+     * @param userEmail User email.
+     * @return Number of invoices.
+     * @throws SQLException if database access fails.
+     */
     public static int getInvoiceCountForUserThisMonth(String userEmail) throws SQLException {
         String sql = "SELECT COUNT(*) FROM invoice WHERE user_email = ? AND " + getCurrentMonthCondition();
 
@@ -306,6 +397,12 @@ public class InvoiceRepository {
         }
     }
 
+    /**
+     * Sums the reimbursement of all invoices for a user in the current month.
+     * @param userEmail User email.
+     * @return Total reimbursement amount.
+     * @throws SQLException if database access fails.
+     */
     public static double getTotalReimbursementForUserThisMonth(String userEmail) throws SQLException {
         String sql = "SELECT SUM(reimbursement) FROM invoice WHERE user_email = ? AND " + getCurrentMonthCondition();
 
@@ -317,6 +414,11 @@ public class InvoiceRepository {
         }
     }
 
+    /**
+     * Sums the reimbursement of all invoices in the current month.
+     * @return Total reimbursement amount.
+     * @throws SQLException if database access fails.
+     */
     public static double getTotalReimbursementThisMonth() throws SQLException {
         String sql = "SELECT SUM(reimbursement) FROM invoice WHERE " + getCurrentMonthCondition();
 
@@ -327,6 +429,10 @@ public class InvoiceRepository {
         }
     }
 
+    /**
+     * Deletes a specific invoice from the database.
+     * @param invoice Invoice to delete.
+     */
     //delete an invoice from a user as admin
     public static void deleteInvoice(Invoice invoice) {
         try (Connection con = DatabaseConnection.getConnection();
