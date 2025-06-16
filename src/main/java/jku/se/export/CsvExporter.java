@@ -5,18 +5,36 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Utility class for exporting tabular data to CSV format.
+ */
 public class CsvExporter {
 
     private final String delimiter;
 
+    /**
+     * Default constructor using semicolon as delimiter (common in AT/DE Excel).
+     */
     public CsvExporter() {
         this.delimiter = ";"; // Standard Semicolon for AT/DE Excel
     }
 
+    /**
+     * Constructor allowing custom delimiter.
+     *
+     * @param delimiter Delimiter character used to separate values.
+     */
     public CsvExporter(String delimiter) {
         this.delimiter = delimiter;
     }
 
+    /**
+     * Exports the provided data rows to a CSV file.
+     *
+     * @param rows List of rows, where each row is a map of column name to value.
+     * @param baseFileName The base name for the output file (without extension).
+     * @throws IOException If an I/O error occurs.
+     */
     public void export(List<Map<String, String>> rows, String baseFileName) throws IOException {
         String fileName = generateFileName(baseFileName, "csv");
 
@@ -52,6 +70,12 @@ public class CsvExporter {
         }
     }
 
+    /**
+     * Escapes CSV values by quoting and handling embedded quotes or special characters.
+     *
+     * @param value The original cell value.
+     * @return The escaped CSV-compatible value.
+     */
     private String escapeCsv(String value) {
         if (value == null) return "";
         boolean mustQuote = value.contains(delimiter) || value.contains("\"") || value.contains("\n") || value.contains("\r");
@@ -63,6 +87,13 @@ public class CsvExporter {
         }
     }
 
+    /**
+     * Generates a full file path in the Downloads folder with timestamp and given extension.
+     *
+     * @param baseName  Base filename (without timestamp or extension).
+     * @param extension File extension (e.g., "csv").
+     * @return Full file path as a string.
+     */
     private String generateFileName(String baseName, String extension) {
         String timestamp = java.time.LocalDateTime.now()
                 .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));

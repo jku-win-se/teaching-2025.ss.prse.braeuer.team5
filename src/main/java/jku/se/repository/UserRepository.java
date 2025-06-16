@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+/**
+ * Repository class for managing user-related database operations.
+ * Provides methods to add, delete, and retrieve users and user data.
+ */
 public class UserRepository {
 
     private static final Logger LOGGER = Logger.getLogger(UserRepository.class.getName());
@@ -18,7 +21,10 @@ public class UserRepository {
     //new user insert
     private static final String INSERT_USER_SQL = "INSERT INTO userlunchify (email, name, password, isadministrator) VALUES (?, ?, ?, ?)";
 
-    //add a new user in database
+    /**
+     * Adds a new user to the database.
+     * @param user The user to be added.
+     */
     public static void addUser(User user) {
         // insert user to userlunchify
         try (Connection con = DatabaseConnection.getConnection();
@@ -43,20 +49,36 @@ public class UserRepository {
     private static final String GET_ALL_USERS_SQL = "SELECT email FROM userlunchify WHERE isadministrator = false";
     private static final String GET_ALL_USERS_WITHOUT_LOGGED_ADMIN = "SELECT email FROM userlunchify WHERE NOT IN user_email =?";
 
-    //choicebox delete user email - difference between user and admin
+    /**
+     * Retrieves email addresses of all admin users.
+     * @return List of admin email addresses.
+     */
     public static List<String> getAllAdminEmails() {
         return getEmails(GET_ALL_ADMINS_SQL);
     }
 
+    /**
+     * Retrieves email addresses of all non-admin users.
+     * @return List of user email addresses.
+     */
     public static List<String> getAllUserEmails() {
         return getEmails(GET_ALL_USERS_SQL);
     }
 
-    //function to output all users without the logged in admin, as he is not allowed to edit his own invoices
+    /**
+     * Retrieves email addresses of all users except the currently logged-in admin.
+     * @param eMail Email of the logged-in admin.
+     * @return List of user email addresses.
+     */
     public static List<String> getAllUsersWithoutLoggedAdmin(String eMail) {
         return getEmails(GET_ALL_USERS_WITHOUT_LOGGED_ADMIN);
     }
 
+    /**
+     * Executes a query to retrieve email addresses from the database.
+     * @param query SQL query to execute.
+     * @return List of email addresses.
+     */
     private static List<String> getEmails(String query) {
         List<String> emails = new ArrayList<>();
         try (Connection con = DatabaseConnection.getConnection();
@@ -74,6 +96,11 @@ public class UserRepository {
     //delete from database
     private static final String DELETE_USER_SQL = "DELETE FROM userlunchify WHERE email = ?";
 
+    /**
+     * Deletes a user by their email address.
+     * @param email Email address of the user to delete.
+     * @return true if deletion was successful, false otherwise.
+     */
     public static boolean deleteUser(String email) {
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(DELETE_USER_SQL)) {
@@ -89,6 +116,12 @@ public class UserRepository {
         }
     }
 
+    /**
+     * Finds a user by email and password for login verification.
+     * @param email Email address.
+     * @param password Password.
+     * @return The matching User object, or null if not found.
+     */
     public static User findByEmailAndPassword(String email, String password) {
         String query = "SELECT * FROM userlunchify WHERE email = ? AND password = ?";
         try (Connection con = DatabaseConnection.getConnection();
@@ -112,6 +145,11 @@ public class UserRepository {
         return null;
     }
 
+    /**
+     * Retrieves a user by their email address.
+     * @param email Email address.
+     * @return The matching User object, or null if not found.
+     */
     public static User getByEmail(String email) {
         String sql = "SELECT * FROM userlunchify WHERE email = ?";
 

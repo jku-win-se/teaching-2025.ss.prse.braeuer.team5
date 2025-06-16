@@ -13,6 +13,10 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Utility class for establishing a connection to the database
+ * and handling file uploads to Supabase bucket storage.
+ */
 public class DatabaseConnection {
     private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getName());
 
@@ -23,12 +27,23 @@ public class DatabaseConnection {
     public static final String API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRsamp0dXluYmd4Z21oa2NkeXB1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3OTg4MjcsImV4cCI6MjA1ODM3NDgyN30.OTZ-XN4JYNbzgfYfHWN_ZbyrRcnW1uIzJIFK1MJLXrI";
     public static final String URL_SUPABASE = "https://dljjtuynbgxgmhkcdypu.supabase.co";
 
-    // Establish database connection
+    /**
+     * Establishes a connection to the PostgreSQL database.
+     *
+     * @return A {@link Connection} object to interact with the database.
+     * @throws SQLException if the connection fails.
+     */
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL_JDBC, USER, PWD);
     }
 
-    // Connection to Supabase and upload
+    /**
+     * Uploads a file to the Supabase storage bucket.
+     *
+     * @param imageFile The file to upload.
+     * @return A public URL pointing to the uploaded file, or null if the upload fails.
+     * @throws IOException if an I/O error occurs during upload.
+     */
     public static String uploadFileToBucket(File imageFile) throws IOException {
 
         try {
@@ -76,12 +91,22 @@ public class DatabaseConnection {
         return null;
     }
 
+    /**
+     * Generates a publicly accessible URL for a given file in the Supabase storage bucket.
+     *
+     * @param filePath The name of the file (including path) in the bucket.
+     * @return The full public URL to the file.
+     */
     public static String getPublicFileUrl(String filePath){
         return URL_SUPABASE + "/storage/v1/object/" + DatabaseConnection.BUCKET + "/" + filePath;
     }
 
 
-    // Check database connection (test connection)
+    /**
+     * Main method to test the database connection. Prints a log message if the connection succeeds or fails.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         try (Connection con = getConnection()) {
             if (LOGGER.isLoggable(Level.INFO)) {

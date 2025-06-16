@@ -12,7 +12,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.logging.Logger;
 
-
+/**
+ * Service class for performing OCR (Optical Character Recognition) using Google Cloud Vision API.
+ * Extracts structured data such as date, amount, and category from an image of a receipt or invoice.
+ */
 public class CloudOCRService {
 
     private static final Logger LOGGER = Logger.getLogger(CloudOCRService.class.getName());
@@ -20,6 +23,9 @@ public class CloudOCRService {
     private static final String API_KEY = "AIzaSyBjoG6cn0pXDb9OlZliX4oDmwbMLnKrfUE";
     private static final String ENDPOINT = "https://vision.googleapis.com/v1/images:annotate?key=" + API_KEY;
 
+    /**
+     * Inner class to encapsulate OCR results.
+     */
     public static class OCRResult {
         public String date;
         public String amount;
@@ -37,6 +43,13 @@ public class CloudOCRService {
         }
     }
 
+    /**
+     * Analyzes an image using Google Cloud Vision API and extracts structured information.
+     *
+     * @param imageFile The image file to analyze.
+     * @return OCRResult containing date, amount, and category.
+     * @throws IOException if the request fails.
+     */
     public OCRResult analyzeImage(File imageFile) throws IOException {
         String base64Image = encodeImageToBase64(imageFile);
         String requestBody = buildRequestJson(base64Image);
@@ -67,11 +80,24 @@ public class CloudOCRService {
         );
     }
 
+    /**
+     * Encodes an image file to a Base64 string.
+     *
+     * @param imageFile The file to encode.
+     * @return Base64-encoded image string.
+     * @throws IOException if reading the file fails.
+     */
     public String encodeImageToBase64(File imageFile) throws IOException {
         byte[] imageBytes = new FileInputStream(imageFile).readAllBytes();
         return Base64.getEncoder().encodeToString(imageBytes);
     }
 
+    /**
+     * Builds the JSON request body for the OCR API.
+     *
+     * @param base64Image Base64-encoded image string.
+     * @return JSON request as a string.
+     */
     public String buildRequestJson(String base64Image) {
         return "{\n" +
                 "  \"requests\": [\n" +
@@ -89,6 +115,12 @@ public class CloudOCRService {
                 "}";
     }
 
+    /**
+     * Parses the OCR API response JSON and extracts the full detected text.
+     *
+     * @param json JSON response from the API.
+     * @return Extracted plain text.
+     */
     public String extractTextFromJson(String json) {
         try {
             JsonObject root = JsonParser.parseString(json).getAsJsonObject();
@@ -109,6 +141,12 @@ public class CloudOCRService {
         return "";
     }
 
+    /**
+     * Extracts a date string from raw text using several regex formats.
+     *
+     * @param text Raw OCR text.
+     * @return Extracted date string or "Not found".
+     */
     public String extractDate(String text) {
         Pattern[] patterns = {
                 Pattern.compile("\\b(\\d{2}[./-]\\d{2}[./-]\\d{4})\\b"),
@@ -126,6 +164,12 @@ public class CloudOCRService {
         return "Not found";
     }
 
+    /**
+     * Extracts the amount from OCR text, prioritizing labeled values (e.g., "Amount").
+     *
+     * @param text OCR-detected text.
+     * @return Extracted amount string or "Not found".
+     */
     public String extractAmount(String text) {
         Pattern strongPattern = Pattern.compile(
                 "(Betrag|Amount|Total|Summe)[^0-9]{0,10}([0-9]+[.,][0-9]{2})",
@@ -162,9 +206,12 @@ public class CloudOCRService {
         return "Not found";
     }
 
-
-
-
+    /**
+     * Attempts to detect whether the receipt belongs to a restaurant or supermarket.
+     *
+     * @param text OCR-detected text.
+     * @return Category label: "RESTAURANT", "SUPERMARKET", or "OTHER".
+     */
     public String detectCategory(String text) {
         String lower = text.toLowerCase();
         if (lower.contains("restaurant") || lower.contains("pizzeria") || lower.contains("café") || lower.contains("gasthaus") || lower.contains("mensa")) {

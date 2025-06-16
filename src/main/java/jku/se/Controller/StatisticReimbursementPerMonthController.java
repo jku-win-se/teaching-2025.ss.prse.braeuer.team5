@@ -19,6 +19,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
+/**
+ * Controller for visualizing and exporting reimbursement data per month.
+ * Inherits export functionality from BaseStatisticController.
+ */
 public class StatisticReimbursementPerMonthController extends BaseStatisticController{
     @FXML private BarChart<String, Number> barChartReimbursementPerMonth;
     @FXML private ComboBox<String> saveFormatComboBox;
@@ -27,6 +31,10 @@ public class StatisticReimbursementPerMonthController extends BaseStatisticContr
     private final Statistics statistics = new Statistics();
     private PauseTransition statusTimer;
 
+    /**
+     * Initializes the bar chart with monthly reimbursement data
+     * and prepares export format selection and status message timeout.
+     */
     @FXML
     public void initialize() {
         // Initialize bar chart with reimbursement per month data
@@ -53,7 +61,13 @@ public class StatisticReimbursementPerMonthController extends BaseStatisticContr
         statusTimer.setOnFinished(e -> statusText.setText(""));
     }
 
-    // Handle export based on selected format
+    /**
+     * Exports the data in the selected format.
+     * - PDF and CSV: Export monthly reimbursement chart data.
+     * - JSON: Export user-level reimbursement details and total reimbursement.
+     *
+     * @throws SQLException if fetching total reimbursement fails
+     */
     @FXML
     private void handleExport() throws SQLException {
         String selectedFormat = saveFormatComboBox.getValue();
@@ -77,13 +91,24 @@ public class StatisticReimbursementPerMonthController extends BaseStatisticContr
         }
     }
 
-    // Cancel and return to statistics page
+    /**
+     * Navigates back to the main statistics overview page.
+     *
+     * @param event the triggered action event
+     * @throws IOException if loading the FXML fails
+     */
     @FXML
     private void cancelReimbursement(ActionEvent event) throws IOException {
         loadPage("Statistics.fxml", event);
     }
 
-    // Load specified FXML page
+    /**
+     * Utility method to load and display another FXML page.
+     *
+     * @param fxmlFile the FXML filename
+     * @param event    the action event triggering the transition
+     * @throws IOException if FXML loading fails
+     */
     private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

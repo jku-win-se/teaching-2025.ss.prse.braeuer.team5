@@ -14,18 +14,24 @@ import jku.se.repository.UserRepository;
 import javafx.scene.control.Label;
 import java.io.IOException;
 
-public class AddAdminUserController { //#18 Magdalena
+/**
+ * Controller for adding new users or administrators in the Lunchify system.
+ * Only administrators are allowed to access this screen.
+ * Fields include name, email, password, and checkboxes to define role.
+ */
+public class AddAdminUserController {
 
     @FXML private TextField txtEmail;
     @FXML private TextField txtName;
     @FXML private TextField txtPassword;
     @FXML private CheckBox chkAdmin;
     @FXML private CheckBox chkUser;
-    @FXML private Label message;
 
 
-    //only admins can create users or other admins
-    //add user - if the admin checkbox is ticked, an admin is created
+    /**
+     * Adds a new user or administrator based on the checkbox selection.
+     * Shows an alert if required fields are missing or upon success.
+     */
     @FXML
     private void addAdminUser(){
         String email = txtEmail.getText();
@@ -45,7 +51,10 @@ public class AddAdminUserController { //#18 Magdalena
         clearFields();
     }
 
-    //delete the fields after insert  - ai
+    /**
+     * Clears all input fields and resets the checkboxes.
+     */
+    //ai
     private void clearFields() {
         txtEmail.clear();
         txtName.clear();
@@ -53,10 +62,26 @@ public class AddAdminUserController { //#18 Magdalena
         chkAdmin.setSelected(false);
         chkUser.setSelected(false);
     }
-    @FXML //exit
+
+    /**
+     * Cancels the add-user process and navigates back to the admin dashboard.
+     *
+     * @param event The action event triggering the method.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
+
+    @FXML
     private void cancelAddAdminUser(ActionEvent event) throws IOException {
         loadPage("dashboard2.fxml", event);
     }
+
+    /**
+     * Loads the specified FXML page into the current scene.
+     *
+     * @param fxmlFile The name of the FXML file to load.
+     * @param event The event that triggered the load.
+     * @throws IOException If the file cannot be found or loaded.
+     */
 
     @FXML
     private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
@@ -69,7 +94,14 @@ public class AddAdminUserController { //#18 Magdalena
         stage.show();
     }
 
-    //add alert for information
+    /**
+     * Displays an alert dialog with a given type, title, and message.
+     *
+     * @param type The type of alert (e.g., ERROR, INFORMATION).
+     * @param title The title shown on the alert window.
+     * @param message The message body of the alert.
+     */
+
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

@@ -13,6 +13,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Utility class for generating PDF documents using Apache PDFBox.
+ * Supports adding titles, paragraphs, tables, and images, and saving the result as a file.
+ */
 public class PdfExporter {
 
     private static final int MARGIN = 50;
@@ -26,27 +30,50 @@ public class PdfExporter {
     private PDPageContentStream contentStream;
     private int yPosition;
 
+    /**
+     * Initializes a new PDF document and sets the starting Y-position.
+     */
     public PdfExporter() {
         this.document = new PDDocument();
         this.yPosition = PAGE_HEIGHT - MARGIN;
     }
 
+    /**
+     * Returns the internal PDF document.
+     * @return the PDDocument instance.
+     */
     public PDDocument getDocument() {
         return document;
     }
 
+    /**
+     * Returns the current content stream used for writing to the PDF.
+     * @return the PDPageContentStream instance.
+     */
     public PDPageContentStream getContentStream() {
         return contentStream;
     }
 
+    /**
+     * Returns the current vertical writing position on the page.
+     * @return the Y-position.
+     */
     public int getYPosition() {
         return yPosition;
     }
 
+    /**
+     * Sets the current vertical writing position.
+     * @param yPosition the Y-position to set.
+     */
     public void setYPosition(int yPosition) {
         this.yPosition = yPosition;
     }
 
+    /**
+     * Starts a new page in the document and initializes a new content stream.
+     * @throws IOException if the page or stream cannot be created.
+     */
     public void startPage() throws IOException {
         PDPage page = new PDPage(PDRectangle.A4);
         document.addPage(page);
@@ -57,24 +84,45 @@ public class PdfExporter {
         yPosition = PAGE_HEIGHT - MARGIN;
     }
 
+    /**
+     * Finalizes the current content stream (e.g., before saving or starting a new page).
+     * @throws IOException if closing the stream fails.
+     */
     public void end() throws IOException {
         if (contentStream != null) {
             contentStream.close();
         }
     }
 
+    /**
+     * Adds a title to the PDF using a bold font and larger font size.
+     * @param title the text to display as the title.
+     * @throws IOException if writing fails.
+     */
     public void addTitle(String title) throws IOException {
         contentStream.setFont(PDType1Font.HELVETICA_BOLD, HEADER_FONT_SIZE);
         writeText(title);
         yPosition -= 2 * ROW_HEIGHT;
     }
 
+    /**
+     * Adds a simple paragraph of text to the PDF using a regular font.
+     * @param text the paragraph content.
+     * @throws IOException if writing fails.
+     */
     public void addParagraph(String text) throws IOException {
         contentStream.setFont(PDType1Font.HELVETICA, TEXT_FONT_SIZE);
         writeText(text);
         yPosition -= ROW_HEIGHT;
     }
 
+    /**
+     * Adds a table with headers and rows to the PDF.
+     * Handles page breaks automatically if the table is too long for one page.
+     * @param headers List of column headers.
+     * @param rows List of rows, each being a list of cell values.
+     * @throws IOException if writing fails.
+     */
     public void addTable(List<String> headers, List<List<String>> rows) throws IOException {
         contentStream.setFont(PDType1Font.HELVETICA_BOLD, TEXT_FONT_SIZE);
 
@@ -158,12 +206,22 @@ public class PdfExporter {
         yPosition = (int)(y - gap);
     }
 
+    /**
+     * Saves the current PDF document to a file with a timestamped name in the Downloads folder.
+     * @param baseFileName Base name of the file (without extension or timestamp).
+     * @throws IOException if saving fails.
+     */
     public void saveToFile(String baseFileName) throws IOException {
         String fileName = generateFileName(baseFileName, "pdf");
         document.save(new File(fileName));
         document.close();
     }
 
+    /**
+     * Writes text to the current content stream at the current y-position.
+     * @param text the text to write.
+     * @throws IOException if writing fails.
+     */
     private void writeText(String text) throws IOException {
         contentStream.beginText();
         contentStream.newLineAtOffset(MARGIN, yPosition);
@@ -171,6 +229,12 @@ public class PdfExporter {
         contentStream.endText();
     }
 
+    /**
+     * Generates a full file path in the Downloads folder with timestamp.
+     * @param baseName base name of the file.
+     * @param extension file extension (e.g., "pdf").
+     * @return the full path to the file.
+     */
     private String generateFileName(String baseName, String extension) {
         String timestamp = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         return System.getProperty("user.home") + File.separator + "Downloads" + File.separator + baseName + "_" + timestamp + "." + extension;

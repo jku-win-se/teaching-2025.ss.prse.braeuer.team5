@@ -18,6 +18,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Controller for displaying and exporting the distribution of invoices
+ * between supermarket and restaurant categories using a pie chart.
+ */
 public class StatisticSupermarketRestaurantController extends BaseStatisticController {
     @FXML private PieChart pieChartDistribution;
     @FXML private ComboBox<String> saveFormatComboBox;
@@ -26,6 +30,11 @@ public class StatisticSupermarketRestaurantController extends BaseStatisticContr
     private final Statistics statistics = new Statistics();
     private PauseTransition statusTimer;
 
+    /**
+     * Initializes the view:
+     * - Loads invoice counts per category and displays them in a pie chart.
+     * - Sets up export format selection and status text timeout.
+     */
     @FXML
     public void initialize() {
         // Initialize pie chart with counts of invoices per supermarket and restaurant
@@ -46,7 +55,11 @@ public class StatisticSupermarketRestaurantController extends BaseStatisticContr
         statusTimer.setOnFinished(e -> statusText.setText(""));
     }
 
-    // Handle export of distribution data in selected format
+    /**
+     * Handles export of the pie chart data (supermarket vs. restaurant) to the selected file format.
+     *
+     * @param event the triggered action event
+     */
     @FXML
     private void handleExport(ActionEvent event) {
         Map<String, Integer> data = new HashMap<>();
@@ -62,13 +75,24 @@ public class StatisticSupermarketRestaurantController extends BaseStatisticContr
         );
     }
 
-    // Cancel and return to statistics page
+    /**
+     * Cancels the current view and returns to the main statistics screen.
+     *
+     * @param event the triggered action event
+     * @throws IOException if FXML loading fails
+     */
     @FXML
     private void cancelDistribution(ActionEvent event) throws IOException {
         loadPage("Statistics.fxml", event);
     }
 
-    // Load specified FXML page
+    /**
+     * Helper method to load and switch to another FXML page.
+     *
+     * @param fxmlFile the filename of the FXML resource
+     * @param event    the triggered action event
+     * @throws IOException if the FXML file cannot be loaded
+     */
     private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

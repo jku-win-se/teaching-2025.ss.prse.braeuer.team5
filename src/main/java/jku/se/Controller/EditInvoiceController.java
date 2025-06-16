@@ -22,6 +22,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller for editing declined invoices.
+ * Allows a user to select a declined invoice, change its details and resubmit it.
+ */
 public class EditInvoiceController {
     private Invoice invoice;
 
@@ -31,6 +35,9 @@ public class EditInvoiceController {
     @FXML private ComboBox<String> categoryComboBox;
     @FXML private Button changeButton;
 
+    /**
+     * Initializes the controller by loading declined invoices and configuring the ComboBox.
+     */
     @FXML
     private void initialize() {
         String userEmail = UserDashboardController.getCurrentUserEmail();
@@ -55,6 +62,10 @@ public class EditInvoiceController {
                 });
     }
 
+    /**
+     * Fills the form fields with the selected invoice's data.
+     * @param invoice the selected invoice
+     */
     private void fillFields(Invoice invoice) {
         this.invoice = invoice;
         amountField.setText(String.valueOf(invoice.getAmount()));
@@ -62,6 +73,12 @@ public class EditInvoiceController {
         categoryComboBox.setValue(invoice.getCategory().name());
     }
 
+    /**
+     * Loads invoices from a SQL ResultSet into a list.
+     * @param rs the SQL ResultSet
+     * @return list of Invoice objects
+     * @throws SQLException if a database access error occurs
+     */
     private List<Invoice> loadInvoicesFromResultSet(ResultSet rs) throws SQLException {
         List<Invoice> invoices = new ArrayList<>();
         while (rs.next()) {
@@ -79,6 +96,10 @@ public class EditInvoiceController {
         return invoices;
     }
 
+    /**
+     * Configures the invoice ComboBox and sets its display format.
+     * @param invoices the list of declined invoices
+     */
     private void configureComboBox(List<Invoice> invoices) {
         ObservableList<Invoice> observableList = FXCollections.observableArrayList(invoices);
         invoiceComboBox.setItems(observableList);
@@ -114,6 +135,11 @@ public class EditInvoiceController {
                 });
     }
 
+    /**
+     * Handles the save changes action.
+     * Updates the invoice in the database.
+     * @param event the action event
+     */
     @FXML
     private void handleSaveChanges(ActionEvent event) {
         if (invoice == null) {
@@ -143,6 +169,12 @@ public class EditInvoiceController {
         }
     }
 
+    /**
+     * Executes the update statement in the database.
+     * @param con the database connection
+     * @param invoice the invoice to update
+     * @throws SQLException if a database error occurs
+     */
     private void updateInvoiceInDatabase(Connection con, Invoice invoice) throws SQLException {
         String updateSql = "UPDATE invoice SET amount = ?, date = ?, category = ?, status = ? " +
                 "WHERE user_email = ? AND date = ?";
@@ -158,6 +190,11 @@ public class EditInvoiceController {
         }
     }
 
+    /**
+     * Cancels the editing and returns to the user dashboard.
+     * @param event the action event
+     * @throws IOException if the dashboard cannot be loaded
+     */
     @FXML
     private void cancelEdit(ActionEvent event) throws IOException {
         try {
@@ -172,6 +209,11 @@ public class EditInvoiceController {
         }
     }
 
+    /**
+     * Shows an alert dialog with the given title and message.
+     * @param title the alert title
+     * @param message the alert message
+     */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -180,6 +222,12 @@ public class EditInvoiceController {
         alert.showAndWait();
     }
 
+    /**
+     * Loads another FXML page.
+     * @param fxmlFile the FXML file name
+     * @param event the action event
+     * @throws IOException if the FXML file cannot be loaded
+     */
     private void loadPage(String fxmlFile, ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlFile));
         Scene scene = new Scene(loader.load());
@@ -188,6 +236,11 @@ public class EditInvoiceController {
         stage.show();
     }
 
+    /**
+     * Handles resubmitting a previously declined invoice.
+     * Updates the invoice and status, and notifies the user.
+     * @param event the action event
+     */
     @FXML
     private void handleResubmit(ActionEvent event) {
         if (invoice == null) {
