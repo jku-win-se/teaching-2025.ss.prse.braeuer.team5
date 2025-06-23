@@ -2,15 +2,16 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="400" prefWidth="600" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jku.se.Controller.NotificationsController">
+<BorderPane prefHeight="500" prefWidth="800" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jku.se.Controller.NotificationsController">
 
     <top>
-        <Label focusTraversable="false" prefHeight="57.0" prefWidth="605.0" style="-fx-background-color: lightblue; -fx-padding: 15;" text="Notifications" BorderPane.alignment="CENTER">
+        <Label focusTraversable="false" prefHeight="57.0" prefWidth="805.0" style="-fx-background-color: lightblue; -fx-padding: 15;" text="Admin Notifications" BorderPane.alignment="CENTER">
             <font>
                 <Font name="System Bold" size="18.0" />
             </font>
@@ -18,7 +19,9 @@
     </top>
 
     <center>
-        <ListView fx:id="notificationList" focusTraversable="false" prefHeight="300" prefWidth="550" BorderPane.alignment="CENTER" />
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+            <VBox fx:id="notificationContainer" spacing="5" style="-fx-padding: 10;" />
+        </ScrollPane>
     </center>
 
     <bottom>
