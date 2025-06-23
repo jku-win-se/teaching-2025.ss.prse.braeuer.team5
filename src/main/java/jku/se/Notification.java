@@ -5,6 +5,7 @@ import jku.se.Utilities.NotificationManager;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,6 +18,7 @@ public class Notification {
     private static final Logger LOGGER = Logger.getLogger(Notification.class.getName());
 
     public static final List<String> MESSAGES_SENT = new ArrayList<>();
+    private String id;
     private String message;
     private LocalDateTime timestamp;
     private boolean isForAdmin;
@@ -30,6 +32,7 @@ public class Notification {
      * @param targetUserEmail  The email of the target user (can be null).
      */
     public Notification(String message, boolean isForAdmin, String targetUserEmail) {
+        this.id = UUID.randomUUID().toString();
         this.message = message;
         this.timestamp = LocalDateTime.now();
         this.isForAdmin = isForAdmin;
@@ -40,6 +43,7 @@ public class Notification {
      * Default constructor. Creates an empty message with current timestamp and no target.
      */
     public Notification() {
+        this.id = UUID.randomUUID().toString();
         this.message = "";
         this.timestamp = LocalDateTime.now();
         this.isForAdmin = false;
@@ -74,9 +78,12 @@ public class Notification {
      * @param message The notification message.
      */
     public Notification(String message) {
+        this.id = UUID.randomUUID().toString();
         this.message = message;
         this.timestamp = LocalDateTime.now();
     }
+
+
 
     /**
      * Returns the message content of the notification.
@@ -87,4 +94,48 @@ public class Notification {
         return message;
     }
 
+    /**
+     * Returns the unique ID of the notification.
+     *
+     * @return The notification ID.
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Returns the timestamp when the notification was created.
+     *
+     * @return The timestamp.
+     */
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    /**
+     * Returns the formatted timestamp as a string.
+     *
+     * @return Formatted timestamp string.
+     */
+    public String getFormattedTimestamp() {
+        return timestamp.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+    }
+
+    /**
+    * Returns the full notification text including timestamp.
+    *
+    * @return Full notification text.
+    */
+    public String getFullMessage() {
+        return getFormattedTimestamp() + " - " + message;
+    }
+
+    /**
+     * Returns the notification message without timestamp (for user notifications).
+     *
+     * @return Notification message without timestamp.
+     */
+    public String getUserMessage() {
+        return message;
+    }
 }

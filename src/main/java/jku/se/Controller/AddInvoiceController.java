@@ -265,18 +265,19 @@ public class AddInvoiceController {
             uploadedDates.add(selectedDate);
             showAlert(Alert.AlertType.INFORMATION, "Invoice Upload", "Invoice and file uploaded successfully.");
 
+            // Create admin notification for new invoice upload
+            String adminNotificationMessage = "User " + userEmail + " uploaded a new invoice from " + displayDate + " for €" + String.format("%.2f", amount) + " (" + selectedCategory + ").";
+            Notification adminNotification = new Notification(adminNotificationMessage);
+            NotificationManager.getInstance().addNotification(adminNotification);
 
             resetForm();
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Save Error", "Error saving invoice: " + e.getMessage());
-
         }
+
         AnomalyDetection anomalyDetection = new AnomalyDetection();
         boolean anomaly = AnomalyDetection.detectMismatch(invoice);
         invoice.setAnomalyDetected(anomaly);
-        Notification notification = new Notification("Invoice submitted successfully.");
-
-
     }
 
     /**

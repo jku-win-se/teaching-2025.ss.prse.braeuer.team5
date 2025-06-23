@@ -305,7 +305,7 @@ public class InvoiceRepository {
         List<Invoice> acceptedInvoices = new ArrayList<>();
         LocalDate now = LocalDate.now();
 
-        String query = "SELECT * FROM invoice WHERE user_email = ? AND status = 'ACCEPTED'";
+        String query = "SELECT * FROM invoice WHERE user_email = ? AND status = 'APPROVED'";
 
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {

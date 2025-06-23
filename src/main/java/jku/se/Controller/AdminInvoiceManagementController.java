@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import jku.se.*;
 import jku.se.repository.InvoiceRepository;
 import jku.se.repository.UserRepository;
+import jku.se.Utilities.NotificationManager;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -201,10 +202,9 @@ public class AdminInvoiceManagementController {
         if (selectedInvoice != null) {
             selectedInvoice.setStatus(Status.APPROVED);
             InvoiceRepository.updateInvoiceStatus(selectedInvoice);
-            UserRepository.getByEmail(selectedInvoice.getUserEmail());
-            new Notification("Your invoice from " + selectedInvoice.getCreatedAtString() + " was approved.");
+            Notification notification = new Notification("Your invoice from " + selectedInvoice.getCreatedAtString() + " was approved.");
+            NotificationManager.getInstance().addNotificationForUser(selectedInvoice.getUserEmail(),notification);
             showAlert(Alert.AlertType.INFORMATION, "Success", "Invoice accepted successfully.");
-
         }
     }
 
@@ -222,10 +222,9 @@ public class AdminInvoiceManagementController {
         if (selectedInvoice != null) {
             selectedInvoice.setStatus(Status.DECLINED);
             InvoiceRepository.updateInvoiceStatus(selectedInvoice);
-            UserRepository.getByEmail(selectedInvoice.getUserEmail());
-            new Notification("Your invoice from " + selectedInvoice.getCreatedAtString() + " was rejected.");
+            Notification notification = new Notification("Your invoice from " + selectedInvoice.getCreatedAtString() + " was rejected.");
+            NotificationManager.getInstance().addNotificationForUser(selectedInvoice.getUserEmail(), notification);
             showAlert(Alert.AlertType.WARNING, "Invoice Declined", "Invoice was declined.");
-
         }
     }
 
