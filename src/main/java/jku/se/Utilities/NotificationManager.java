@@ -3,6 +3,7 @@ package jku.se.Utilities;
 import jku.se.Notification;
 import jku.se.User;
 import jku.se.repository.DeletedNotificationRepository;
+import jku.se.repository.AdminNotificationRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ public final class NotificationManager {
     private final Map<String, Set<String>> deletedNotificationMessages;
 
     private NotificationManager() {
-        globalNotifications = new ArrayList<>();
+        globalNotifications = new ArrayList<>(AdminNotificationRepository.getAllAdminNotifications());
         userNotifications = new HashMap<>();
         deletedNotificationMessages = new HashMap<>();
     }
@@ -48,6 +49,7 @@ public final class NotificationManager {
 
     public void addNotification(Notification notification) {
         globalNotifications.add(notification);
+        AdminNotificationRepository.addAdminNotification(notification);
     }
     /**
      * Adds a notification for a specific user.
@@ -135,6 +137,7 @@ public final class NotificationManager {
         for (int i = 0; i < globalNotifications.size(); i++) {
             if (globalNotifications.get(i).getId().equals(notificationId)) {
                 Notification removed = globalNotifications.remove(i);
+                AdminNotificationRepository.deleteAdminNotification(notificationId);
                 if (markAsDeleted) {
                     // Mark the message as deleted (for all users since it's global)
                     for (String userEmail : userNotifications.keySet()) {
