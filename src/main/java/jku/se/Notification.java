@@ -23,7 +23,6 @@ public class Notification {
     private LocalDateTime timestamp;
     private boolean isForAdmin;
     private String targetUserEmail;
-
     /**
      * Constructs a new Notification with full attributes.
      *
@@ -138,4 +137,7 @@ public class Notification {
     public String getUserMessage() {
         return message;
     }
+
+    public void setId(String id) { this.id = id; }
+    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
 }
