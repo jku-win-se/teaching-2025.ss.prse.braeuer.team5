@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"Lunchify","l":"jku.se"},{"m":"Lunchify","l":"jku.se.Controller"},{"m":"Lunchify","l":"jku.se.export"},{"m":"Lunchify","l":"jku.se.repository"},{"m":"Lunchify","l":"jku.se.Utilities"}];updateSearchResults();
