@@ -8,7 +8,8 @@ Alle Daten werden sicher in einer PostgreSQL-Datenbank gespeichert, die über Su
 
 # Umgesetzte Anforderungen
 Alle Anforderungen inklusive Verantwortlichkeiten findest du unter:  
-https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/issues?q=is%3Aissue%20state%3Aclosed
+
+[Issues](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/issues?q=is%3Aissue%20state%3Aclosed)
 
 # Überblick über die Applikation aus Benutzersicht
 
@@ -34,7 +35,7 @@ Lunchify basiert auf einer JavaFX-Anwendung mit Anbindung an eine PostgreSQL-Dat
 
 #### Entscheidung 2: JavaFX als UI-Technologie  
 **Begründung:** Desktop-App, leichtgewichtig, gute Integration mit Java  
-**Alternativen:** 
+**Alternativen:** Swing
 **Annahmen:** Installation lokal möglich  
 **Konsequenzen:** Geringere Einstiegshürde für Benutzer, keine Deployment-Infrastruktur nötig
 
@@ -45,7 +46,7 @@ Lunchify basiert auf einer JavaFX-Anwendung mit Anbindung an eine PostgreSQL-Dat
 **Konsequenzen:** schwer verständlich, anschließend einfache Integration in den Code
 
 ## Implementierung
-Dieser Abschnitt beschreibt die wichtigsten Funktionen und Abläufe des Projekts. Die 
+Dieser Abschnitt beschreibt die wichtigsten Funktionen und Abläufe des Projekts. 
 
 ## Code Qualität
 Zur Sicherstellung einer hohen Codequalität wurde das Projekt mit den Tools PMD und SonarQube analysiert und optimiert.
@@ -55,7 +56,7 @@ PMD wurde zur statischen Codeanalyse eingesetzt, um typische Programmierfehler u
 
 Verwendung von System.out.println-Ausgaben: Diese temporären Debug-Ausgaben wurden identifiziert und vollständig entfernt.
 
-Fehlerhafte oder uneinheitliche Benennung von Variablen: Mehrere Variablennamen entsprachen nicht dem CamelCase-Stil oder enthielten unzulässige Zeichen. Diese wurden gemäß Java-Benennungskonventionen angepasst.
+Fehlerhafte oder uneinheitliche Benennung von Variablen: Mehrere Variablennamen entsprachen nicht dem richten Stil oder enthielten unzulässige Zeichen. Diese wurden gemäß Java-Benennungskonventionen angepasst.
 
 Fehlende Modifizierer für Konstanten: Einige als Konstanten verwendete Felder waren nicht als static final deklariert und wurden entsprechend korrigiert.
 
@@ -80,13 +81,14 @@ Insgesamt trugen beide Tools wesentlich dazu bei, die Codebasis robuster, verst�
 [Testplan](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/main/docs/Testplan)
 
 Testabdeckung:
-![WhatsApp Bild 2025-06-10 um 15 55 14_96f00ed8](https://github.com/user-attachments/assets/3b3f0fac-a1e4-469b-a8ab-52068f9a48f0)
+<img width="576" alt="image" src="https://github.com/user-attachments/assets/55bc12be-1010-40d2-8bb8-6d8ecd05ae55" />
+
 
 
 # JavaDoc für wichtige Klassen, Interfaces und Methoden
 
-[JavaDoc](https://jku-win-se.github.io/teaching-2025.ss.prse.braeuer.team5/javadoc/)
-[Beschreibung wichtigster Klassen](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/main/docs/systemdoku.md)
+- [JavaDoc](https://jku-win-se.github.io/teaching-2025.ss.prse.braeuer.team5/javadoc/)
+- [Beschreibung wichtigster Klassen](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/main/docs/systemdoku.md)
 
 # Installationsanleitung
 
