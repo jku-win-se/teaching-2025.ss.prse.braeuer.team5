@@ -23,6 +23,8 @@ classDiagram
     }
 
     class Repository {
+        +AdminNotificationRepository
+        +DeletedNotificationRepository
         +InvoiceRepository
         +UserRepository
     }
