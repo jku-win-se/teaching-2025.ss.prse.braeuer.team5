@@ -15,10 +15,11 @@ Anschließend sollte auch überprüft werden, ob ein Zugriff auf JavaFX SDK best
 https://gluonhq.com/products/javafx/
 
 #### Schritt 3: Lunchify-Installationspaket vorbereiten
-Sie haben eine Zip-Datei mit der Lunchify erhalten. Bitte herunterladen und entpacken. Bitte öffnen sie die Datei "Lunchify-0.0.1.beta" mit Doppelklick. 
+Bitte laden sie sich die Dateien aus dem Ordner [Lunchify-Installation](out/artifacts/Lunchify_jar) herunter. Bitte öffnen sie die Datei "Lunchify.jar" mit Doppelklick. 
 
-Falls dieser Vorgang nicht durchgeführt werden kann, öffnen Sie den Ordner, in dem sie die JavaFX SDK entpackt haben. Kopieren Sie den Pfad zum Ordner "lib". Öffnen sie die Datei "start-lunchify.bat" per Rechtsklick und klicken sie auf "bearbeiten". Ersetzen sie in der Datei den Pfad "PATH_TO_FX" mit ihrem Link. Speichern und schließen sie die Datei.
+Falls dieser Vorgang nicht durchgeführt werden kann, öffnen Sie den Ordner, in dem sie die JavaFX SDK entpackt haben. Kopieren Sie den Pfad zum Ordner "lib". Öffnen sie die Datei "Lunchify.bat" per Rechtsklick und klicken sie auf "bearbeiten". Ersetzen sie in der Datei den Pfad "PATH_TO_FX" mit ihrem Link. Speichern und schließen sie die Datei.
 Danach können sie die Datei mit Doppelklick öffnen und Lunchify starten.
+
 
 ## 2. USER
 ### 2.1. Login
