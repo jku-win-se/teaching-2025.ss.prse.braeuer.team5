@@ -80,7 +80,8 @@ Insgesamt trugen beide Tools wesentlich dazu bei, die Codebasis robuster, verstÃ
 ## Testen
 [Testplan](https://github.com/jku-win-se/teaching-2025.ss.prse.braeuer.team5/blob/main/docs/Testplan)
 
-Testabdeckung:
+#Testabdeckung
+
 <img width="576" alt="image" src="https://github.com/user-attachments/assets/55bc12be-1010-40d2-8bb8-6d8ecd05ae55" />
 
 
