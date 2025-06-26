@@ -34,7 +34,7 @@
 - **OCR-Technologie:** Open-Source OCR  
 - **Exportformate:** JSON, XML, CSV, PDF
   
-<img width="612" alt="Bildschirmfoto 2025-06-10 um 15 35 46 1" src="https://github.com/user-attachments/assets/f19ca9dd-bf20-4062-aa47-d8eedaf6b098" />
+<img width="654" alt="Bildschirmfoto 2025-06-26 um 16 34 05" src="https://github.com/user-attachments/assets/9866f877-47e5-4827-9083-e5a3618f89bb" />
 
 ---
 
